@@ -20,7 +20,7 @@
 {% macro scheme_card(r, show_detail=true) %}
 {% set pct = r.confidence | round | int %}
 {% set ben = benefits.get(r.scheme_id) %}
-<div class="scheme-card" data-status="{{ r.status.value.lower() }}">
+<div class="scheme-card" data-status="{{ r.status.value.lower() }}" data-href="/scheme/{{ r.scheme_id }}?{{ profile_dict | urlencode }}" role="link" tabindex="0" aria-label="View {{ r.scheme_name }} details">
     <div class="card-row">
         <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
         <div class="card-body">
@@ -51,21 +51,7 @@
             </div>
         </div>
     </div>
-    {% if show_detail %}
-    <div class="card-detail">
-        {% if r.rule_evaluations %}
-        <ul class="rule-list">
-            {% for ev in r.rule_evaluations[:6] %}
-            <li class="rule-item">
-                <span class="rule-icon {{ rule_icon_class(ev.result) }}">{{ rule_char(ev.result) }}</span>
-                <div class="rule-text">{{ ev.rule_id }}{% if ev.explanation %}<span class="rule-explain">{{ ev.explanation[:100] }}</span>{% endif %}</div>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <a class="detail-link" href="/scheme/{{ r.scheme_id }}?{{ profile_dict | urlencode }}">Full breakdown →</a>
-    </div>
-    {% endif %}
+    <div class="card-tap-hint">Tap for full details · पूरी जानकारी →</div>
 </div>
 {% endmacro %}
 
@@ -547,11 +533,14 @@ async function recheckScheme(schemeId) {
     }
 }
 
-// Scheme card expand/collapse
-document.querySelectorAll('.scheme-card').forEach(card => {
+// Scheme card → navigate to detail page
+document.querySelectorAll('.scheme-card[data-href]').forEach(card => {
     card.addEventListener('click', e => {
-        if (e.target.closest('a') || e.target.closest('button')) return;
-        card.classList.toggle('expanded');
+        if (e.target.closest('button')) return;
+        window.location.href = card.dataset.href;
+    });
+    card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') window.location.href = card.dataset.href;
     });
 });
 </script>

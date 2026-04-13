@@ -324,8 +324,8 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
     border-radius: var(--radius); padding: 16px 18px; margin-bottom: 8px;
     cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s;
 }
-.scheme-card:hover { box-shadow: var(--shadow-md); }
-.scheme-card.expanded { border-color: var(--primary); }
+.scheme-card:hover { box-shadow: var(--shadow-md); border-color: var(--primary); }
+.scheme-card:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 .card-row { display: flex; align-items: flex-start; gap: 12px; }
 .card-icon { font-size: 2.2rem; margin-top: 1px; flex-shrink: 0; }
@@ -346,8 +346,7 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
 .confidence-fill { height: 100%; border-radius: 4px; }
 .conf-pct { font-size: 0.9rem; color: var(--text-secondary); font-weight: 700; }
 
-.card-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
-.scheme-card.expanded .card-detail { display: block; }
+.card-tap-hint { font-size: 0.78rem; color: var(--primary); margin-top: 10px; text-align: right; opacity: 0.8; font-weight: 600; }
 
 .rule-list { list-style: none; margin-bottom: 10px; }
 .rule-item { display: flex; gap: 8px; align-items: flex-start; padding: 3px 0; font-size: 0.83rem; }

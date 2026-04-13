@@ -136,7 +136,7 @@
             <div class="detail-section-title">Apply these first / पहले यह करें</div>
             {% for prereq_id in result.prerequisite_scheme_ids %}
             <div class="order-item">
-                <div class="order-num">{{ loop.index|string.zfill(2) if loop.index < 10 else loop.index }}</div>
+                <div class="order-num">{{ loop.index }}</div>
                 <strong>{{ prereq_id.replace('_', ' ').upper() }}</strong>
             </div>
             {% endfor %}
