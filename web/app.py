@@ -305,9 +305,63 @@ async def results(request: Request):
     return await _render_results(request, dict(form_data))
 
 
+def _personalized_docs(profile: UserProfile, scheme: Scheme, bur_score=None):
+    """Return (has_docs, needs_docs) lists for the scheme, using BureaucraticScore if available."""
+    if bur_score is not None:
+        return bur_score.docs_already_have, bur_score.missing_docs
+    calc = BureaucraticDistanceCalculator()
+    score = calc.calculate(profile, scheme, [])
+    return score.docs_already_have, score.missing_docs
+
+
+def _office_script(profile: UserProfile, scheme: Scheme) -> str:
+    """Generate a plain Hindi script the user can read at the office."""
+    doc_keywords = {
+        "has_aadhaar": "आधार कार्ड",
+        "has_bank_account": "बैंक पासबुक",
+        "has_ration_card": "राशन कार्ड",
+        "is_aadhaar_linked": "आधार-लिंक्ड बैंक खाता",
+    }
+    docs_have = []
+    for field, label in doc_keywords.items():
+        val = getattr(profile, field, None)
+        if val and val is not False and val != "none":
+            docs_have.append(label)
+
+    name_hindi = scheme.name_hindi or scheme.name
+    script = f"नमस्ते, मुझे {name_hindi} के लिए आवेदन करना है।\n"
+    if docs_have:
+        script += f"मेरे पास {', '.join(docs_have)} है।\n"
+
+    scheme_actions = {
+        "pm_kisan": "PM-KISAN में पंजीकरण करवाना है।",
+        "mgnrega": f"NREGA जॉब कार्ड बनवाना है। मेरे परिवार में {profile.family_size or '?'} लोग कार्य कर सकते हैं।",
+        "ayushman_bharat": "आयुष्मान भारत कार्ड बनवाना है। कृपया जांचें कि मेरा नाम सूची में है या नहीं।",
+        "pmjdy": "जन धन खाता खोलना है — जीरो बैलेंस वाला।",
+        "pmay_g": "प्रधानमंत्री आवास योजना (ग्रामीण) में आवेदन करना है।",
+        "pmay_u": "प्रधानमंत्री आवास योजना (शहरी) में आवेदन करना है।",
+        "ujjwala": "उज्ज्वला योजना के तहत LPG कनेक्शन लेना है।",
+        "nsap_ignoaps": "वृद्धावस्था पेंशन (IGNOAPS) के लिए आवेदन करना है।",
+        "nsap_ignwps": "विधवा पेंशन (IGNWPS) के लिए आवेदन करना है।",
+        "nsap_igndps": "विकलांगता पेंशन (IGNDPS) के लिए आवेदन करना है।",
+        "apy": "अटल पेंशन योजना में पंजीकरण करना है।",
+        "pm_sym": "PM-SYM पेंशन योजना में पंजीकरण करना है।",
+        "pm_svanidhi": "PM SVANidhi ऋण के लिए आवेदन करना है।",
+        "pm_mudra": "मुद्रा ऋण के लिए आवेदन करना है।",
+        "pmegp": "PMEGP के तहत उद्यम शुरू करने के लिए आवेदन करना है।",
+        "stand_up_india": "Stand-Up India ऋण के लिए आवेदन करना है।",
+        "sukanya_samriddhi": "सुकन्या समृद्धि खाता खोलना है।",
+        "pmmvy": "प्रधानमंत्री मातृ वंदना योजना में पंजीकरण करना है।",
+        "nfsa": "राशन कार्ड / NFSA के तहत खाद्य सुरक्षा के लिए आवेदन करना है।",
+        "pm_vishwakarma": "PM Vishwakarma योजना में पंजीकरण करना है।",
+    }
+    action = scheme_actions.get(scheme.scheme_id, f"{name_hindi} में आवेदन करना है।")
+    script += action + "\n\nक्या और कोई दस्तावेज़ चाहिए?"
+    return script
+
+
 @app.get("/scheme/{scheme_id}", response_class=HTMLResponse)
 async def scheme_detail(request: Request, scheme_id: str):
-    # Profile is passed as query params (encoded from results page)
     from urllib.parse import parse_qs  # noqa: PLC0415
     qs = str(request.query_params)
     form = {k: v[0] for k, v in parse_qs(qs).items()} if qs else {}
@@ -332,11 +386,20 @@ async def scheme_detail(request: Request, scheme_id: str):
 
     match_result = _evaluate_scheme(scheme_obj, profile)
 
+    bur_calc = BureaucraticDistanceCalculator()
+    bur_score = bur_calc.calculate(profile, scheme_obj, [])
+    has_docs, needs_docs = _personalized_docs(profile, scheme_obj, bur_score)
+    office_script = _office_script(profile, scheme_obj)
+
     return templates.TemplateResponse(request, "scheme_detail.html", {
         "scheme": scheme_obj,
         "result": match_result,
         "icon": SCHEME_ICONS.get(scheme_id, "📋"),
         "profile_qs": qs,
+        "bur": bur_score,
+        "has_docs": has_docs,
+        "needs_docs": needs_docs,
+        "office_script": office_script,
     })
 
 
@@ -415,17 +478,17 @@ def _chat_regex_extract(message: str) -> dict:
 
 
 def _chat_fallback_reply(extracted: dict, profile: dict, turn: int) -> str:
-    """Simple rule-based follow-up when Claude API unavailable."""
+    """Simple rule-based follow-up."""
     combined = {**profile, **extracted}
     missing = []
-    if not combined.get("age"): missing.append("Aapki umar kitni hai? (What is your age?)")
-    elif not combined.get("state"): missing.append("Aap kis rajya mein rehte hain? (Which state?)")
-    elif not combined.get("caste_category"): missing.append("Aapka varg kya hai? General, OBC, SC, ya ST?")
-    elif not combined.get("annual_income"): missing.append("Saalana amdani kitni hai? (Yearly income?)")
-    elif not combined.get("occupation"): missing.append("Aap kya kaam karte hain? (What is your occupation?)")
+    if not combined.get("age"): missing.append("आपकी उम्र कितनी है? / What is your age?")
+    elif not combined.get("state"): missing.append("आप किस राज्य में रहते हैं? / Which state do you live in?")
+    elif not combined.get("caste_category"): missing.append("आपका वर्ग क्या है? / What is your category? General, OBC, SC, or ST?")
+    elif not combined.get("annual_income"): missing.append("सालाना आमदनी कितनी है? / What is your yearly income?")
+    elif not combined.get("occupation"): missing.append("आप क्या काम करते हैं? / What is your occupation?")
     else:
-        return "Shukriya! Ab aap 'See my results' button dabayein. धन्यवाद!"
-    return missing[0] if missing else "Kuch aur batayein apne baare mein?"
+        return "धन्यवाद! / Thank you! Now press 'See my results' to check your eligibility."
+    return missing[0] if missing else "अपने बारे में और बताएं। / Tell us more about yourself."
 
 
 

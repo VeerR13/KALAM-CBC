@@ -33,7 +33,9 @@
       },
       "is_mandatory": true,
       "weight": 30,
-      "ambiguity_refs": ["AMB-12"],
+      "ambiguity_refs": [
+        "AMB-12"
+      ],
       "ambiguity_note": "Income refers to annual household income — ambiguity whether individual vs. combined household income is used"
     },
     {
@@ -43,12 +45,19 @@
       "condition": {
         "type": "field_check",
         "field": "land_ownership",
-        "values": ["none", "leases"],
-        "ambiguous_values": ["owns"]
+        "values": [
+          "none",
+          "leases"
+        ],
+        "ambiguous_values": [
+          "owns"
+        ]
       },
       "is_mandatory": true,
       "weight": 30,
-      "ambiguity_refs": ["AMB-10"],
+      "ambiguity_refs": [
+        "AMB-10"
+      ],
       "ambiguity_note": "Owning land does not automatically mean owning a pucca house — 'owns' is ambiguous as applicant may own land but not a habitable dwelling"
     },
     {
@@ -73,7 +82,10 @@
         "type": "field_check",
         "field": "previous_scheme_loans",
         "values": [],
-        "ambiguous_values": ["pmay_u", "pmay_g"]
+        "ambiguous_values": [
+          "pmay_u",
+          "pmay_g"
+        ]
       },
       "is_mandatory": false,
       "weight": 25,
@@ -107,6 +119,30 @@
       "priority": 4
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "Central assistance for house construction/purchase via BLC/AHP/ARH/ISS verticals. House carpet area 30-90 sqm, value up to ₹45 lakh."
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "Central assistance for house construction/purchase via BLC/AHP/ARH/ISS verticals. House carpet area 30-90 sqm, value up to ₹45 lakh.",
+  "name_hindi": "प्रधानमंत्री आवास योजना - शहरी",
+  "portal_url": "https://pmaymis.gov.in",
+  "helpline": {
+    "number": "1800-11-3377",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:30 AM – 6:00 PM",
+    "alternate": "1800-11-3388"
+  },
+  "application_offices": [
+    {
+      "type": "Urban Local Body / Municipal Office",
+      "name_hindi": "नगर निकाय कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your city's municipal corporation or nagar palika office"
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

@@ -52,7 +52,7 @@
     {
       "rule_id": "PMEGP-R04",
       "parameter": "education_for_large_projects",
-      "description": "For projects above \u20b910L manufacturing or \u20b95L service: must be at least 8th standard pass (age proxy: 14+)",
+      "description": "For projects above ₹10L manufacturing or ₹5L service: must be at least 8th standard pass (age proxy: 14+)",
       "condition": {
         "type": "range_check",
         "field": "age",
@@ -60,8 +60,10 @@
       },
       "is_mandatory": false,
       "weight": 15,
-      "ambiguity_refs": ["AMB-29"],
-      "ambiguity_note": "For projects above \u20b910L manufacturing or \u20b95L service: must be at least 8th standard pass."
+      "ambiguity_refs": [
+        "AMB-29"
+      ],
+      "ambiguity_note": "For projects above ₹10L manufacturing or ₹5L service: must be at least 8th standard pass."
     },
     {
       "rule_id": "PMEGP-R05",
@@ -71,7 +73,9 @@
         "type": "field_check",
         "field": "previous_scheme_loans",
         "values": [],
-        "ambiguous_values": ["pmegp"]
+        "ambiguous_values": [
+          "pmegp"
+        ]
       },
       "is_mandatory": false,
       "weight": 15,
@@ -99,7 +103,7 @@
       "priority": 3
     },
     {
-      "document": "Education Certificate (8th pass — if project above \u20b910L manufacturing)",
+      "document": "Education Certificate (8th pass — if project above ₹10L manufacturing)",
       "where_to_obtain": "School",
       "processing_time_days": "0",
       "priority": 4
@@ -118,5 +122,27 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "Margin money subsidy 15-35% of project cost. General: 15% urban / 25% rural. SC/ST/OBC/Women/Ex-servicemen/PwD/NER/Hill/Border: 25% urban / 35% rural. Manufacturing max project \u20b925 lakh. Service/Business max \u20b910 lakh. No collateral for loans up to \u20b910 lakh."
+  "benefit_summary": "Margin money subsidy 15-35% of project cost. General: 15% urban / 25% rural. SC/ST/OBC/Women/Ex-servicemen/PwD/NER/Hill/Border: 25% urban / 35% rural. Manufacturing max project ₹25 lakh. Service/Business max ₹10 lakh. No collateral for loans up to ₹10 lakh.",
+  "name_hindi": "प्रधानमंत्री रोजगार सृजन कार्यक्रम",
+  "portal_url": "https://www.kviconline.gov.in/pmegpeportal",
+  "helpline": {
+    "number": "1800-3000-0034",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:30 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "District Industries Centre (DIC)",
+      "name_hindi": "जिला उद्योग केंद्र",
+      "locator_url": null,
+      "find_instruction": "District Industries Centre at your district collectorate"
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

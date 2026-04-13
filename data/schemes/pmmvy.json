@@ -14,7 +14,9 @@
       "condition": {
         "type": "field_check",
         "field": "gender",
-        "values": ["F"],
+        "values": [
+          "F"
+        ],
         "ambiguous_values": []
       },
       "is_mandatory": true,
@@ -76,13 +78,19 @@
           {
             "type": "field_check",
             "field": "has_ration_card",
-            "values": ["AAY", "PHH"],
+            "values": [
+              "AAY",
+              "PHH"
+            ],
             "ambiguous_values": []
           },
           {
             "type": "field_check",
             "field": "caste_category",
-            "values": ["SC", "ST"],
+            "values": [
+              "SC",
+              "ST"
+            ],
             "ambiguous_values": []
           },
           {
@@ -102,7 +110,7 @@
       "is_mandatory": true,
       "weight": 25,
       "ambiguity_refs": [],
-      "ambiguity_note": "Must belong to at least one: SC/ST, 40%+ disabled, BPL ration card, PM-JAY beneficiary, e-Shram card, PM-KISAN/MGNREGA card, income <\u20b98L/year, AWW/AWH/ASHA, NFSA ration card."
+      "ambiguity_note": "Must belong to at least one: SC/ST, 40%+ disabled, BPL ration card, PM-JAY beneficiary, e-Shram card, PM-KISAN/MGNREGA card, income <₹8L/year, AWW/AWH/ASHA, NFSA ration card."
     },
     {
       "rule_id": "PMMVY-EX01",
@@ -157,6 +165,30 @@
       "priority": 6
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "First child (any gender): \u20b95,000 in 2 installments (\u20b93,000 + \u20b92,000). Second child (only if girl): \u20b96,000 in 1 installment. Miscarriage/stillbirth treated as fresh case. Must apply within 270 days of birth."
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "First child (any gender): ₹5,000 in 2 installments (₹3,000 + ₹2,000). Second child (only if girl): ₹6,000 in 1 installment. Miscarriage/stillbirth treated as fresh case. Must apply within 270 days of birth.",
+  "name_hindi": "प्रधानमंत्री मातृ वंदना योजना",
+  "portal_url": "https://pmmvy.wcd.gov.in",
+  "helpline": {
+    "number": "011-23385271",
+    "toll_free": false,
+    "hours": "Mon–Fri, 9:30 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Anganwadi Centre",
+      "name_hindi": "आंगनवाड़ी केंद्र",
+      "locator_url": null,
+      "find_instruction": "Nearest Anganwadi centre in your village or ward"
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

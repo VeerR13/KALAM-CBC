@@ -28,12 +28,19 @@
       "condition": {
         "type": "field_check",
         "field": "has_ration_card",
-        "values": ["AAY", "PHH"],
-        "ambiguous_values": ["unknown"]
+        "values": [
+          "AAY",
+          "PHH"
+        ],
+        "ambiguous_values": [
+          "unknown"
+        ]
       },
       "is_mandatory": true,
       "weight": 30,
-      "ambiguity_refs": ["AMB-17"],
+      "ambiguity_refs": [
+        "AMB-17"
+      ],
       "ambiguity_note": "BPL status based on SECC/ration card — stale data may exclude genuinely poor applicants"
     },
     {
@@ -47,7 +54,9 @@
       },
       "is_mandatory": false,
       "weight": 20,
-      "ambiguity_refs": ["AMB-19"],
+      "ambiguity_refs": [
+        "AMB-19"
+      ],
       "ambiguity_note": "is_govt_employee used as proxy for receiving government pension — does not capture private pension or other assistance sources"
     },
     {
@@ -109,6 +118,30 @@
       "priority": 7
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "₹200/month central contribution (age 60-79), ₹500/month (age 80+). States add variable top-up."
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "₹200/month central contribution (age 60-79), ₹500/month (age 80+). States add variable top-up.",
+  "name_hindi": "इंदिरा गांधी राष्ट्रीय वृद्धावस्था पेंशन योजना",
+  "portal_url": "https://nsap.nic.in",
+  "helpline": {
+    "number": "011-23386163",
+    "toll_free": false,
+    "hours": "Mon–Fri, 9:30 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Gram Panchayat",
+      "name_hindi": "ग्राम पंचायत कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
+    },
+    {
+      "type": "Block Development Office",
+      "name_hindi": "प्रखंड विकास कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Block Development Office (BDO) in your block or tehsil"
+    }
+  ]
 }

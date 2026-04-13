@@ -7,11 +7,11 @@
 {% macro conf_color(pct) %}{% if pct >= 80 %}var(--eligible){% elif pct >= 60 %}var(--likely){% elif pct >= 40 %}var(--ambiguous){% else %}var(--text-muted){% endif %}{% endmacro %}
 
 {% macro status_badge(status) %}
-    {% if status.value == 'ELIGIBLE' %}<span class="badge badge-eligible">🟢 Mil sakta hai</span>
-    {% elif status.value == 'LIKELY_ELIGIBLE' %}<span class="badge badge-likely">🟡 Shayad mile</span>
-    {% elif status.value == 'AMBIGUOUS' %}<span class="badge badge-ambiguous">🟠 Pata nahi</span>
-    {% elif status.value == 'INELIGIBLE' %}<span class="badge badge-ineligible">🔴 Nahi milega</span>
-    {% else %}<span class="badge badge-needinfo">🟣 Aur info chahiye</span>{% endif %}
+    {% if status.value == 'ELIGIBLE' %}<span class="badge badge-eligible">🟢 Eligible / पात्र</span>
+    {% elif status.value == 'LIKELY_ELIGIBLE' %}<span class="badge badge-likely">🟡 Likely / संभावित</span>
+    {% elif status.value == 'AMBIGUOUS' %}<span class="badge badge-ambiguous">🟠 Unclear / अस्पष्ट</span>
+    {% elif status.value == 'INELIGIBLE' %}<span class="badge badge-ineligible">🔴 Not eligible / अपात्र</span>
+    {% else %}<span class="badge badge-needinfo">🟣 Need info / जानकारी चाहिए</span>{% endif %}
 {% endmacro %}
 
 {% macro rule_icon_class(result) %}{% if result.value == 'PASS' %}pass{% elif result.value == 'FAIL' %}fail{% elif result.value == 'AMBIGUOUS' %}amb{% else %}miss{% endif %}{% endmacro %}
@@ -106,7 +106,7 @@
     {% if optimal_path and (optimal_path.total_annual_cash or optimal_path.total_annual_food or optimal_path.total_insurance_cover) %}
     <div class="total-benefits-box">
         <div class="total-benefits-title">
-            <span>Aapko mil sakta hai / Based on your details, you could receive:</span>
+            <span>आपको मिल सकता है / Based on your details, you could receive:</span>
             <button class="speak-btn" data-speak="आपके नतीजे। {% for line in optimal_path.summary_lines %}{{ line }}. {% endfor %}" aria-label="सुनें">🔊</button>
         </div>
         <div class="total-benefits-grid">
@@ -291,8 +291,8 @@
     {% if optimal_path and optimal_path.steps %}
     <div class="optimal-path-section">
         <div class="path-header">
-            <h3>Sabse pehle kya karein? / What to do first?</h3>
-            <p class="path-subtitle">सबसे पहले क्या करें — step by step guide</p>
+            <h3>सबसे पहले क्या करें? / What to do first?</h3>
+            <p class="path-subtitle">Step by step guide / चरण दर चरण मार्गदर्शन</p>
             <button class="speak-btn" data-speak="सबसे पहले क्या करें। {% for step in optimal_path.steps[:4] %}Step {{ loop.index }}: {{ step.scheme_name }}. {{ step.benefit_headline }}. {{ step.where_to_go }}. {% endfor %}" aria-label="सुनें">🔊</button>
         </div>
 

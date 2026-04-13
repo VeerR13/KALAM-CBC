@@ -18,20 +18,39 @@
           {
             "type": "field_check",
             "field": "has_ration_card",
-            "values": ["AAY", "PHH"],
-            "ambiguous_values": ["unknown"]
+            "values": [
+              "AAY",
+              "PHH"
+            ],
+            "ambiguous_values": [
+              "unknown"
+            ]
           },
           {
             "type": "field_check",
             "field": "occupation",
-            "values": ["Daily wage worker", "street_vendor", "Artisan", "Domestic worker", "Ragpicker", "Washerman", "Driver", "Rickshaw puller"],
-            "ambiguous_values": ["Homemaker", "Shopkeeper"]
+            "values": [
+              "Daily wage worker",
+              "street_vendor",
+              "Artisan",
+              "Domestic worker",
+              "Ragpicker",
+              "Washerman",
+              "Driver",
+              "Rickshaw puller"
+            ],
+            "ambiguous_values": [
+              "Homemaker",
+              "Shopkeeper"
+            ]
           }
         ]
       },
       "is_mandatory": true,
       "weight": 30,
-      "ambiguity_refs": ["AMB-04"],
+      "ambiguity_refs": [
+        "AMB-04"
+      ],
       "ambiguity_note": "SECC 2011 data is 15 years stale — many genuinely poor families may not appear. Urban occupational route covers the 11 PM-JAY eligible categories. Occupation values from the form map approximately to these categories."
     },
     {
@@ -46,7 +65,9 @@
       },
       "is_mandatory": true,
       "weight": 10,
-      "ambiguity_refs": ["AMB-05"],
+      "ambiguity_refs": [
+        "AMB-05"
+      ],
       "ambiguity_note": "Central rule. Several states (Rajasthan, Kerala, Delhi) have extended PM-JAY to higher income groups — if your state has extended coverage, you may still be eligible despite failing this rule. State-specific overrides are not yet modelled."
     },
     {
@@ -70,12 +91,30 @@
       "condition": {
         "type": "exclusion",
         "any_true_fails": [
-          {"field": "is_govt_employee", "equals": true},
-          {"field": "is_income_tax_payer", "equals": true},
-          {"field": "has_motorized_vehicle", "equals": true},
-          {"field": "has_mechanized_farm_equipment", "equals": true},
-          {"field": "has_kisan_credit_card", "equals": true},
-          {"field": "has_pucca_house", "equals": true}
+          {
+            "field": "is_govt_employee",
+            "equals": true
+          },
+          {
+            "field": "is_income_tax_payer",
+            "equals": true
+          },
+          {
+            "field": "has_motorized_vehicle",
+            "equals": true
+          },
+          {
+            "field": "has_mechanized_farm_equipment",
+            "equals": true
+          },
+          {
+            "field": "has_kisan_credit_card",
+            "equals": true
+          },
+          {
+            "field": "has_pucca_house",
+            "equals": true
+          }
         ]
       },
       "is_mandatory": true,
@@ -120,5 +159,27 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "₹5 lakh family floater health insurance per year for secondary/tertiary hospitalization at empanelled hospitals. Cashless and paperless."
+  "benefit_summary": "₹5 lakh family floater health insurance per year for secondary/tertiary hospitalization at empanelled hospitals. Cashless and paperless.",
+  "name_hindi": "आयुष्मान भारत प्रधानमंत्री जन आरोग्य योजना",
+  "portal_url": "https://pmjay.gov.in",
+  "helpline": {
+    "number": "14555",
+    "toll_free": true,
+    "hours": "24 hours, 7 days",
+    "alternate": "1800-111-565"
+  },
+  "application_offices": [
+    {
+      "type": "Empanelled Hospital",
+      "name_hindi": "सूचीबद्ध अस्पताल",
+      "locator_url": "https://hospitals.pmjay.gov.in",
+      "find_instruction": "Find empanelled hospitals at hospitals.pmjay.gov.in"
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

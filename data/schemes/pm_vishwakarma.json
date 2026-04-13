@@ -14,12 +14,56 @@
       "condition": {
         "type": "field_check",
         "field": "occupation",
-        "values": ["Carpenter", "Suthar", "Boat Maker", "Goldsmith", "Sunar", "Mason", "Raajmistri", "Armourer", "Blacksmith", "Lohar", "Hammer and Tool Kit Maker", "Locksmith", "Sculptor", "Stone Breaker", "Potter", "Kumhaar", "Cobbler", "Charmakar", "Shoesmith", "Footwear Artisan", "Basket Maker", "Mat Maker", "Broom Maker", "Coir Weaver", "Doll and Toy Maker", "Barber", "Naai", "Garland Maker", "Malakaar", "Washerman", "Dhobi", "Tailor", "Darzi", "Fishing Net Maker", "Artisan", "Traditional Craftsman"],
-        "ambiguous_values": ["Self-employed", "Skilled Worker", "Craftsperson", "Other"]
+        "values": [
+          "Carpenter",
+          "Suthar",
+          "Boat Maker",
+          "Goldsmith",
+          "Sunar",
+          "Mason",
+          "Raajmistri",
+          "Armourer",
+          "Blacksmith",
+          "Lohar",
+          "Hammer and Tool Kit Maker",
+          "Locksmith",
+          "Sculptor",
+          "Stone Breaker",
+          "Potter",
+          "Kumhaar",
+          "Cobbler",
+          "Charmakar",
+          "Shoesmith",
+          "Footwear Artisan",
+          "Basket Maker",
+          "Mat Maker",
+          "Broom Maker",
+          "Coir Weaver",
+          "Doll and Toy Maker",
+          "Barber",
+          "Naai",
+          "Garland Maker",
+          "Malakaar",
+          "Washerman",
+          "Dhobi",
+          "Tailor",
+          "Darzi",
+          "Fishing Net Maker",
+          "Artisan",
+          "Traditional Craftsman"
+        ],
+        "ambiguous_values": [
+          "Self-employed",
+          "Skilled Worker",
+          "Craftsperson",
+          "Other"
+        ]
       },
       "is_mandatory": true,
       "weight": 35,
-      "ambiguity_refs": ["AMB-40"],
+      "ambiguity_refs": [
+        "AMB-40"
+      ],
       "ambiguity_note": "Must be engaged in one of 18 family-based traditional trades in unorganised sector on self-employment basis."
     },
     {
@@ -72,11 +116,17 @@
         "type": "field_check",
         "field": "previous_scheme_loans",
         "values": [],
-        "ambiguous_values": ["pmegp", "pm_svanidhi", "pm_mudra"]
+        "ambiguous_values": [
+          "pmegp",
+          "pm_svanidhi",
+          "pm_mudra"
+        ]
       },
       "is_mandatory": true,
       "weight": 20,
-      "ambiguity_refs": ["AMB-41"],
+      "ambiguity_refs": [
+        "AMB-41"
+      ],
       "ambiguity_note": "Must not have availed PMEGP/SVANidhi/MUDRA or similar credit scheme in past 5 years — even if fully repaid."
     },
     {
@@ -101,7 +151,9 @@
         "type": "field_check",
         "field": "previous_scheme_loans",
         "values": [],
-        "ambiguous_values": ["pm_vishwakarma"]
+        "ambiguous_values": [
+          "pm_vishwakarma"
+        ]
       },
       "is_mandatory": false,
       "weight": 10,
@@ -136,5 +188,27 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "Collateral-free loans: 1st tranche \u20b91 lakh at 5% interest, 2nd tranche \u20b92 lakh at 5% interest. Skill training (basic 5 days + advanced 15 days). Toolkit incentive \u20b915,000. Digital transaction incentive. PM Vishwakarma certificate and ID card."
+  "benefit_summary": "Collateral-free loans: 1st tranche ₹1 lakh at 5% interest, 2nd tranche ₹2 lakh at 5% interest. Skill training (basic 5 days + advanced 15 days). Toolkit incentive ₹15,000. Digital transaction incentive. PM Vishwakarma certificate and ID card.",
+  "name_hindi": "पीएम विश्वकर्मा",
+  "portal_url": "https://pmvishwakarma.gov.in",
+  "helpline": {
+    "number": "18002677777",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:00 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Gram Panchayat",
+      "name_hindi": "ग्राम पंचायत कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

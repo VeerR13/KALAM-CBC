@@ -10,7 +10,7 @@
     {
       "rule_id": "NFSA-R01",
       "parameter": "income_proxy",
-      "description": "Household income should be below state-specified threshold (e.g., Delhi: <\u20b91 lakh/year)",
+      "description": "Household income should be below state-specified threshold (e.g., Delhi: <₹1 lakh/year)",
       "condition": {
         "type": "range_check",
         "field": "annual_income",
@@ -19,8 +19,11 @@
       },
       "is_mandatory": false,
       "weight": 25,
-      "ambiguity_refs": ["AMB-36", "AMB-37"],
-      "ambiguity_note": "Real eligibility is entirely state-specific. Delhi example: income <\u20b91 lakh/year. Central rules minimal."
+      "ambiguity_refs": [
+        "AMB-36",
+        "AMB-37"
+      ],
+      "ambiguity_note": "Real eligibility is entirely state-specific. Delhi example: income <₹1 lakh/year. Central rules minimal."
     },
     {
       "rule_id": "NFSA-R02",
@@ -33,13 +36,18 @@
           {
             "type": "field_check",
             "field": "caste_category",
-            "values": ["SC", "ST"],
+            "values": [
+              "SC",
+              "ST"
+            ],
             "ambiguous_values": []
           },
           {
             "type": "field_check",
             "field": "marital_status",
-            "values": ["widowed"],
+            "values": [
+              "widowed"
+            ],
             "ambiguous_values": []
           },
           {
@@ -57,7 +65,9 @@
       },
       "is_mandatory": false,
       "weight": 30,
-      "ambiguity_refs": ["AMB-36"],
+      "ambiguity_refs": [
+        "AMB-36"
+      ],
       "ambiguity_note": "Vulnerable groups: SC/ST, widows, disabled, slum residents, shelterless, single women, construction workers, rickshaw drivers, domestic workers, ragpickers."
     },
     {
@@ -67,8 +77,14 @@
       "condition": {
         "type": "field_check",
         "field": "has_ration_card",
-        "values": ["none", "unknown"],
-        "ambiguous_values": ["AAY", "PHH"]
+        "values": [
+          "none",
+          "unknown"
+        ],
+        "ambiguous_values": [
+          "AAY",
+          "PHH"
+        ]
       },
       "is_mandatory": false,
       "weight": 20,
@@ -86,7 +102,9 @@
       },
       "is_mandatory": true,
       "weight": 20,
-      "ambiguity_refs": ["AMB-38"],
+      "ambiguity_refs": [
+        "AMB-38"
+      ],
       "ambiguity_note": "Aadhaar required for all family members for ONORC portability."
     },
     {
@@ -96,7 +114,10 @@
       "condition": {
         "type": "exclusion",
         "any_true_fails": [
-          {"field": "is_income_tax_payer", "equals": true}
+          {
+            "field": "is_income_tax_payer",
+            "equals": true
+          }
         ]
       },
       "is_mandatory": true,
@@ -132,5 +153,27 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "AAY: 35 kg food grain per household per month at \u20b93/2 per kg (rice/wheat) + 1 kg subsidised sugar. PHH: 5 kg per person per month at \u20b93/2/1 per kg (rice/wheat/coarse grain)."
+  "benefit_summary": "AAY: 35 kg food grain per household per month at ₹3/2 per kg (rice/wheat) + 1 kg subsidised sugar. PHH: 5 kg per person per month at ₹3/2/1 per kg (rice/wheat/coarse grain).",
+  "name_hindi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम",
+  "portal_url": "https://nfsa.gov.in",
+  "helpline": {
+    "number": "1967",
+    "toll_free": true,
+    "hours": "24 hours, 7 days",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "State Food / Ration Office",
+      "name_hindi": "खाद्य विभाग कार्यालय",
+      "locator_url": null,
+      "find_instruction": "District Food & Civil Supplies office or your Gram Panchayat"
+    },
+    {
+      "type": "Gram Panchayat",
+      "name_hindi": "ग्राम पंचायत कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
+    }
+  ]
 }

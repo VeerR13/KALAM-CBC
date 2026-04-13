@@ -56,3 +56,7 @@ class Scheme(BaseModel):
     required_documents: list[RequiredDocument]
     prerequisites: list[str] = []
     benefit_summary: str
+    name_hindi: Optional[str] = None
+    portal_url: Optional[str] = None
+    helpline: Optional[dict] = None
+    application_offices: list[dict] = []

@@ -61,7 +61,9 @@
       },
       "is_mandatory": false,
       "weight": 20,
-      "ambiguity_refs": ["AMB-24"],
+      "ambiguity_refs": [
+        "AMB-24"
+      ],
       "ambiguity_note": "Members of statutory social security (EPF/NPS-govt/ESIC) not eligible"
     }
   ],
@@ -85,6 +87,30 @@
       "priority": 3
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "Guaranteed monthly pension \u20b91,000-\u20b95,000 after age 60. Govt co-contribution for eligible subscribers. Spouse gets same pension after subscriber death."
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "Guaranteed monthly pension ₹1,000-₹5,000 after age 60. Govt co-contribution for eligible subscribers. Spouse gets same pension after subscriber death.",
+  "name_hindi": "अटल पेंशन योजना",
+  "portal_url": "https://www.npscra.nsdl.co.in",
+  "helpline": {
+    "number": "1800-110-069",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:00 AM – 9:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Bank Branch",
+      "name_hindi": "बैंक शाखा",
+      "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
+      "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
+    },
+    {
+      "type": "Post Office",
+      "name_hindi": "डाकघर",
+      "locator_url": "https://www.indiapost.gov.in/VAS/Pages/FindPinCode.aspx",
+      "find_instruction": "Your nearest post office"
+    }
+  ]
 }

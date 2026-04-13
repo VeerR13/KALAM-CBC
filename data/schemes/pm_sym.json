@@ -2,7 +2,7 @@
   "scheme_id": "pm_sym",
   "name": "PM-SYM",
   "full_name": "Pradhan Mantri Shram Yogi Maan-dhan",
-  "target_description": "Unorganised workers aged 18-40 with monthly income up to \u20b915,000",
+  "target_description": "Unorganised workers aged 18-40 with monthly income up to ₹15,000",
   "ministry": "Ministry of Labour and Employment",
   "data_source": "PM-SYM Brief from Ministry of Labour and Employment official document",
   "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
@@ -25,7 +25,7 @@
     {
       "rule_id": "PMSYM-R02",
       "parameter": "income",
-      "description": "Monthly income must be up to \u20b915,000 (\u20b91,80,000 annually)",
+      "description": "Monthly income must be up to ₹15,000 (₹1,80,000 annually)",
       "condition": {
         "type": "range_check",
         "field": "annual_income",
@@ -34,8 +34,10 @@
       },
       "is_mandatory": true,
       "weight": 25,
-      "ambiguity_refs": ["AMB-25"],
-      "ambiguity_note": "Monthly income up to \u20b915,000 (\u20b91,80,000 annually). AMB-25: income verification difficult for informal workers."
+      "ambiguity_refs": [
+        "AMB-25"
+      ],
+      "ambiguity_note": "Monthly income up to ₹15,000 (₹1,80,000 annually). AMB-25: income verification difficult for informal workers."
     },
     {
       "rule_id": "PMSYM-R03",
@@ -94,6 +96,24 @@
       "priority": 2
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "\u20b93,000/month guaranteed pension after age 60. 50:50 govt-worker contribution. Contribution \u20b955-\u20b9200/month based on entry age. Spouse gets 50% family pension."
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "₹3,000/month guaranteed pension after age 60. 50:50 govt-worker contribution. Contribution ₹55-₹200/month based on entry age. Spouse gets 50% family pension.",
+  "name_hindi": "प्रधानमंत्री श्रम योगी मान-धन योजना",
+  "portal_url": "https://maandhan.in",
+  "helpline": {
+    "number": "1800-267-6888",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:00 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

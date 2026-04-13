@@ -14,12 +14,34 @@
       "condition": {
         "type": "field_check",
         "field": "occupation",
-        "values": ["Street Vendor", "Vendor", "Hawker", "Cobbler", "Ragpicker", "Food Vendor", "Cart Vendor", "Mobile Vendor", "street_vendor", "vendor", "hawker", "cobbler", "ragpicker"],
-        "ambiguous_values": ["Self-employed", "Petty Business", "Other", "self_employed", "informal_trade"]
+        "values": [
+          "Street Vendor",
+          "Vendor",
+          "Hawker",
+          "Cobbler",
+          "Ragpicker",
+          "Food Vendor",
+          "Cart Vendor",
+          "Mobile Vendor",
+          "street_vendor",
+          "vendor",
+          "hawker",
+          "cobbler",
+          "ragpicker"
+        ],
+        "ambiguous_values": [
+          "Self-employed",
+          "Petty Business",
+          "Other",
+          "self_employed",
+          "informal_trade"
+        ]
       },
       "is_mandatory": true,
       "weight": 35,
-      "ambiguity_refs": ["AMB-26"],
+      "ambiguity_refs": [
+        "AMB-26"
+      ],
       "ambiguity_note": "Must be street vendor. Category A/B: Certificate of Vending. Category C/D: Letter of Recommendation from ULB. No March 2020 cut-off — new vendors eligible via LoR route."
     },
     {
@@ -58,7 +80,9 @@
         "type": "field_check",
         "field": "previous_scheme_loans",
         "values": [],
-        "ambiguous_values": ["pm_svanidhi"]
+        "ambiguous_values": [
+          "pm_svanidhi"
+        ]
       },
       "is_mandatory": false,
       "weight": 20,
@@ -93,5 +117,27 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "1st loan \u20b910,000 (7% interest subsidy, 1-year repayment). On repayment: 2nd loan \u20b920,000. On repayment: 3rd loan \u20b950,000. Digital transaction cashback up to \u20b9100/month."
+  "benefit_summary": "1st loan ₹10,000 (7% interest subsidy, 1-year repayment). On repayment: 2nd loan ₹20,000. On repayment: 3rd loan ₹50,000. Digital transaction cashback up to ₹100/month.",
+  "name_hindi": "पीएम स्वनिधि (स्ट्रीट वेंडर आत्मनिर्भर निधि)",
+  "portal_url": "https://pmsvanidhi.mohua.gov.in",
+  "helpline": {
+    "number": "1800-111-979",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:30 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Urban Local Body / Municipal Office",
+      "name_hindi": "नगर निकाय कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your city's municipal corporation or nagar palika office"
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

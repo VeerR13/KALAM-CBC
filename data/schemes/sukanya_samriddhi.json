@@ -24,7 +24,7 @@
     {
       "rule_id": "SSY-R02",
       "parameter": "deposit_minimum_capacity",
-      "description": "Applicant should have income to meet minimum annual deposit of \u20b9250",
+      "description": "Applicant should have income to meet minimum annual deposit of ₹250",
       "condition": {
         "type": "range_check",
         "field": "annual_income",
@@ -33,7 +33,7 @@
       "is_mandatory": false,
       "weight": 20,
       "ambiguity_refs": [],
-      "ambiguity_note": "Minimum deposit \u20b9250/year required to keep account active."
+      "ambiguity_note": "Minimum deposit ₹250/year required to keep account active."
     },
     {
       "rule_id": "SSY-R03",
@@ -46,7 +46,9 @@
       },
       "is_mandatory": false,
       "weight": 20,
-      "ambiguity_refs": ["AMB-33"],
+      "ambiguity_refs": [
+        "AMB-33"
+      ],
       "ambiguity_note": "Girl child must be Indian resident. NRI not eligible. Use is_aadhaar_linked as imperfect proxy — NRIs less likely to have Aadhaar-linked account."
     },
     {
@@ -57,7 +59,9 @@
         "type": "field_check",
         "field": "previous_scheme_loans",
         "values": [],
-        "ambiguous_values": ["sukanya_samriddhi"]
+        "ambiguous_values": [
+          "sukanya_samriddhi"
+        ]
       },
       "is_mandatory": false,
       "weight": 10,
@@ -92,5 +96,27 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "8.2% p.a. interest (Q3 FY2025-26, quarterly revision). EEE tax status. Partial withdrawal 50% after girl turns 18 for higher education. Account matures 21 years from opening or on marriage after 18."
+  "benefit_summary": "8.2% p.a. interest (Q3 FY2025-26, quarterly revision). EEE tax status. Partial withdrawal 50% after girl turns 18 for higher education. Account matures 21 years from opening or on marriage after 18.",
+  "name_hindi": "सुकन्या समृद्धि योजना",
+  "portal_url": "https://www.nsiindia.gov.in",
+  "helpline": {
+    "number": "1800-266-6868",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:00 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Post Office",
+      "name_hindi": "डाकघर",
+      "locator_url": "https://www.indiapost.gov.in/VAS/Pages/FindPinCode.aspx",
+      "find_instruction": "Your nearest post office"
+    },
+    {
+      "type": "Bank Branch",
+      "name_hindi": "बैंक शाखा",
+      "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
+      "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
+    }
+  ]
 }

@@ -77,5 +77,21 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "100 days guaranteed wage employment per household per financial year at state-notified wages"
+  "benefit_summary": "100 days guaranteed wage employment per household per financial year at state-notified wages",
+  "name_hindi": "महात्मा गांधी राष्ट्रीय ग्रामीण रोजगार गारंटी अधिनियम",
+  "portal_url": "https://nrega.nic.in",
+  "helpline": {
+    "number": "1800-345-22-44",
+    "toll_free": true,
+    "hours": "Mon–Fri, 9:00 AM – 5:30 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Gram Panchayat",
+      "name_hindi": "ग्राम पंचायत कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
+    }
+  ]
 }

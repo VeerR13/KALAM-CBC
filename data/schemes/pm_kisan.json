@@ -14,12 +14,19 @@
       "condition": {
         "type": "field_check",
         "field": "land_ownership",
-        "values": ["owns"],
-        "ambiguous_values": ["leases", "sharecrop"]
+        "values": [
+          "owns"
+        ],
+        "ambiguous_values": [
+          "leases",
+          "sharecrop"
+        ]
       },
       "is_mandatory": true,
       "weight": 20,
-      "ambiguity_refs": ["AMB-01"],
+      "ambiguity_refs": [
+        "AMB-01"
+      ],
       "ambiguity_note": "Lease and sharecrop arrangements are ambiguous — land must be registered in applicant's name in state land records"
     },
     {
@@ -29,13 +36,21 @@
       "condition": {
         "type": "exclusion",
         "any_true_fails": [
-          {"field": "is_income_tax_payer", "equals": true},
-          {"field": "is_govt_employee", "equals": true}
+          {
+            "field": "is_income_tax_payer",
+            "equals": true
+          },
+          {
+            "field": "is_govt_employee",
+            "equals": true
+          }
         ]
       },
       "is_mandatory": true,
       "weight": 25,
-      "ambiguity_refs": ["AMB-45"],
+      "ambiguity_refs": [
+        "AMB-45"
+      ],
       "ambiguity_note": "IMPORTANT EXCEPTION: Class IV/Multi-Tasking Staff/Group D government employees (peons, sweepers, gardeners) ARE eligible for PM-KISAN if they own farmland. This engine cannot distinguish Group D from other govt employees — if you are Group D, verify at pmkisan.gov.in despite this FAIL result. Also: practicing professionals (registered doctor/lawyer/CA) are excluded but not tracked separately."
     },
     {
@@ -93,6 +108,30 @@
       "priority": 4
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "₹6,000/year in 3 installments of ₹2,000 (April-July, August-November, December-March) via DBT"
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "₹6,000/year in 3 installments of ₹2,000 (April-July, August-November, December-March) via DBT",
+  "name_hindi": "प्रधानमंत्री किसान सम्मान निधि",
+  "portal_url": "https://pmkisan.gov.in",
+  "helpline": {
+    "number": "155261",
+    "toll_free": false,
+    "hours": "Mon–Sat, 9:30 AM – 6:00 PM",
+    "alternate": "011-24300606"
+  },
+  "application_offices": [
+    {
+      "type": "Gram Panchayat",
+      "name_hindi": "ग्राम पंचायत कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

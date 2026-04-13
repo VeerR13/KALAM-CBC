@@ -37,14 +37,34 @@
           {
             "type": "field_check",
             "field": "occupation",
-            "values": ["Self-employed", "Shopkeeper", "Vendor", "Artisan", "Food Processor", "Trader", "Micro Enterprise", "Small Business", "Repair Shop", "Transport", "Service Business", "Manufacturing", "Street Vendor", "Hawker"],
-            "ambiguous_values": ["Farmer", "Agricultural Labourer"]
+            "values": [
+              "Self-employed",
+              "Shopkeeper",
+              "Vendor",
+              "Artisan",
+              "Food Processor",
+              "Trader",
+              "Micro Enterprise",
+              "Small Business",
+              "Repair Shop",
+              "Transport",
+              "Service Business",
+              "Manufacturing",
+              "Street Vendor",
+              "Hawker"
+            ],
+            "ambiguous_values": [
+              "Farmer",
+              "Agricultural Labourer"
+            ]
           }
         ]
       },
       "is_mandatory": true,
       "weight": 30,
-      "ambiguity_refs": ["AMB-28"],
+      "ambiguity_refs": [
+        "AMB-28"
+      ],
       "ambiguity_note": "Manufacturing, trading, service or allied-agriculture micro enterprise. NOT core farming."
     },
     {
@@ -115,5 +135,21 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "Shishu: up to \u20b950,000 (no collateral). Kishore: \u20b950,001-\u20b95 lakh. Tarun: \u20b95-\u20b910 lakh. Tarun Plus: up to \u20b920 lakh (for successful Tarun repayers)."
+  "benefit_summary": "Shishu: up to ₹50,000 (no collateral). Kishore: ₹50,001-₹5 lakh. Tarun: ₹5-₹10 lakh. Tarun Plus: up to ₹20 lakh (for successful Tarun repayers).",
+  "name_hindi": "प्रधानमंत्री मुद्रा योजना",
+  "portal_url": "https://www.udyamimitra.in",
+  "helpline": {
+    "number": "1800-180-1111",
+    "toll_free": true,
+    "hours": "Mon–Fri, 9:00 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Bank Branch",
+      "name_hindi": "बैंक शाखा",
+      "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
+      "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
+    }
+  ]
 }

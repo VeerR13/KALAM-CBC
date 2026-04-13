@@ -18,13 +18,18 @@
           {
             "type": "field_check",
             "field": "caste_category",
-            "values": ["SC", "ST"],
+            "values": [
+              "SC",
+              "ST"
+            ],
             "ambiguous_values": []
           },
           {
             "type": "field_check",
             "field": "gender",
-            "values": ["F"],
+            "values": [
+              "F"
+            ],
             "ambiguous_values": []
           }
         ]
@@ -59,7 +64,9 @@
       },
       "is_mandatory": true,
       "weight": 25,
-      "ambiguity_refs": ["AMB-31"],
+      "ambiguity_refs": [
+        "AMB-31"
+      ],
       "ambiguity_note": "Must be greenfield (first-time) enterprise."
     },
     {
@@ -122,5 +129,21 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "Composite loan (term loan + working capital) \u20b910 lakh to \u20b91 crore. RuPay debit card issued. Hand-holding support via standupmitra.in."
+  "benefit_summary": "Composite loan (term loan + working capital) ₹10 lakh to ₹1 crore. RuPay debit card issued. Hand-holding support via standupmitra.in.",
+  "name_hindi": "स्टैंड-अप इंडिया",
+  "portal_url": "https://www.standupmitra.in",
+  "helpline": {
+    "number": "1800-180-1111",
+    "toll_free": true,
+    "hours": "Mon–Fri, 9:00 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Bank Branch",
+      "name_hindi": "बैंक शाखा",
+      "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
+      "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
+    }
+  ]
 }

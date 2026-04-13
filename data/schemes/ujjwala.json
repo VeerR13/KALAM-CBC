@@ -14,8 +14,12 @@
       "condition": {
         "type": "field_check",
         "field": "gender",
-        "values": ["F"],
-        "ambiguous_values": ["Transgender"]
+        "values": [
+          "F"
+        ],
+        "ambiguous_values": [
+          "Transgender"
+        ]
       },
       "is_mandatory": true,
       "weight": 25,
@@ -47,7 +51,10 @@
           {
             "type": "field_check",
             "field": "has_ration_card",
-            "values": ["AAY", "PHH"],
+            "values": [
+              "AAY",
+              "PHH"
+            ],
             "ambiguous_values": []
           },
           {
@@ -60,7 +67,9 @@
       },
       "is_mandatory": true,
       "weight": 25,
-      "ambiguity_refs": ["AMB-15"],
+      "ambiguity_refs": [
+        "AMB-15"
+      ],
       "ambiguity_note": "Poor household determination is based on self-declaration of deprivation — BPL ration card or low income used as proxy indicators"
     },
     {
@@ -84,12 +93,16 @@
       "condition": {
         "type": "field_check",
         "field": "has_existing_enterprise",
-        "values": ["false"],
+        "values": [
+          "false"
+        ],
         "ambiguous_values": []
       },
       "is_mandatory": true,
       "weight": 25,
-      "ambiguity_refs": ["AMB-16"],
+      "ambiguity_refs": [
+        "AMB-16"
+      ],
       "ambiguity_note": "has_existing_enterprise is used as a proxy for existing commercial LPG connection — this is an imperfect proxy and may require manual verification"
     }
   ],
@@ -125,6 +138,24 @@
       "priority": 5
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "Free LPG connection (cylinder + regulator + hose) + first refill free. Subsidy on subsequent refills via DBT."
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "Free LPG connection (cylinder + regulator + hose) + first refill free. Subsidy on subsequent refills via DBT.",
+  "name_hindi": "प्रधानमंत्री उज्ज्वला योजना",
+  "portal_url": "https://www.pmuy.gov.in",
+  "helpline": {
+    "number": "1906",
+    "toll_free": true,
+    "hours": "24 hours, 7 days",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "LPG Distributor",
+      "name_hindi": "एलपीजी वितरक",
+      "locator_url": "https://www.mylpg.in",
+      "find_instruction": "Your nearest LPG distributor (HP Gas, Indane, or Bharat Gas)"
+    }
+  ]
 }

@@ -1,72 +1,76 @@
 # Kalam — Welfare Scheme Eligibility Engine
 
-AI-powered eligibility matching for 20 Indian government welfare schemes. Input a user profile in Hinglish/English; get back which schemes they qualify for, why, what documents they need, and in what order to apply.
+Find which Indian government welfare schemes you qualify for. Input a profile; get eligibility results, benefit amounts, document checklists, and step-by-step application guidance for 20 schemes.
 
-**CBC BITS Pilani Mission 03 submission.**
+**No API key required. No sign-up. Works with partial information.**
 
-## Features
+---
 
-- Deterministic rule engine (no black boxes — every output traces to specific rule evaluations)
-- PASS / FAIL / AMBIGUOUS / MISSING per rule (never fabricates a confident answer)
-- Confidence scoring with explainability
-- Gap analysis: what's blocking eligibility and what to do about it
-- Prerequisite DAG: topological sort for application order
-- 10 adversarial edge case test profiles
-- Hinglish/English CLI via Claude API NLP
+## What it does
+
+- Checks eligibility across 20 central government schemes
+- Shows exactly which rules you pass, fail, or need clarification on — no black boxes
+- Shows personalised benefit amounts (cash, food ration, insurance) including state-specific top-ups
+- Generates a personalised document checklist — only documents you don't already have
+- Provides a "How to Apply" guide with office locations, portal links, helpline numbers, and a Hindi script to read at the office
+- Projects how eligibility changes as you age (life events)
+- Highlights if income or age is near a scheme threshold (sensitivity analysis)
+- Detects scheme conflicts and mutual exclusions
+- Recommends the optimal order to apply
 
 ## Setup
 
 ```bash
 # Requires Python 3.11+
-git clone <repo>
+git clone https://github.com/VeerR13/kalam
 cd kalam
 python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-cp .env.example .env
-# Add your ANTHROPIC_API_KEY to .env
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-## Usage
+## Running
 
 ```bash
-# Interactive CLI
+# Web app (recommended)
+uvicorn web.app:app --reload
+# Open http://localhost:8000
+
+# CLI
 python cli.py
-
-# Load profile from JSON
 python cli.py --profile tests/fixtures/profiles/edge_02_leased_farmer.json
-
-# Run all 10 adversarial edge cases
 python cli.py --test-edge-cases
 
-# Run tests
+# Tests
 pytest -v
 ```
 
 ## Architecture
 
 ```
-User Input (Hinglish/English)
-        │
-        ▼
-Conversational Interface (Claude API NLP)
-        │ UserProfile JSON
-        ▼
-Profile Builder (Pydantic validation, unit normalization)
-        │ Validated UserProfile
-        ▼
-Rule Engine ◄─── Scheme Knowledge Base (20 JSON rule files)
-        │         Ambiguity Map (10+ annotations)
-        │ Per-scheme RuleResults (PASS/FAIL/AMBIGUOUS/MISSING)
-        ▼
-Confidence Scorer (weighted aggregation)
-        │ ScoredResults
-        ├──► Gap Analyzer
-        ├──► Doc Checklist Generator
-        └──► Prerequisite Sequencer (networkx topological sort)
+User fills form
+      │
+      ▼
+Profile Builder  ← Pydantic validation, unit normalization (bigha/acre/gaj/sqft)
+      │ UserProfile
+      ▼
+Rule Engine  ◄──── 20 Scheme JSON files (all rules live here, no hardcoding)
+      │             Ambiguity Map (edge case annotations)
+      │ PASS / FAIL / AMBIGUOUS / MISSING per rule
+      ▼
+Confidence Scorer  ← Smets-Kennes TBM pignistic transform + Bayesian shrinkage
+      │
+      ├── Gap Analyzer
+      ├── Benefit Calculator       ← Real scheme amounts, state-specific top-ups
+      ├── Sensitivity Analyzer
+      ├── Life Event Projector
+      ├── Interaction Detector
+      ├── Bureaucratic Distance Calculator
+      ├── Path Optimizer
+      └── Prerequisite Sequencer   ← networkx topological sort
                 │
                 ▼
-        Output Formatter (rich CLI)
+        FastAPI + Jinja2 Web App
 ```
 
 ## Scheme coverage
@@ -83,23 +87,27 @@ Confidence Scorer (weighted aggregation)
 | 8 | NSAP-IGNOAPS | Rural Development |
 | 9 | NSAP-IGNWPS | Rural Development |
 | 10 | NSAP-IGNDPS | Rural Development |
-| 11 | APY | Finance/PFRDA |
+| 11 | APY | Finance / PFRDA |
 | 12 | PM-SYM | Labour |
-| 13 | PM SVANidhi | Housing/Urban |
+| 13 | PM SVANidhi | Housing & Urban Affairs |
 | 14 | PM-MUDRA | Finance |
 | 15 | PMEGP | MSME |
 | 16 | Stand-Up India | Finance |
 | 17 | Sukanya Samriddhi | Finance |
-| 18 | PMMVY | Women & Child |
-| 19 | NFSA | Food |
+| 18 | PMMVY | Women & Child Development |
+| 19 | NFSA | Food & Consumer Affairs |
 | 20 | PM Vishwakarma | MSME |
 
-## Data freshness
+## Data
 
-All 20 scheme JSONs are marked `PENDING_HUMAN_VERIFICATION`. Place official PDFs in `data/pdfs/` and update `data_freshness` after verification.
+All 20 scheme JSON files are verified against official government PDFs and guidelines. Verification date is in each file's `data_freshness` field. Rules, eligibility conditions, benefit amounts, required documents, helpline numbers, and portal URLs are stored entirely in `data/schemes/*.json` — no eligibility logic is hardcoded in Python.
 
 ## Tech stack
 
-- Python 3.11+, Pydantic v2, networkx, rich, typer
-- Anthropic Claude API (Hinglish NLP)
-- pytest (87 tests)
+- Python 3.11+, Pydantic v2, networkx, FastAPI, Jinja2, uvicorn
+- No external API key required
+- pytest (92 tests)
+
+## Deploy on Render
+
+`render.yaml` is included. Connect the GitHub repo at render.com — no environment variables needed.

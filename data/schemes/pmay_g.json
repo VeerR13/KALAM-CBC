@@ -28,12 +28,19 @@
       "condition": {
         "type": "field_check",
         "field": "has_ration_card",
-        "values": ["AAY", "PHH"],
-        "ambiguous_values": ["unknown"]
+        "values": [
+          "AAY",
+          "PHH"
+        ],
+        "ambiguous_values": [
+          "unknown"
+        ]
       },
       "is_mandatory": true,
       "weight": 25,
-      "ambiguity_refs": ["AMB-04"],
+      "ambiguity_refs": [
+        "AMB-04"
+      ],
       "ambiguity_note": "SECC 2011 data is stale — beneficiary list may not reflect current poverty status accurately"
     },
     {
@@ -43,12 +50,19 @@
       "condition": {
         "type": "field_check",
         "field": "land_ownership",
-        "values": ["owns", "leases"],
-        "ambiguous_values": ["none"]
+        "values": [
+          "owns",
+          "leases"
+        ],
+        "ambiguous_values": [
+          "none"
+        ]
       },
       "is_mandatory": false,
       "weight": 25,
-      "ambiguity_refs": ["AMB-11"],
+      "ambiguity_refs": [
+        "AMB-11"
+      ],
       "ambiguity_note": "Landless households may be allotted land by gram panchayat — 'none' is ambiguous and requires local verification"
     },
     {
@@ -72,13 +86,34 @@
       "condition": {
         "type": "exclusion",
         "any_true_fails": [
-          {"field": "is_govt_employee", "equals": true},
-          {"field": "is_income_tax_payer", "equals": true},
-          {"field": "has_motorized_vehicle", "equals": true},
-          {"field": "has_mechanized_farm_equipment", "equals": true},
-          {"field": "has_kisan_credit_card", "equals": true},
-          {"field": "has_refrigerator", "equals": true},
-          {"field": "has_pucca_house", "equals": true}
+          {
+            "field": "is_govt_employee",
+            "equals": true
+          },
+          {
+            "field": "is_income_tax_payer",
+            "equals": true
+          },
+          {
+            "field": "has_motorized_vehicle",
+            "equals": true
+          },
+          {
+            "field": "has_mechanized_farm_equipment",
+            "equals": true
+          },
+          {
+            "field": "has_kisan_credit_card",
+            "equals": true
+          },
+          {
+            "field": "has_refrigerator",
+            "equals": true
+          },
+          {
+            "field": "has_pucca_house",
+            "equals": true
+          }
         ]
       },
       "is_mandatory": true,
@@ -149,6 +184,30 @@
       "priority": 5
     }
   ],
-  "prerequisites": ["pmjdy"],
-  "benefit_summary": "₹1.20 lakh (plains) / ₹1.30 lakh (hilly areas) financial assistance for pucca house construction + 90-95 MGNREGA person-days"
+  "prerequisites": [
+    "pmjdy"
+  ],
+  "benefit_summary": "₹1.20 lakh (plains) / ₹1.30 lakh (hilly areas) financial assistance for pucca house construction + 90-95 MGNREGA person-days",
+  "name_hindi": "प्रधानमंत्री आवास योजना - ग्रामीण",
+  "portal_url": "https://pmayg.nic.in",
+  "helpline": {
+    "number": "1800-11-6446",
+    "toll_free": true,
+    "hours": "Mon–Sat, 9:30 AM – 6:00 PM",
+    "alternate": null
+  },
+  "application_offices": [
+    {
+      "type": "Gram Panchayat",
+      "name_hindi": "ग्राम पंचायत कार्यालय",
+      "locator_url": null,
+      "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
+    },
+    {
+      "type": "Common Service Centre (CSC)",
+      "name_hindi": "जन सेवा केंद्र",
+      "locator_url": "https://locator.csccloud.in",
+      "find_instruction": "Find the nearest CSC at locator.csccloud.in"
+    }
+  ]
 }

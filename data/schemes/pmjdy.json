@@ -32,7 +32,9 @@
       },
       "is_mandatory": true,
       "weight": 40,
-      "ambiguity_refs": ["AMB-14"],
+      "ambiguity_refs": [
+        "AMB-14"
+      ],
       "ambiguity_note": "Aadhaar is the primary ID but any government-issued identity document is acceptable; small accounts allowed even without ID via self-declaration"
     }
   ],
@@ -51,5 +53,27 @@
     }
   ],
   "prerequisites": [],
-  "benefit_summary": "Zero-balance bank account + RuPay debit card (₹1 lakh accidental cover) + overdraft up to ₹10,000 + life cover ₹30,000 (for eligible accounts opened in initial period)"
+  "benefit_summary": "Zero-balance bank account + RuPay debit card (₹1 lakh accidental cover) + overdraft up to ₹10,000 + life cover ₹30,000 (for eligible accounts opened in initial period)",
+  "name_hindi": "प्रधानमंत्री जन-धन योजना",
+  "portal_url": "https://pmjdy.gov.in",
+  "helpline": {
+    "number": "1800-11-0001",
+    "toll_free": true,
+    "hours": "Mon–Fri, 9:00 AM – 6:00 PM",
+    "alternate": "1800-180-1111"
+  },
+  "application_offices": [
+    {
+      "type": "Bank Branch",
+      "name_hindi": "बैंक शाखा",
+      "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
+      "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
+    },
+    {
+      "type": "Post Office",
+      "name_hindi": "डाकघर",
+      "locator_url": "https://www.indiapost.gov.in/VAS/Pages/FindPinCode.aspx",
+      "find_instruction": "Your nearest post office"
+    }
+  ]
 }
