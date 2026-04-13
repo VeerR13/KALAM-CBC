@@ -863,13 +863,58 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
 .bring-have .bring-name { color: var(--eligible); }
 .bring-need .bring-name { color: var(--ineligible); }
 
-.office-script {
-    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 14px 16px; font-size: 0.9rem; white-space: pre-wrap;
-    color: var(--text); line-height: 1.7; font-family: 'Noto Sans Devanagari', 'DM Sans', sans-serif;
-    margin-bottom: 8px;
+/* ── Office script card ──────────────────────────────────────────────────── */
+.apply-card-script {
+    border: 2px solid var(--primary-light);
+    background: linear-gradient(135deg, var(--primary-50) 0%, #fff 100%);
 }
-.office-script-note { font-size: 0.78rem; color: var(--text-muted); }
+.script-intro { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; }
+
+.script-tabs {
+    display: flex; gap: 6px; margin-bottom: 12px;
+}
+.script-tab {
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1.5px solid var(--border); background: var(--bg);
+    font-size: 0.82rem; font-weight: 500; color: var(--text-secondary);
+    cursor: pointer; transition: all 0.15s;
+}
+.script-tab.active {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+}
+.script-tab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+.script-panel { display: none; }
+.script-panel.active { display: block; }
+
+.office-script {
+    border-radius: var(--radius-sm); padding: 16px 18px;
+    font-size: 0.95rem; white-space: pre-wrap;
+    color: var(--text); line-height: 1.75; margin-bottom: 12px;
+}
+.office-script-hl {
+    background: var(--bg-card); border: 1.5px solid var(--primary-light);
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: 1rem;
+    border-left: 4px solid var(--primary);
+}
+.office-script-hi {
+    background: var(--bg-card); border: 1.5px solid var(--border);
+    font-family: 'Noto Sans Devanagari', 'DM Sans', sans-serif;
+    border-left: 4px solid var(--primary);
+}
+
+.speak-btn-big {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--primary); color: #fff;
+    border: none; border-radius: var(--radius-pill);
+    padding: 10px 22px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; margin-bottom: 12px;
+    transition: background 0.15s, transform 0.1s;
+}
+.speak-btn-big:hover { background: var(--primary-dark); transform: scale(1.02); }
+.speak-btn-big:active { transform: scale(0.98); }
+
+.office-script-note { font-size: 0.8rem; color: var(--text-muted); }
 
 .time-item {
     display: flex; gap: 10px; align-items: flex-start;

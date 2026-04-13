@@ -313,50 +313,151 @@ def _personalized_docs(profile: UserProfile, scheme: Scheme, bur_score=None):
     return score.docs_already_have, score.missing_docs
 
 
-def _office_script(profile: UserProfile, scheme: Scheme) -> str:
-    """Generate a plain Hindi script the user can read at the office."""
+def _office_script(profile: UserProfile, scheme: Scheme, needs_docs: list = None) -> dict:
+    """Generate office visit scripts in both Hindi and Hinglish.
+
+    Returns a dict with keys 'hindi' (Devanagari, for TTS) and
+    'hinglish' (Latin script, for on-screen reading).
+    """
     doc_keywords = {
-        "has_aadhaar": "आधार कार्ड",
-        "has_bank_account": "बैंक पासबुक",
-        "has_ration_card": "राशन कार्ड",
-        "is_aadhaar_linked": "आधार-लिंक्ड बैंक खाता",
+        "has_aadhaar": ("आधार कार्ड", "Aadhaar card"),
+        "has_bank_account": ("बैंक पासबुक", "bank passbook"),
+        "has_ration_card": ("राशन कार्ड", "ration card"),
+        "is_aadhaar_linked": ("आधार-लिंक्ड बैंक खाता", "Aadhaar-linked bank account"),
     }
-    docs_have = []
-    for field, label in doc_keywords.items():
+    docs_have_hi, docs_have_hl = [], []
+    for field, (label_hi, label_hl) in doc_keywords.items():
         val = getattr(profile, field, None)
         if val and val is not False and val != "none":
-            docs_have.append(label)
+            docs_have_hi.append(label_hi)
+            docs_have_hl.append(label_hl)
 
     name_hindi = scheme.name_hindi or scheme.name
-    script = f"नमस्ते, मुझे {name_hindi} के लिए आवेदन करना है।\n"
-    if docs_have:
-        script += f"मेरे पास {', '.join(docs_have)} है।\n"
 
+    # Scheme-specific action lines — (Hindi, Hinglish) tuples
+    _fam = profile.family_size or "?"
     scheme_actions = {
-        "pm_kisan": "PM-KISAN में पंजीकरण करवाना है।",
-        "mgnrega": f"NREGA जॉब कार्ड बनवाना है। मेरे परिवार में {profile.family_size or '?'} लोग कार्य कर सकते हैं।",
-        "ayushman_bharat": "आयुष्मान भारत कार्ड बनवाना है। कृपया जांचें कि मेरा नाम सूची में है या नहीं।",
-        "pmjdy": "जन धन खाता खोलना है — जीरो बैलेंस वाला।",
-        "pmay_g": "प्रधानमंत्री आवास योजना (ग्रामीण) में आवेदन करना है।",
-        "pmay_u": "प्रधानमंत्री आवास योजना (शहरी) में आवेदन करना है।",
-        "ujjwala": "उज्ज्वला योजना के तहत LPG कनेक्शन लेना है।",
-        "nsap_ignoaps": "वृद्धावस्था पेंशन (IGNOAPS) के लिए आवेदन करना है।",
-        "nsap_ignwps": "विधवा पेंशन (IGNWPS) के लिए आवेदन करना है।",
-        "nsap_igndps": "विकलांगता पेंशन (IGNDPS) के लिए आवेदन करना है।",
-        "apy": "अटल पेंशन योजना में पंजीकरण करना है।",
-        "pm_sym": "PM-SYM पेंशन योजना में पंजीकरण करना है।",
-        "pm_svanidhi": "PM SVANidhi ऋण के लिए आवेदन करना है।",
-        "pm_mudra": "मुद्रा ऋण के लिए आवेदन करना है।",
-        "pmegp": "PMEGP के तहत उद्यम शुरू करने के लिए आवेदन करना है।",
-        "stand_up_india": "Stand-Up India ऋण के लिए आवेदन करना है।",
-        "sukanya_samriddhi": "सुकन्या समृद्धि खाता खोलना है।",
-        "pmmvy": "प्रधानमंत्री मातृ वंदना योजना में पंजीकरण करना है।",
-        "nfsa": "राशन कार्ड / NFSA के तहत खाद्य सुरक्षा के लिए आवेदन करना है।",
-        "pm_vishwakarma": "PM Vishwakarma योजना में पंजीकरण करना है।",
+        "pm_kisan": (
+            "मुझे PM-KISAN में पंजीकरण करवाना है।",
+            "Mujhe PM-KISAN mein registration karwana hai.",
+        ),
+        "mgnrega": (
+            f"मुझे NREGA जॉब कार्ड बनवाना है। मेरे परिवार में {_fam} लोग कार्य कर सकते हैं।",
+            f"Mujhe NREGA job card banwana hai. Mere ghar mein {_fam} log kaam kar sakte hain.",
+        ),
+        "ayushman_bharat": (
+            "मुझे आयुष्मान भारत कार्ड बनवाना है। कृपया जांचें कि मेरा नाम सूची में है या नहीं।",
+            "Mujhe Ayushman Bharat card banwana hai. Please check karein ki mera naam list mein hai ya nahi.",
+        ),
+        "pmjdy": (
+            "मुझे जन धन खाता खोलना है — जीरो बैलेंस वाला।",
+            "Mujhe Jan Dhan khata kholna hai — zero balance wala.",
+        ),
+        "pmay_g": (
+            "मुझे प्रधानमंत्री आवास योजना (ग्रामीण) में आवेदन करना है।",
+            "Mujhe PMAY-Gramin mein aavedan karna hai.",
+        ),
+        "pmay_u": (
+            "मुझे प्रधानमंत्री आवास योजना (शहरी) में आवेदन करना है।",
+            "Mujhe PMAY-Urban mein aavedan karna hai.",
+        ),
+        "ujjwala": (
+            "मुझे उज्ज्वला योजना के तहत मुफ़्त LPG कनेक्शन लेना है।",
+            "Mujhe Ujjwala Yojana ke tahat free LPG connection lena hai.",
+        ),
+        "nsap_ignoaps": (
+            "मुझे वृद्धावस्था पेंशन (IGNOAPS) के लिए आवेदन करना है।",
+            "Mujhe vridhavastha pension (IGNOAPS) ke liye aavedan karna hai.",
+        ),
+        "nsap_ignwps": (
+            "मुझे विधवा पेंशन (IGNWPS) के लिए आवेदन करना है।",
+            "Mujhe vidhwa pension (IGNWPS) ke liye aavedan karna hai.",
+        ),
+        "nsap_igndps": (
+            "मुझे विकलांगता पेंशन (IGNDPS) के लिए आवेदन करना है।",
+            "Mujhe viklangta pension (IGNDPS) ke liye aavedan karna hai.",
+        ),
+        "apy": (
+            "मुझे अटल पेंशन योजना में पंजीकरण करना है।",
+            "Mujhe Atal Pension Yojana mein registration karna hai.",
+        ),
+        "pm_sym": (
+            "मुझे PM-SYM पेंशन योजना में पंजीकरण करना है।",
+            "Mujhe PM-SYM pension yojana mein registration karna hai.",
+        ),
+        "pm_svanidhi": (
+            "मुझे PM SVANidhi के तहत ₹10,000 का ऋण चाहिए।",
+            "Mujhe PM SVANidhi ke tahat ₹10,000 ka loan chahiye.",
+        ),
+        "pm_mudra": (
+            "मुझे मुद्रा ऋण के लिए आवेदन करना है।",
+            "Mujhe Mudra loan ke liye aavedan karna hai.",
+        ),
+        "pmegp": (
+            "मुझे PMEGP के तहत नया उद्यम शुरू करने के लिए आवेदन करना है।",
+            "Mujhe PMEGP ke tahat naya udyam shuru karne ke liye aavedan karna hai.",
+        ),
+        "stand_up_india": (
+            "मुझे Stand-Up India ऋण के लिए आवेदन करना है।",
+            "Mujhe Stand-Up India loan ke liye aavedan karna hai.",
+        ),
+        "sukanya_samriddhi": (
+            "मुझे अपनी बेटी के नाम सुकन्या समृद्धि खाता खोलना है।",
+            "Mujhe apni beti ke naam Sukanya Samriddhi khata kholna hai.",
+        ),
+        "pmmvy": (
+            "मुझे प्रधानमंत्री मातृ वंदना योजना में पंजीकरण करना है।",
+            "Mujhe Pradhan Mantri Matru Vandana Yojana mein registration karna hai.",
+        ),
+        "nfsa": (
+            "मुझे राशन कार्ड बनवाना है — NFSA के तहत।",
+            "Mujhe ration card banwana hai — NFSA ke tahat.",
+        ),
+        "pm_vishwakarma": (
+            "मुझे PM Vishwakarma योजना में पंजीकरण करना है।",
+            "Mujhe PM Vishwakarma yojana mein registration karna hai.",
+        ),
     }
-    action = scheme_actions.get(scheme.scheme_id, f"{name_hindi} में आवेदन करना है।")
-    script += action + "\n\nक्या और कोई दस्तावेज़ चाहिए?"
-    return script
+
+    action_hi, action_hl = scheme_actions.get(
+        scheme.scheme_id,
+        (f"{name_hindi} में आवेदन करना है।", f"{scheme.name} mein aavedan karna hai."),
+    )
+
+    # Build Hindi script
+    hi_lines = [f"नमस्ते, मुझे {name_hindi} के लिए आवेदन करना है।"]
+    if docs_have_hi:
+        hi_lines.append(f"मेरे पास {', '.join(docs_have_hi)} है।")
+    hi_lines.append(action_hi)
+    if needs_docs:
+        for doc in needs_docs[:3]:  # top 3 missing docs
+            doc_name = getattr(doc, 'name', str(doc))
+            doc_where = getattr(doc, 'where', '')
+            if doc_where:
+                hi_lines.append(f"{doc_name} अभी नहीं है — {doc_where} से मिलेगा।")
+            else:
+                hi_lines.append(f"{doc_name} अभी नहीं है।")
+    hi_lines.append("\nक्या और कोई दस्तावेज़ चाहिए?")
+
+    # Build Hinglish script (Latin script — easier for users who can't read Devanagari)
+    hl_lines = [f"Namaskar, mujhe {scheme.name} ke liye aavedan karna hai."]
+    if docs_have_hl:
+        hl_lines.append(f"Mere paas {', '.join(docs_have_hl)} hai.")
+    hl_lines.append(action_hl)
+    if needs_docs:
+        for doc in needs_docs[:3]:
+            doc_name = getattr(doc, 'name', str(doc))
+            doc_where = getattr(doc, 'where', '')
+            if doc_where:
+                hl_lines.append(f"{doc_name} abhi nahi hai — {doc_where} se milega.")
+            else:
+                hl_lines.append(f"{doc_name} abhi nahi hai.")
+    hl_lines.append("\nKya aur koi document chahiye?")
+
+    return {
+        "hindi": "\n".join(hi_lines),
+        "hinglish": "\n".join(hl_lines),
+    }
 
 
 @app.get("/scheme/{scheme_id}", response_class=HTMLResponse)
@@ -388,7 +489,7 @@ async def scheme_detail(request: Request, scheme_id: str):
     bur_calc = BureaucraticDistanceCalculator()
     bur_score = bur_calc.calculate(profile, scheme_obj, [])
     has_docs, needs_docs = _personalized_docs(profile, scheme_obj, bur_score)
-    office_script = _office_script(profile, scheme_obj)
+    scripts = _office_script(profile, scheme_obj, needs_docs)
 
     return templates.TemplateResponse(request, "scheme_detail.html", {
         "scheme": scheme_obj,
@@ -398,7 +499,8 @@ async def scheme_detail(request: Request, scheme_id: str):
         "bur": bur_score,
         "has_docs": has_docs,
         "needs_docs": needs_docs,
-        "office_script": office_script,
+        "office_script_hindi": scripts["hindi"],
+        "office_script_hinglish": scripts["hinglish"],
     })
 
 
