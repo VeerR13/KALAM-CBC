@@ -43,6 +43,10 @@
           {
             "field": "is_govt_employee",
             "equals": true
+          },
+          {
+            "field": "spouse_is_govt_employee",
+            "equals": true
           }
         ]
       },

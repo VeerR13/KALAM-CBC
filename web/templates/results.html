@@ -88,6 +88,13 @@
         <a href="/details" class="profile-edit-btn">✏️ Edit</a>
     </div>
 
+    {% if profile.is_family_head == false %}
+    <div class="info-banner" style="background:rgba(255,180,0,0.1);border:1px solid rgba(255,180,0,0.4);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.92rem;">
+        ⚠️ <strong>Note:</strong> Several schemes (PM-KISAN, housing, MGNREGA job card) require the <em>head of household</em> or main earning member to apply. Ask the primary earner in your household to check their own eligibility. /
+        <span style="color:var(--text-secondary);">कई योजनाएं परिवार के मुखिया के नाम पर होती हैं — उनसे भी जांच करवाएं।</span>
+    </div>
+    {% endif %}
+
     <!-- Total benefits summary -->
     {% if optimal_path and (optimal_path.total_annual_cash or optimal_path.total_annual_food or optimal_path.total_insurance_cover) %}
     <div class="total-benefits-box">

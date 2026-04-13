@@ -1,0 +1,16 @@
+{
+  "age": 52,
+  "gender": "F",
+  "state": "Uttar Pradesh",
+  "is_urban": false,
+  "caste_category": "OBC",
+  "marital_status": "married",
+  "annual_income": 40000,
+  "occupation": "daily_wage",
+  "family_size": 3,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "has_ration_card": "PHH",
+  "is_govt_employee": false
+}

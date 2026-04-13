@@ -1,0 +1,11 @@
+{
+  "age": 150,
+  "gender": "F",
+  "state": "Bihar",
+  "is_urban": false,
+  "annual_income": 10000,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "has_ration_card": "AAY",
+  "is_govt_employee": false
+}

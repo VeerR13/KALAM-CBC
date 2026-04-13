@@ -3,6 +3,17 @@ from src.models.scheme import Rule, RuleCondition, RuleResult, Scheme
 from src.models.user_profile import UserProfile
 
 
+def _str_in(value: object, collection: list) -> bool:
+    """Check membership with case-insensitive comparison for strings."""
+    if isinstance(value, str):
+        value_lower = value.lower()
+        return any(
+            (v.lower() if isinstance(v, str) else v) == value_lower
+            for v in collection
+        )
+    return value in collection
+
+
 def evaluate_rule(rule: Rule, profile: UserProfile) -> tuple[RuleResult, str]:
     """Evaluate a single rule against a profile. Returns (RuleResult, explanation)."""
     cond = rule.condition
@@ -11,9 +22,26 @@ def evaluate_rule(rule: Rule, profile: UserProfile) -> tuple[RuleResult, str]:
         value = getattr(profile, cond.field, None)
         if value is None:
             return RuleResult.MISSING, f"{cond.field} not provided"
-        if cond.values and value in cond.values:
+
+        # Special handling for list-type fields (e.g. previous_scheme_loans)
+        if isinstance(value, list):
+            # An empty list means no prior scheme loans — PASS if no values expected
+            if not value:
+                return RuleResult.PASS, f"{cond.field}=[] (no prior loans)"
+            # Check if any item in the list matches ambiguous_values
+            if cond.ambiguous_values:
+                matched = [item for item in value if _str_in(item, cond.ambiguous_values)]
+                if matched:
+                    return RuleResult.AMBIGUOUS, (
+                        f"{cond.field} contains ambiguous item(s): {matched}"
+                    )
+            # If items exist and none are ambiguous, it's a disqualifying loan (FAIL)
+            return RuleResult.FAIL, f"{cond.field}={value} contains disqualifying loan(s)"
+
+        # Scalar field_check with case-insensitive string matching
+        if cond.values is not None and _str_in(value, cond.values):
             return RuleResult.PASS, f"{cond.field}={value} matches required {cond.values}"
-        if cond.ambiguous_values and value in cond.ambiguous_values:
+        if cond.ambiguous_values and _str_in(value, cond.ambiguous_values):
             return RuleResult.AMBIGUOUS, f"{cond.field}={value} is ambiguous — eligibility unclear"
         return RuleResult.FAIL, f"{cond.field}={value} not in required {cond.values}"
 

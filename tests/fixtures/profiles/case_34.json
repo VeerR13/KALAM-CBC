@@ -1,0 +1,17 @@
+{
+  "age": 55,
+  "gender": "F",
+  "state": "Odisha",
+  "is_urban": false,
+  "caste_category": "ST",
+  "marital_status": "widowed",
+  "annual_income": 18000,
+  "disability_percent": 85,
+  "occupation": "unemployed",
+  "family_size": 1,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "has_ration_card": "AAY",
+  "is_govt_employee": false
+}

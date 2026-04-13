@@ -1,0 +1,16 @@
+{
+  "age": 50,
+  "gender": "F",
+  "state": "Jharkhand",
+  "is_urban": false,
+  "caste_category": "ST",
+  "annual_income": 30000,
+  "occupation": "farmer",
+  "land_ownership": "owns",
+  "land_area_hectares": 0.5,
+  "family_size": 3,
+  "has_bank_account": false,
+  "has_aadhaar": false,
+  "is_aadhaar_linked": false,
+  "has_ration_card": "PHH"
+}

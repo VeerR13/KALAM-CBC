@@ -84,6 +84,12 @@ class UserProfile(BaseModel):
     has_landline: Optional[bool] = None
     has_pucca_house: Optional[bool] = None                # permanent/solidly-built house
 
+    # Family / household criteria
+    is_family_head: Optional[bool] = None           # Is this person the primary earner / head of household?
+    spouse_is_govt_employee: Optional[bool] = None  # Spouse works for govt (affects PM-KISAN exclusion)
+    has_lpg_connection: Optional[bool] = None       # Household already has LPG connection (Ujjwala)
+    has_existing_pension: Optional[bool] = None     # Already receiving a govt pension (NSAP)
+
     # Metadata
     income_is_approximate: bool = False
     income_range: Optional[tuple[int, int]] = None

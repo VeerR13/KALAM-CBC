@@ -1,0 +1,18 @@
+{
+  "age": 26,
+  "gender": "F",
+  "state": "Madhya Pradesh",
+  "is_urban": false,
+  "caste_category": "SC",
+  "marital_status": "married",
+  "annual_income": 60000,
+  "occupation": "homemaker",
+  "family_size": 3,
+  "num_live_births": 1,
+  "is_pregnant_or_lactating": true,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "has_ration_card": "PHH",
+  "is_govt_employee": false
+}

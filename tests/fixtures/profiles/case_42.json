@@ -1,0 +1,15 @@
+{
+  "age": 18,
+  "gender": "F",
+  "state": "Rajasthan",
+  "is_urban": false,
+  "caste_category": "ST",
+  "annual_income": 0,
+  "occupation": "student",
+  "family_size": 5,
+  "has_bank_account": false,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": false,
+  "is_govt_employee": false,
+  "is_income_tax_payer": false
+}

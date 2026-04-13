@@ -89,21 +89,16 @@
     {
       "rule_id": "PMUY-EX01",
       "parameter": "no_existing_lpg",
-      "description": "No other LPG connection from any OMC in same household. has_existing_enterprise used as proxy — existing enterprise often has commercial LPG.",
+      "description": "Household must not have any existing LPG connection from any oil marketing company (HP, Indane, Bharat Gas)",
       "condition": {
-        "type": "field_check",
-        "field": "has_existing_enterprise",
-        "values": [
-          "false"
-        ],
-        "ambiguous_values": []
+        "type": "boolean_check",
+        "field": "has_lpg_connection",
+        "equals": false
       },
       "is_mandatory": true,
       "weight": 25,
-      "ambiguity_refs": [
-        "AMB-16"
-      ],
-      "ambiguity_note": "has_existing_enterprise is used as a proxy for existing commercial LPG connection — this is an imperfect proxy and may require manual verification"
+      "ambiguity_refs": [],
+      "ambiguity_note": "If your household already has an LPG connection in any family member's name, you cannot get a new Ujjwala connection. Check with your distributor if unsure."
     }
   ],
   "required_documents": [

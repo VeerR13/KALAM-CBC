@@ -49,7 +49,7 @@
       "description": "Must not receive any pension/financial assistance from any other source. Affidavit required.",
       "condition": {
         "type": "boolean_check",
-        "field": "is_govt_employee",
+        "field": "has_existing_pension",
         "equals": false
       },
       "is_mandatory": false,
@@ -57,7 +57,7 @@
       "ambiguity_refs": [
         "AMB-19"
       ],
-      "ambiguity_note": "is_govt_employee used as proxy for receiving government pension — does not capture private pension or other assistance sources"
+      "ambiguity_note": "Already receiving a government pension makes applicant ineligible — includes other NSAP schemes, state pensions, or service pensions"
     },
     {
       "rule_id": "NSAP-OAP-R04",

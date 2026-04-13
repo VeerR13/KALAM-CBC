@@ -1,0 +1,17 @@
+{
+  "age": 38,
+  "gender": "F",
+  "state": "Madhya Pradesh",
+  "is_urban": false,
+  "caste_category": "General",
+  "annual_income": 100000,
+  "occupation": "farmer",
+  "land_ownership": "owns",
+  "land_area_hectares": 1.0,
+  "family_size": 4,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "is_govt_employee": false,
+  "is_income_tax_payer": false
+}

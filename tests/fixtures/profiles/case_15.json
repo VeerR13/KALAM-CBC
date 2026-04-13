@@ -1,0 +1,17 @@
+{
+  "age": 82,
+  "gender": "M",
+  "state": "Rajasthan",
+  "is_urban": false,
+  "caste_category": "SC",
+  "annual_income": 15000,
+  "occupation": "unemployed",
+  "family_size": 1,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "has_ration_card": "AAY",
+  "disability_percent": 0,
+  "is_govt_employee": false,
+  "is_income_tax_payer": false
+}

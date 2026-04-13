@@ -317,5 +317,104 @@ def main(
     _show_results(profile)
 
 
+@app.command()
+def test_all_cases(
+    output: Path = typer.Option(
+        Path("tests/results/50_cases_report.json"),
+        help="Output JSON report path",
+    ),
+) -> None:
+    """Run all 50 test cases (case_01.json … case_50.json) and generate a JSON report."""
+    from pydantic import ValidationError as PydanticValidationError
+
+    fixtures_dir = Path(__file__).parent / "tests" / "fixtures" / "profiles"
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    case_files = sorted(fixtures_dir.glob("case_*.json"))
+    if not case_files:
+        console.print(f"[red]No case_*.json files found in {fixtures_dir}[/red]")
+        raise typer.Exit(1)
+
+    report: list[dict] = []
+    passed = 0
+    crashed = 0
+
+    console.print(f"\n[bold cyan]Running {len(case_files)} test cases...[/bold cyan]\n")
+
+    for case_file in case_files:
+        case_id = case_file.stem
+        raw = json.loads(case_file.read_text())
+
+        try:
+            profile = UserProfile(**raw)
+        except PydanticValidationError as ve:
+            record = {
+                "case_id": case_id,
+                "outcome": "VALIDATION_ERROR (expected)",
+                "note": f"ValidationError: {ve.error_count()} error(s)",
+                "profile_raw": raw,
+                "scheme_results": [],
+            }
+            report.append(record)
+            console.print(f"  [dim]{case_id}[/dim] [yellow]ValidationError (expected)[/yellow]")
+            passed += 1
+            continue
+        except Exception as exc:
+            record = {
+                "case_id": case_id,
+                "outcome": "PROFILE_BUILD_ERROR",
+                "note": str(exc),
+                "profile_raw": raw,
+                "scheme_results": [],
+            }
+            report.append(record)
+            console.print(f"  [dim]{case_id}[/dim] [red]Profile build error: {exc}[/red]")
+            crashed += 1
+            continue
+
+        try:
+            results = run_engine_for_profile(profile)
+            scheme_results = [
+                {
+                    "scheme_id": r.scheme_id,
+                    "scheme_name": r.scheme_name,
+                    "status": r.status.value,
+                    "confidence": round(r.confidence, 2),
+                }
+                for r in results
+            ]
+            record = {
+                "case_id": case_id,
+                "outcome": "OK",
+                "note": "",
+                "profile_raw": raw,
+                "scheme_results": scheme_results,
+            }
+            report.append(record)
+            eligible = [s["scheme_id"] for s in scheme_results if s["status"] == "ELIGIBLE"]
+            console.print(
+                f"  [dim]{case_id}[/dim] [green]OK[/green] "
+                f"— eligible: {eligible or 'none'}"
+            )
+            passed += 1
+        except Exception as exc:
+            record = {
+                "case_id": case_id,
+                "outcome": "ENGINE_CRASH",
+                "note": str(exc),
+                "profile_raw": raw,
+                "scheme_results": [],
+            }
+            report.append(record)
+            console.print(f"  [dim]{case_id}[/dim] [red]Engine crash: {exc}[/red]")
+            crashed += 1
+
+    output.write_text(json.dumps(report, indent=2, default=str))
+
+    console.print(f"\n[bold]Results:[/bold] {passed}/{len(case_files)} succeeded, "
+                  f"{crashed} crashes")
+    console.print(f"[dim]Report saved to {output}[/dim]\n")
+
+
 if __name__ == "__main__":
     app()

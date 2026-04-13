@@ -53,13 +53,13 @@
     {
       "rule_id": "APY-R04",
       "parameter": "not_epf_member",
-      "description": "Applicant should not be a member of statutory social security schemes (EPF/NPS-govt/ESIC)",
+      "description": "Applicant must not be a member of statutory social security schemes (EPF/NPS-govt/ESIC)",
       "condition": {
         "type": "boolean_check",
         "field": "is_epf_member",
         "equals": false
       },
-      "is_mandatory": false,
+      "is_mandatory": true,
       "weight": 20,
       "ambiguity_refs": [
         "AMB-24"

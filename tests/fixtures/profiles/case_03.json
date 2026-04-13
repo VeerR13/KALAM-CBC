@@ -1,0 +1,19 @@
+{
+  "age": 65,
+  "gender": "F",
+  "state": "Uttar Pradesh",
+  "is_urban": false,
+  "caste_category": "SC",
+  "marital_status": "widowed",
+  "annual_income": 24000,
+  "occupation": "unemployed",
+  "land_ownership": "none",
+  "family_size": 1,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "has_ration_card": "AAY",
+  "disability_percent": 0,
+  "is_govt_employee": false,
+  "is_income_tax_payer": false
+}

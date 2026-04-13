@@ -1,0 +1,15 @@
+{
+  "age": 35,
+  "gender": "M",
+  "state": "Uttar Pradesh",
+  "is_urban": false,
+  "caste_category": "SC",
+  "annual_income": 30000,
+  "occupation": "unemployed",
+  "disability_percent": 40,
+  "family_size": 2,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "has_ration_card": "PHH"
+}

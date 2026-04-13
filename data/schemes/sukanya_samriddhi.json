@@ -41,15 +41,15 @@
       "description": "Girl child must be an Indian resident, not an NRI",
       "condition": {
         "type": "boolean_check",
-        "field": "is_aadhaar_linked",
-        "equals": false
+        "field": "has_aadhaar",
+        "equals": true
       },
       "is_mandatory": false,
       "weight": 20,
       "ambiguity_refs": [
         "AMB-33"
       ],
-      "ambiguity_note": "Girl child must be Indian resident. NRI not eligible. Use is_aadhaar_linked as imperfect proxy — NRIs less likely to have Aadhaar-linked account."
+      "ambiguity_note": "Girl child must be Indian resident. NRI not eligible. Aadhaar possession is used as proxy for Indian residency — NRIs typically do not have Aadhaar."
     },
     {
       "rule_id": "SSY-R04",

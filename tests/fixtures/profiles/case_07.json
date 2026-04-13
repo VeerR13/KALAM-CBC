@@ -1,0 +1,18 @@
+{
+  "age": 24,
+  "gender": "F",
+  "state": "Rajasthan",
+  "is_urban": false,
+  "caste_category": "ST",
+  "marital_status": "married",
+  "annual_income": 60000,
+  "occupation": "homemaker",
+  "family_size": 2,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "is_pregnant_or_lactating": true,
+  "num_live_births": 0,
+  "has_ration_card": "PHH",
+  "is_govt_employee": false
+}

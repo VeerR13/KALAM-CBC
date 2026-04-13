@@ -187,6 +187,10 @@ def _build_profile(form: dict) -> UserProfile:
         has_refrigerator=_bool("has_refrigerator"),
         has_landline=_bool("has_landline"),
         has_pucca_house=_bool("has_pucca_house"),
+        is_family_head=_bool("is_family_head"),
+        spouse_is_govt_employee=_bool("spouse_is_govt_employee"),
+        has_lpg_connection=_bool("has_lpg_connection"),
+        has_existing_pension=_bool("has_existing_pension"),
     )
 
 

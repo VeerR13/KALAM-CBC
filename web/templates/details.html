@@ -464,6 +464,42 @@
             </div>
 
             <div class="field-group">
+                <label class="field-label">Gas (LPG) connection at home? <span class="field-label-hi">/ घर में गैस कनेक्शन है?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="has_lpg_connection" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_lpg_connection" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="has_lpg_connection" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Already getting govt pension? <span class="field-label-hi">/ सरकारी पेंशन मिल रही है?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="has_existing_pension" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_existing_pension" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="has_existing_pension" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
                 <label class="field-label">Household assets <span class="field-label-hi">/ घर में क्या है?</span></label>
                 <p class="field-hint">Check everything that applies — this helps us rule out schemes you won't qualify for.<br>
                 <span style="color:var(--text-faint);font-size:0.83rem;">जो भी है वो चुनें — इससे गलत योजनाएं नहीं दिखेंगी।</span></p>
@@ -521,6 +557,45 @@
             <div class="step-label">Step 4 of 5</div>
             <h2>Family <button class="speak-btn" type="button" data-speak="स्टेप चार। आपके परिवार के बारे में बताएं।" aria-label="सुनें">🔊</button></h2>
             <p class="step-subtitle">परिवार</p>
+
+            <div class="field-group">
+                <label class="field-label">Main earning member? <span class="field-label-hi">/ परिवार के मुखिया / कमाने वाले?</span></label>
+                <p class="field-hint">Many schemes require the primary earner / head of household to apply. / कई योजनाएं परिवार के मुखिया के लिए होती हैं।</p>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="is_family_head" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="is_family_head" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="is_family_head" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="conditional" id="cond-spouse-govt">
+                <div class="field-group">
+                    <label class="field-label">Spouse a govt employee? <span class="field-label-hi">/ पति / पत्नी सरकारी नौकरी में?</span></label>
+                    <div class="option-cards three-col">
+                        <label class="option-card">
+                            <input type="radio" name="spouse_is_govt_employee" value="yes">
+                            <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="spouse_is_govt_employee" value="no">
+                            <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                        </label>
+                        <label class="option-card skip-card">
+                            <input type="radio" name="spouse_is_govt_employee" value="">
+                            <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
 
             <div class="field-group">
                 <label class="field-label" for="family_size">Family members <span class="field-label-hi">/ परिवार में सदस्य</span></label>

@@ -234,4 +234,7 @@ function updateConditionals() {
     const isPregnant = getVal('is_pregnant_or_lactating');
     setVisible('cond-pregnant',        gender === 'F');
     setVisible('cond-pregnant-births', gender === 'F' && isPregnant === 'yes');
+
+    const maritalStatus = getVal('marital_status');
+    setVisible('cond-spouse-govt', maritalStatus === 'married');
 }

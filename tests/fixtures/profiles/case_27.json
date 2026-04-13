@@ -1,0 +1,17 @@
+{
+  "age": 62,
+  "gender": "M",
+  "state": "Uttar Pradesh",
+  "is_urban": false,
+  "caste_category": "OBC",
+  "annual_income": 96000,
+  "occupation": "farmer",
+  "land_ownership": "owns",
+  "land_area_hectares": 0.8,
+  "family_size": 3,
+  "has_bank_account": true,
+  "has_aadhaar": true,
+  "is_aadhaar_linked": true,
+  "is_govt_employee": true,
+  "is_income_tax_payer": false
+}
