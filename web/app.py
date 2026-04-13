@@ -1,6 +1,5 @@
 """Kalam Web — FastAPI application."""
 import json
-import re
 from pathlib import Path
 from typing import Optional
 
@@ -432,63 +431,6 @@ async def recheck(request: Request):
     })
 
 
-@app.get("/chat", response_class=HTMLResponse)
-async def chat_page(request: Request):
-    return templates.TemplateResponse(request, "chat.html")
-
-
-@app.post("/api/chat", response_class=JSONResponse)
-async def chat_api(request: Request):
-    """Process a chat message, extract profile fields, return a follow-up reply."""
-    body = await request.json()
-    message: str = body.get("message", "")
-    profile: dict = body.get("profile", {})
-    turn: int = body.get("turn", 0)
-    extracted = _chat_regex_extract(message)
-    reply = _chat_fallback_reply(extracted, profile, turn)
-    return JSONResponse({"reply": reply, "extracted": extracted})
-
-
-def _chat_regex_extract(message: str) -> dict:
-    """Very basic field extraction for when Claude API is unavailable."""
-    al = message.lower().strip()
-    extracted: dict = {}
-    nums = re.findall(r"\d+", al.replace(",", ""))
-    if nums and not extracted.get("age"):
-        val = int(nums[0])
-        if 5 < val < 120:
-            extracted["age"] = val
-    if any(x in al for x in ("gaon", "village", "rural", "gram")):
-        extracted["is_urban"] = False
-    elif any(x in al for x in ("shehar", "city", "urban", "town")):
-        extracted["is_urban"] = True
-    for cat in ("General", "OBC", "SC", "ST"):
-        if cat.lower() in al:
-            extracted["caste_category"] = cat
-            break
-    if any(x in al for x in ("kisan", "farmer")):
-        extracted["occupation"] = "Farmer"
-    elif any(x in al for x in ("majdoor", "labourer", "daily wage")):
-        extracted["occupation"] = "Daily wage worker"
-    if nums and len(nums) >= 1:
-        big = [int(n) for n in nums if int(n) > 1000]
-        if big:
-            extracted["annual_income"] = big[0]
-    return extracted
-
-
-def _chat_fallback_reply(extracted: dict, profile: dict, turn: int) -> str:
-    """Simple rule-based follow-up."""
-    combined = {**profile, **extracted}
-    missing = []
-    if not combined.get("age"): missing.append("आपकी उम्र कितनी है? / What is your age?")
-    elif not combined.get("state"): missing.append("आप किस राज्य में रहते हैं? / Which state do you live in?")
-    elif not combined.get("caste_category"): missing.append("आपका वर्ग क्या है? / What is your category? General, OBC, SC, or ST?")
-    elif not combined.get("annual_income"): missing.append("सालाना आमदनी कितनी है? / What is your yearly income?")
-    elif not combined.get("occupation"): missing.append("आप क्या काम करते हैं? / What is your occupation?")
-    else:
-        return "धन्यवाद! / Thank you! Now press 'See my results' to check your eligibility."
-    return missing[0] if missing else "अपने बारे में और बताएं। / Tell us more about yourself."
 
 
 
