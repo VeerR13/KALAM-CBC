@@ -5,12 +5,56 @@ let currentStep = 1;
 const formState = {};
 
 // ── Audio (Web Speech API) ─────────────────────────────────────────────────
+let _hindiVoice = null;
+
+function _pickHindiVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return;
+    // Prefer Google Hindi (best quality on Android/Chrome), then any hi-IN
+    _hindiVoice =
+        voices.find(v => v.lang === 'hi-IN' && /google/i.test(v.name)) ||
+        voices.find(v => v.lang === 'hi-IN') ||
+        voices.find(v => v.lang.startsWith('hi')) ||
+        null;
+}
+
+// Voices load asynchronously on most browsers
+if ('speechSynthesis' in window) {
+    _pickHindiVoice();
+    window.speechSynthesis.addEventListener('voiceschanged', _pickHindiVoice);
+}
+
+function _cleanForTTS(text) {
+    return text
+        // Currency — say "rupaye" not the symbol
+        .replace(/₹\s*([\d,]+)/g, (_, n) => n.replace(/,/g, '') + ' रुपये ')
+        .replace(/₹/g, 'रुपये ')
+        // Common symbols read as English words
+        .replace(/[·•|]/g, ' ')          // separators
+        .replace(/[—–\-]+/g, ' ')        // dashes
+        .replace(/→|←|↓|↑|»|«/g, ' ')   // arrows
+        .replace(/\+/g, ' से अधिक ')     // plus sign
+        .replace(/%/g, ' प्रतिशत ')       // percent
+        .replace(/\//g, ' ')              // slash in "6,000/year"
+        .replace(/&amp;/g, ' और ')        // HTML entity
+        .replace(/&/g, ' और ')
+        // Remove stray English punctuation that causes TTS to pause oddly
+        .replace(/[*#@^~`<>[\]{}\\]/g, '')
+        // Collapse whitespace
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+}
+
 function speakHindi(text) {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
+    const cleaned = _cleanForTTS(text);
+    if (!cleaned) return;
+    const u = new SpeechSynthesisUtterance(cleaned);
     u.lang = 'hi-IN';
-    u.rate = 0.85;
+    u.rate = 0.88;
+    u.pitch = 1.05;
+    if (_hindiVoice) u.voice = _hindiVoice;
     window.speechSynthesis.speak(u);
 }
 

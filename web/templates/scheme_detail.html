@@ -340,10 +340,19 @@ function switchScript(name, btn) {
 
 function speakScript(text) {
     if (!('speechSynthesis' in window)) { alert('Audio not supported in this browser.'); return; }
+    // Reuse the same cleaner + voice picker from app.js if available, else inline fallback
+    if (typeof speakHindi === 'function') { speakHindi(text); return; }
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'hi-IN';
-    u.rate = 0.8;
+    const cleaned = text.replace(/₹\s*([\d,]+)/g, (_, n) => n.replace(/,/g,'') + ' रुपये ')
+        .replace(/[·•|—–\-]+/g, ' ').replace(/[→←↓↑+%\/&]/g, ' ')
+        .replace(/\s{2,}/g, ' ').trim();
+    const u = new SpeechSynthesisUtterance(cleaned);
+    u.lang = 'hi-IN'; u.rate = 0.88; u.pitch = 1.05;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang === 'hi-IN' && /google/i.test(v.name))
+           || voices.find(v => v.lang === 'hi-IN')
+           || voices.find(v => v.lang.startsWith('hi'));
+    if (v) u.voice = v;
     window.speechSynthesis.speak(u);
 }
 
