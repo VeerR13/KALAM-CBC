@@ -252,11 +252,29 @@
         <!-- What to say at the office -->
         <div class="apply-card apply-card-script">
             <div class="apply-card-title">
-                🗣️ What to say at the office / कार्यालय में क्या बोलें
+                🗣️ कार्यालय में क्या बोलें · What to say at the office
             </div>
             <p class="script-intro">
-                Show this screen to the clerk, or press 🔊 to play it aloud. / यह स्क्रीन क्लर्क को दिखाएं, या 🔊 दबाकर बोलें।
+                यह स्क्रीन क्लर्क को दिखाएं, या 🔊 दबाकर बोलें। · Show this screen to the clerk, or press 🔊 to play it aloud.
             </p>
+
+            <!-- Personalisation row -->
+            <div class="script-name-row">
+                <div class="script-name-field">
+                    <label class="script-name-label" for="script-name-inp">आपका नाम · Your name</label>
+                    <input type="text" id="script-name-inp"
+                           dir="auto" autocomplete="name" spellcheck="false"
+                           placeholder="Ramesh Kumar / रमेश कुमार"
+                           value="{{ request.query_params.get('applicant_name', '') }}">
+                </div>
+                <div class="script-name-field">
+                    <label class="script-name-label" for="script-village-inp">गाँव / शहर · Village</label>
+                    <input type="text" id="script-village-inp"
+                           dir="auto" autocomplete="address-level2" spellcheck="false"
+                           placeholder="Barabanki / बाराबंकी"
+                           value="{{ request.query_params.get('applicant_village', '') }}">
+                </div>
+            </div>
 
             <!-- Hinglish tab (Latin script — readable without knowing Devanagari) -->
             <div class="script-tabs">
@@ -265,20 +283,16 @@
             </div>
 
             <div id="script-hinglish" class="script-panel active">
-                <div class="office-script office-script-hl">{{ office_script_hinglish }}</div>
-                <button class="speak-btn-big" onclick="speakScript('{{ office_script_hindi | replace("'", "\\'") | replace('\n', ' ') }}')">
-                    🔊 Bolein / बोलें
-                </button>
+                <div class="office-script office-script-hl" id="script-hl-text">{{ office_script_hinglish }}</div>
+                <button class="speak-btn-big" id="speak-hl-btn">🔊 Bolein / बोलें</button>
             </div>
             <div id="script-hindi" class="script-panel">
-                <div class="office-script office-script-hi">{{ office_script_hindi }}</div>
-                <button class="speak-btn-big" onclick="speakScript('{{ office_script_hindi | replace("'", "\\'") | replace('\n', ' ') }}')">
-                    🔊 सुनें
-                </button>
+                <div class="office-script office-script-hi" id="script-hi-text">{{ office_script_hindi }}</div>
+                <button class="speak-btn-big" id="speak-hi-btn">🔊 सुनें</button>
             </div>
 
             <p class="office-script-note">
-                💡 The clerk will understand — just show the screen or play the audio. / क्लर्क समझेंगे — स्क्रीन दिखाएं या ऑडियो चलाएं।
+                💡 क्लर्क समझेंगे — स्क्रीन दिखाएं या ऑडियो चलाएं। · The clerk will understand — just show the screen or play the audio.
             </p>
         </div>
 
@@ -340,7 +354,6 @@ function switchScript(name, btn) {
 
 function speakScript(text) {
     if (!('speechSynthesis' in window)) { alert('Audio not supported in this browser.'); return; }
-    // Reuse the same cleaner + voice picker from app.js if available, else inline fallback
     if (typeof speakHindi === 'function') { speakHindi(text); return; }
     window.speechSynthesis.cancel();
     const cleaned = text.replace(/₹\s*([\d,]+)/g, (_, n) => n.replace(/,/g,'') + ' रुपये ')
@@ -355,6 +368,55 @@ function speakScript(text) {
     if (v) u.voice = v;
     window.speechSynthesis.speak(u);
 }
+
+// Real-time office script personalisation
+const BASE_HL = document.getElementById('script-hl-text')?.textContent || '';
+const BASE_HI = document.getElementById('script-hi-text')?.textContent || '';
+
+function _rebuildScript() {
+    const name = (document.getElementById('script-name-inp')?.value || '').trim();
+    const village = (document.getElementById('script-village-inp')?.value || '').trim();
+
+    let greetHI, greetHL;
+    if (name && village) {
+        greetHI = `नमस्ते, मेरा नाम ${name} है, मैं ${village} से आया/आई हूँ।`;
+        greetHL = `Namaskar, mera naam ${name} hai, main ${village} se aaya/aayi hoon.`;
+    } else if (name) {
+        greetHI = `नमस्ते, मेरा नाम ${name} है।`;
+        greetHL = `Namaskar, mera naam ${name} hai.`;
+    } else {
+        greetHI = 'नमस्ते,';
+        greetHL = 'Namaskar,';
+    }
+
+    // Replace just the greeting line (first line) in each script
+    const replaceGreet = (base, oldGreet, newGreet) => {
+        const lines = base.split('\n');
+        // First line always starts with greeting
+        lines[0] = lines[0].replace(/^[^\s।.]+[,।.]?\s*/, newGreet + ' ');
+        return lines.join('\n');
+    };
+
+    const newHI = BASE_HI.replace(/^नमस्ते[^।\n]*[।\n]?/, greetHI + ' ');
+    const newHL = BASE_HL.replace(/^Namaskar[^.\n]*[.\n]?/, greetHL + ' ');
+
+    const hiEl = document.getElementById('script-hi-text');
+    const hlEl = document.getElementById('script-hl-text');
+    if (hiEl) hiEl.textContent = newHI;
+    if (hlEl) hlEl.textContent = newHL;
+}
+
+['script-name-inp', 'script-village-inp'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', _rebuildScript);
+});
+
+// Wire up speak buttons to current script text
+document.getElementById('speak-hi-btn')?.addEventListener('click', () => {
+    speakScript(document.getElementById('script-hi-text')?.textContent || '');
+});
+document.getElementById('speak-hl-btn')?.addEventListener('click', () => {
+    speakScript(document.getElementById('script-hi-text')?.textContent || '');
+});
 
 document.querySelectorAll('.speak-btn').forEach(btn => {
     btn.addEventListener('click', e => {

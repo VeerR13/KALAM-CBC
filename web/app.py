@@ -317,7 +317,15 @@ def _personalized_docs(profile: UserProfile, scheme: Scheme, bur_score=None):
     return score.docs_already_have, score.missing_docs
 
 
-def _office_script(profile: UserProfile, scheme: Scheme, needs_docs: list = None) -> dict:
+def _doc_name_where(doc) -> tuple[str, str]:
+    """Extract (name, where) from a doc that may be a dict or an object."""
+    if isinstance(doc, dict):
+        return doc.get("name", ""), doc.get("where", "")
+    return getattr(doc, "name", str(doc)), getattr(doc, "where", "")
+
+
+def _office_script(profile: UserProfile, scheme: Scheme, needs_docs: list = None,
+                   applicant_name: str = "", applicant_village: str = "") -> dict:
     """Generate office visit scripts in both Hindi and Hinglish.
 
     Returns a dict with keys 'hindi' (Devanagari, for TTS) and
@@ -428,15 +436,27 @@ def _office_script(profile: UserProfile, scheme: Scheme, needs_docs: list = None
         (f"{name_hindi} में आवेदन करना है।", f"{scheme.name} mein aavedan karna hai."),
     )
 
+    # Build greeting — personalised if name provided
+    if applicant_name and applicant_village:
+        greet_hi = f"नमस्ते, मेरा नाम {applicant_name} है, मैं {applicant_village} से आया/आई हूँ।"
+        greet_hl = f"Namaskar, mera naam {applicant_name} hai, main {applicant_village} se aaya/aayi hoon."
+    elif applicant_name:
+        greet_hi = f"नमस्ते, मेरा नाम {applicant_name} है।"
+        greet_hl = f"Namaskar, mera naam {applicant_name} hai."
+    else:
+        greet_hi = "नमस्ते,"
+        greet_hl = "Namaskar,"
+
     # Build Hindi script
-    hi_lines = [f"नमस्ते, मुझे {name_hindi} के लिए आवेदन करना है।"]
+    hi_lines = [f"{greet_hi} मुझे {name_hindi} के लिए आवेदन करना है।"]
     if docs_have_hi:
         hi_lines.append(f"मेरे पास {', '.join(docs_have_hi)} है।")
     hi_lines.append(action_hi)
     if needs_docs:
-        for doc in needs_docs[:3]:  # top 3 missing docs
-            doc_name = getattr(doc, 'name', str(doc))
-            doc_where = getattr(doc, 'where', '')
+        for doc in needs_docs[:3]:
+            doc_name, doc_where = _doc_name_where(doc)
+            if not doc_name:
+                continue
             if doc_where:
                 hi_lines.append(f"{doc_name} अभी नहीं है — {doc_where} से मिलेगा।")
             else:
@@ -444,14 +464,15 @@ def _office_script(profile: UserProfile, scheme: Scheme, needs_docs: list = None
     hi_lines.append("\nक्या और कोई दस्तावेज़ चाहिए?")
 
     # Build Hinglish script (Latin script — easier for users who can't read Devanagari)
-    hl_lines = [f"Namaskar, mujhe {scheme.name} ke liye aavedan karna hai."]
+    hl_lines = [f"{greet_hl} Mujhe {scheme.name} ke liye aavedan karna hai."]
     if docs_have_hl:
         hl_lines.append(f"Mere paas {', '.join(docs_have_hl)} hai.")
     hl_lines.append(action_hl)
     if needs_docs:
         for doc in needs_docs[:3]:
-            doc_name = getattr(doc, 'name', str(doc))
-            doc_where = getattr(doc, 'where', '')
+            doc_name, doc_where = _doc_name_where(doc)
+            if not doc_name:
+                continue
             if doc_where:
                 hl_lines.append(f"{doc_name} abhi nahi hai — {doc_where} se milega.")
             else:
@@ -493,7 +514,11 @@ async def scheme_detail(request: Request, scheme_id: str):
     bur_calc = BureaucraticDistanceCalculator()
     bur_score = bur_calc.calculate(profile, scheme_obj, [])
     has_docs, needs_docs = _personalized_docs(profile, scheme_obj, bur_score)
-    scripts = _office_script(profile, scheme_obj, needs_docs)
+    applicant_name = form.get("applicant_name", "").strip()
+    applicant_village = form.get("applicant_village", "").strip()
+    scripts = _office_script(profile, scheme_obj, needs_docs,
+                             applicant_name=applicant_name,
+                             applicant_village=applicant_village)
 
     return templates.TemplateResponse(request, "scheme_detail.html", {
         "scheme": scheme_obj,
