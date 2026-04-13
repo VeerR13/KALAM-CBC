@@ -188,7 +188,7 @@
                 We couldn't check these schemes because some details are missing. Click "Answer now" to provide just the info needed for that scheme.
             </p>
             {% for r in grouped.insufficient %}
-            <div class="needinfo-card" id="nicard-{{ r.scheme_id }}">
+            <div class="needinfo-card" id="nicard-{{ r.scheme_id }}" data-scheme-id="{{ r.scheme_id }}" data-status="insufficient_data">
                 <div class="needinfo-top">
                     <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
                     <div>
@@ -261,7 +261,7 @@
         </div>
         <div class="section-body collapsed">
             {% for r in grouped.ineligible %}
-            <div class="scheme-card" data-status="ineligible">
+            <div class="scheme-card" data-status="ineligible" data-scheme-id="{{ r.scheme_id }}">
                 <div class="card-row">
                     <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
                     <div class="card-body">

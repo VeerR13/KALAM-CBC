@@ -156,16 +156,21 @@ def _build_profile(form: dict) -> UserProfile:
     is_urban_raw = form.get("is_urban")
     is_urban = (is_urban_raw == "urban") if is_urban_raw else None
 
+    def _clamp(val, lo, hi):
+        if val is None:
+            return None
+        return max(lo, min(hi, val))
+
     return UserProfile(
-        age=_int("age"),
+        age=_clamp(_int("age"), 0, 150),
         gender=form.get("gender") or None,
         state=state or None,
         is_urban=is_urban,
         caste_category=form.get("caste_category") or None,
         marital_status=form.get("marital_status") or None,
-        annual_income=_int("annual_income"),
+        annual_income=_clamp(_int("annual_income"), 0, 10_00_00_000),
         occupation=form.get("occupation") or None,
-        family_size=_int("family_size"),
+        family_size=_clamp(_int("family_size"), 1, 50),
         num_children=_int("num_children"),
         has_girl_child_under_10=_bool("has_girl_child_under_10"),
         is_pregnant_or_lactating=_bool("is_pregnant_or_lactating"),
