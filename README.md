@@ -15,7 +15,7 @@ Find which Indian government welfare schemes you qualify for. Answer 5 short que
 
 ## Live demo
 
-The app is deployed at: [https://kalam.onrender.com](https://kalam.onrender.com) *(Render free tier — may take 30s to wake)*
+The app is deployed at: [https://kalam-ac7c.onrender.com](https://kalam-ac7c.onrender.com) *(Render free tier — may take 30s to wake)*
 
 ---
 
