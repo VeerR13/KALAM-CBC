@@ -896,4 +896,140 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
     .detail-tab { flex: 1; min-width: 80px; font-size: 0.8rem; padding: 8px 10px 10px; }
     .apply-card { padding: 14px 16px; }
     .helpline-number { font-size: 1.4rem; }
+    .ptl-meta-row { flex-direction: column; gap: 8px; }
 }
+
+/* ── Scheme overview card (detail page) ─────────────────────────────────── */
+.scheme-overview-card {
+    background: linear-gradient(135deg, var(--primary-50) 0%, #fff 100%);
+    border: 1.5px solid var(--primary-light);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 20px;
+}
+.scheme-overview-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; margin-bottom: 14px;
+}
+.scheme-overview-fullname {
+    font-size: 1.05rem; font-weight: 700; color: var(--primary-dark); line-height: 1.3;
+}
+.scheme-overview-fullname-hi {
+    font-size: 1rem; font-weight: 600; color: var(--primary);
+    font-family: 'Noto Sans Devanagari', sans-serif; margin-top: 3px;
+}
+.scheme-desc-en {
+    font-size: 0.9rem; color: var(--text); line-height: 1.65;
+    margin-bottom: 10px; padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border);
+}
+.scheme-desc-hi {
+    font-size: 0.9rem; color: var(--text);
+    font-family: 'Noto Sans Devanagari', 'DM Sans', sans-serif;
+    line-height: 1.75; margin-bottom: 14px;
+}
+.scheme-benefit-row {
+    background: var(--bg-card); border-radius: var(--radius-sm);
+    padding: 12px 14px; border: 1px solid var(--border);
+    margin-bottom: 12px;
+}
+.scheme-benefit-en {
+    font-size: 0.92rem; font-weight: 600; color: var(--primary-dark);
+    margin-bottom: 4px;
+}
+.scheme-benefit-hi {
+    font-size: 0.88rem; color: var(--primary);
+    font-family: 'Noto Sans Devanagari', sans-serif;
+}
+.scheme-target {
+    font-size: 0.82rem; color: var(--text-secondary);
+    background: var(--bg-soft); border-radius: var(--radius-sm);
+    padding: 8px 12px; margin-top: 8px;
+}
+.scheme-target-label { font-weight: 600; color: var(--text); margin-right: 4px; }
+
+.benefit-box-hindi {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    font-size: 0.9rem; color: var(--primary-dark);
+    background: var(--primary-50); border-radius: var(--radius-sm);
+    padding: 10px 14px; margin-top: 8px;
+    border-left: 3px solid var(--primary);
+}
+
+/* ── Optimal path timeline (results page) ───────────────────────────────── */
+.optimal-path-section {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 28px 0;
+}
+.path-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; margin-bottom: 24px;
+}
+.path-title-en {
+    font-size: 1.25rem; font-weight: 700; color: var(--text); line-height: 1.2;
+}
+.path-title-hi {
+    font-size: 1.1rem; font-weight: 600; color: var(--primary);
+    font-family: 'Noto Sans Devanagari', sans-serif; margin-top: 2px;
+}
+.path-subtitle { font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; }
+
+/* Timeline */
+.path-timeline { display: flex; flex-direction: column; gap: 0; }
+.path-timeline-item {
+    display: flex; gap: 16px; cursor: pointer;
+}
+.ptl-left {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0; width: 36px;
+}
+.ptl-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg-soft); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);
+    flex-shrink: 0; transition: all 0.2s;
+}
+.ptl-num-first {
+    background: var(--primary); border-color: var(--primary);
+    color: #fff;
+}
+.ptl-line {
+    width: 2px; background: var(--border); flex: 1; min-height: 16px;
+    margin: 4px 0;
+}
+
+/* Card on the right */
+.ptl-card {
+    flex: 1; background: var(--bg-soft); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ptl-card:hover, .path-timeline-item:hover .ptl-card {
+    border-color: var(--primary-light); box-shadow: var(--shadow-md);
+}
+.path-timeline-item:hover .ptl-num { background: var(--primary); border-color: var(--primary); color: #fff; }
+.ptl-card.ptl-expanded { border-color: var(--primary); }
+
+.ptl-card-top {
+    display: flex; align-items: flex-start; gap: 12px;
+}
+.ptl-icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.ptl-card-titles { flex: 1; }
+.ptl-scheme-name { font-size: 0.98rem; font-weight: 700; color: var(--text); }
+.ptl-benefit { font-size: 0.85rem; color: var(--primary-dark); font-weight: 600; margin-top: 2px; }
+
+.ptl-card-body { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+
+.ptl-why-row { background: var(--bg-card); border-radius: var(--radius-sm); padding: 10px 12px; border-left: 3px solid var(--primary); }
+.ptl-why-en { font-size: 0.85rem; color: var(--text); font-weight: 500; }
+.ptl-why-hi { font-size: 0.85rem; color: var(--primary-dark); font-family: 'Noto Sans Devanagari', sans-serif; margin-top: 3px; }
+
+.ptl-meta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.ptl-meta-item { display: flex; gap: 8px; align-items: flex-start; flex: 1; min-width: 180px; }
+.ptl-meta-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.ptl-meta-en { font-size: 0.83rem; color: var(--text); font-weight: 500; }
+.ptl-meta-hi { font-size: 0.83rem; color: var(--text-secondary); font-family: 'Noto Sans Devanagari', sans-serif; margin-top: 1px; }

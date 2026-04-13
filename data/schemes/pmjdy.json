@@ -75,5 +75,9 @@
       "locator_url": "https://www.indiapost.gov.in/VAS/Pages/FindPinCode.aspx",
       "find_instruction": "Your nearest post office"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री जन धन योजना",
+  "description": "Zero-balance bank account with a RuPay debit card, ₹2 lakh accidental insurance cover, ₹30,000 life insurance (for those who opened before 26 Jan 2015), and overdraft facility up to ₹10,000 after 6 months of satisfactory operation. A bank account is required to receive benefits from almost all other government schemes via DBT.",
+  "description_hindi": "ज़ीरो बैलेंस पर बैंक खाता, RuPay डेबिट कार्ड, ₹2 लाख दुर्घटना बीमा और ₹30,000 जीवन बीमा मुफ़्त मिलता है। 6 महीने बाद ₹10,000 ओवरड्राफ्ट सुविधा। यह खाता लगभग सभी सरकारी योजनाओं का DBT पाने के लिए ज़रूरी है — इसलिए पहले यही खुलवाएं।",
+  "benefit_summary_hindi": "ज़ीरो बैलेंस खाता + ₹2 लाख दुर्घटना बीमा + ₹30,000 जीवन बीमा मुफ़्त"
 }

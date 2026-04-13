@@ -190,5 +190,9 @@
       "locator_url": "https://locator.csccloud.in",
       "find_instruction": "Find the nearest CSC at locator.csccloud.in"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री मातृ वंदना योजना",
+  "description": "Maternity benefit of ₹5,000 for the first live birth (paid in two instalments) to partly compensate for wage loss and to promote institutional delivery and healthy feeding practices. The amount is paid directly to the woman's bank account. A second incentive (₹6,000) is given under Janani Suraksha Yojana for institutional delivery.",
+  "description_hindi": "पहले जीवित बच्चे के जन्म पर गर्भवती/स्तनपान कराने वाली महिलाओं को ₹5,000 मिलते हैं — दो किस्तों में। यह राशि वेतन हानि की भरपाई और पोषण सहायता के लिए है। आंगनवाड़ी से आवेदन करें। दूसरी बेटी होने पर ₹6,000 का अतिरिक्त लाभ (JSY के साथ)।",
+  "benefit_summary_hindi": "₹5,000 पहले बच्चे पर, दो किस्तों में, सीधे बैंक खाते में"
 }

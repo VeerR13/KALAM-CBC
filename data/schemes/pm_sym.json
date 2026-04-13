@@ -115,5 +115,9 @@
       "locator_url": "https://locator.csccloud.in",
       "find_instruction": "Find the nearest CSC at locator.csccloud.in"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री श्रम योगी मान-धन",
+  "description": "Monthly pension of ₹3,000 at age 60 for unorganised sector workers with monthly income ≤₹15,000. The worker and government each contribute 50% of the monthly premium (₹55–₹200 depending on age of entry). If the subscriber dies before 60, the spouse can continue or withdraw. Simple enrollment at CSC or bank using Aadhaar and savings account.",
+  "description_hindi": "असंगठित क्षेत्र के मजदूर (मासिक आय ≤₹15,000) को 60 वर्ष के बाद ₹3,000/माह पेंशन। सरकार आपके जितना योगदान स्वयं देती है — बराबर-बराबर। मासिक किस्त उम्र के हिसाब से ₹55–₹200। अगर 60 से पहले मृत्यु हो तो जीवनसाथी योजना जारी रख सकते हैं या पैसा निकाल सकते हैं।",
+  "benefit_summary_hindi": "₹3,000/माह पेंशन, 60 वर्ष के बाद, सरकार 50% किस्त भरती है"
 }

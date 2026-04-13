@@ -171,5 +171,9 @@
       "locator_url": null,
       "find_instruction": "Block Development Office (BDO) in your block or tehsil"
     }
-  ]
+  ],
+  "full_name_hindi": "इंदिरा गांधी राष्ट्रीय विधवा पेंशन योजना",
+  "description": "Monthly pension for BPL widows aged 40–79 years. Central contribution is ₹300/month. States add varying amounts — total pension ranges from ₹300 to over ₹2,000/month. At age 80, the widow transitions to IGNOAPS (old age pension). Paid directly to bank account.",
+  "description_hindi": "40 से 79 वर्ष की BPL विधवा महिलाओं को हर महीने पेंशन मिलती है। केंद्र सरकार ₹300/माह देती है, राज्य सरकार अपनी राशि जोड़ती है। 80 वर्ष की आयु पर IGNOAPS (वृद्धावस्था पेंशन) में तब्दील हो जाती है। पेंशन सीधे बैंक खाते में आती है।",
+  "benefit_summary_hindi": "₹300/माह (केंद्र) + राज्य टॉप-अप, 40–79 वर्ष विधवा महिलाओं के लिए"
 }

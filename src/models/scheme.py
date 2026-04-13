@@ -57,6 +57,10 @@ class Scheme(BaseModel):
     prerequisites: list[str] = []
     benefit_summary: str
     name_hindi: Optional[str] = None
+    full_name_hindi: Optional[str] = None
+    description: Optional[str] = None
+    description_hindi: Optional[str] = None
+    benefit_summary_hindi: Optional[str] = None
     portal_url: Optional[str] = None
     helpline: Optional[dict] = None
     application_offices: list[dict] = []

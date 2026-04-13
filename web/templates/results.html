@@ -291,40 +291,63 @@
     {% if optimal_path and optimal_path.steps %}
     <div class="optimal-path-section">
         <div class="path-header">
-            <h3>सबसे पहले क्या करें? / What to do first?</h3>
-            <p class="path-subtitle">Step by step guide / चरण दर चरण मार्गदर्शन</p>
-            <button class="speak-btn" data-speak="सबसे पहले क्या करें। {% for step in optimal_path.steps[:4] %}Step {{ loop.index }}: {{ step.scheme_name }}. {{ step.benefit_headline }}. {{ step.where_to_go }}. {% endfor %}" aria-label="सुनें">🔊</button>
-        </div>
-
-        <!-- Visual step strip (first 5) -->
-        <div class="path-strip">
-            {% for step in optimal_path.steps[:5] %}
-            <div class="path-node {% if loop.first %}path-node-first{% endif %}" onclick="togglePathDetail('pd-{{ step.scheme_id }}')">
-                <div class="path-step-icon">{{ step.icon }}</div>
-                <div class="path-step-label">{{ step.scheme_name[:12] }}{% if step.scheme_name|length > 12 %}…{% endif %}</div>
-                <div class="path-step-num">{{ loop.index }}</div>
+            <div>
+                <h3 class="path-title-en">What to do first?</h3>
+                <h3 class="path-title-hi">सबसे पहले क्या करें?</h3>
+                <p class="path-subtitle">Optimal order to apply · आवेदन का सही क्रम</p>
             </div>
-            {% if not loop.last %}<div class="path-arrow">→</div>{% endif %}
-            {% endfor %}
+            <button class="speak-btn" data-speak="सबसे पहले क्या करें। {% for step in optimal_path.steps[:4] %}चरण {{ loop.index }}: {{ step.scheme_name }}. {{ step.reason_hi or step.reason }}. {{ step.where_to_go_hi or step.where_to_go }}. {% endfor %}" aria-label="सुनें">🔊</button>
         </div>
 
-        <!-- Expandable step details -->
-        <div class="path-steps-list">
+        <!-- Visual timeline -->
+        <div class="path-timeline">
             {% for step in optimal_path.steps %}
-            <div class="path-step-card" id="pd-{{ step.scheme_id }}">
-                <div class="path-step-header">
-                    <span class="path-step-num-badge">{{ loop.index }}</span>
-                    <span class="path-step-big-icon">{{ step.icon }}</span>
-                    <div class="path-step-info">
-                        <div class="path-step-name">{{ step.scheme_name }}</div>
-                        {% if step.benefit_headline %}<div class="path-benefit-hl">{{ step.benefit_headline }}</div>{% endif %}
-                    </div>
-                    <button class="speak-btn" data-speak="{{ step.scheme_name }}. {{ step.benefit_headline }}. {{ step.where_to_go }}. समय: {{ step.time_estimate }}" aria-label="सुनें">🔊</button>
+            <div class="path-timeline-item" onclick="togglePathDetail('pd-{{ step.scheme_id }}')">
+
+                <!-- Left: step number + connector -->
+                <div class="ptl-left">
+                    <div class="ptl-num {% if loop.first %}ptl-num-first{% endif %}">{{ loop.index }}</div>
+                    {% if not loop.last %}<div class="ptl-line"></div>{% endif %}
                 </div>
-                <div class="path-step-body">
-                    {% if step.reason %}<div class="path-why">{{ step.reason }}</div>{% endif %}
-                    <div class="path-where">📍 <strong>Where:</strong> {{ step.where_to_go }}</div>
-                    <div class="path-time">⏱ <strong>Time:</strong> {{ step.time_estimate }}</div>
+
+                <!-- Right: card -->
+                <div class="ptl-card" id="pd-{{ step.scheme_id }}">
+                    <div class="ptl-card-top">
+                        <span class="ptl-icon">{{ step.icon }}</span>
+                        <div class="ptl-card-titles">
+                            <div class="ptl-scheme-name">{{ step.scheme_name }}</div>
+                            {% if step.benefit_headline %}
+                            <div class="ptl-benefit">{{ step.benefit_headline }}</div>
+                            {% endif %}
+                        </div>
+                        <button class="speak-btn" data-speak="{{ step.scheme_name }}. {% if step.reason_hi %}{{ step.reason_hi }}{% else %}{{ step.reason }}{% endif %}. {% if step.where_to_go_hi %}{{ step.where_to_go_hi }}{% else %}{{ step.where_to_go }}{% endif %}. समय: {% if step.time_estimate_hi %}{{ step.time_estimate_hi }}{% else %}{{ step.time_estimate }}{% endif %}" aria-label="सुनें">🔊</button>
+                    </div>
+
+                    <div class="ptl-card-body">
+                        {% if step.reason %}
+                        <div class="ptl-why-row">
+                            <div class="ptl-why-en">{{ step.reason }}</div>
+                            {% if step.reason_hi %}<div class="ptl-why-hi">{{ step.reason_hi }}</div>{% endif %}
+                        </div>
+                        {% endif %}
+                        <div class="ptl-meta-row">
+                            <div class="ptl-meta-item">
+                                <span class="ptl-meta-icon">📍</span>
+                                <div>
+                                    <div class="ptl-meta-en">{{ step.where_to_go }}</div>
+                                    {% if step.where_to_go_hi %}<div class="ptl-meta-hi">{{ step.where_to_go_hi }}</div>{% endif %}
+                                </div>
+                            </div>
+                            <div class="ptl-meta-item">
+                                <span class="ptl-meta-icon">⏱</span>
+                                <div>
+                                    <div class="ptl-meta-en">{{ step.time_estimate }}</div>
+                                    {% if step.time_estimate_hi %}<div class="ptl-meta-hi">{{ step.time_estimate_hi }}</div>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             {% endfor %}
@@ -480,8 +503,7 @@ function toggleSection(btn) {
 }
 
 function togglePathDetail(id) {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('expanded');
+    document.getElementById(id)?.classList.toggle('ptl-expanded');
 }
 
 function toggleMiniForm(schemeId) {

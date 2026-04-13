@@ -175,5 +175,9 @@
       "locator_url": null,
       "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
     }
-  ]
+  ],
+  "full_name_hindi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम",
+  "description": "Subsidised food grains through the Public Distribution System (PDS/ration card). Antyodaya (AAY) households get 35 kg/month at ₹2/kg wheat and ₹3/kg rice. Priority Households (PHH) get 5 kg/person/month at same rates. Since Jan 2023, food grains are provided completely free under PM-GARIB KALYAN ANN YOJANA for all NFSA beneficiaries.",
+  "description_hindi": "राशन कार्ड पर सरकारी दुकान (PDS) से सस्ता अनाज मिलता है। अंत्योदय (AAY) परिवारों को 35 किलो/माह — ₹2/किलो गेहूं, ₹3/किलो चावल। प्राथमिकता परिवारों को 5 किलो/व्यक्ति/माह। जनवरी 2023 से सभी NFSA लाभार्थियों को अनाज बिल्कुल मुफ़्त (PM गरीब कल्याण अन्न योजना के तहत)।",
+  "benefit_summary_hindi": "5 किलो/व्यक्ति/माह मुफ़्त अनाज (2023 से), AAY परिवारों को 35 किलो/माह"
 }

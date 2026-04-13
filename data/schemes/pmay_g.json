@@ -209,5 +209,9 @@
       "locator_url": "https://locator.csccloud.in",
       "find_instruction": "Find the nearest CSC at locator.csccloud.in"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री आवास योजना — ग्रामीण",
+  "description": "Financial assistance to homeless rural families or those living in kutcha/dilapidated houses to build a pucca house. Central government provides ₹1.20 lakh (plains) or ₹1.30 lakh (hilly/difficult areas). The beneficiary also gets 90–95 days of MGNREGA wages for construction labour. A toilet under Swachh Bharat Mission is mandatory.",
+  "description_hindi": "ग्रामीण क्षेत्र में बेघर या कच्चे/जर्जर घर में रहने वाले परिवारों को पक्का घर बनाने के लिए ₹1.20 लाख (मैदानी क्षेत्र) या ₹1.30 लाख (पहाड़ी/दुर्गम क्षेत्र) मिलते हैं। साथ में MGNREGA के तहत 90–95 दिन की मजदूरी। घर में शौचालय ज़रूरी है (स्वच्छ भारत मिशन)। प्राथमिकता: SC/ST, विधवा, विकलांग, और कच्चे घरों में रहने वाले।",
+  "benefit_summary_hindi": "₹1.20–1.30 लाख घर बनाने की सहायता + MGNREGA मजदूरी"
 }

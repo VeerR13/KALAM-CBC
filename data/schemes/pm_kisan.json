@@ -133,5 +133,9 @@
       "locator_url": "https://locator.csccloud.in",
       "find_instruction": "Find the nearest CSC at locator.csccloud.in"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री किसान सम्मान निधि",
+  "description": "Direct income support of ₹6,000 per year for all landholding farmer families, paid in three equal instalments of ₹2,000 directly to the farmer's bank account. No middleman — money arrives via DBT. Covers all crop types and farm sizes. Excludes institutional landholders, government employees, and income taxpayers.",
+  "description_hindi": "सभी किसान परिवारों को हर साल ₹6,000 सीधे बैंक खाते में मिलते हैं — 3 किस्तों में ₹2,000 प्रत्येक (अप्रैल-जुलाई, अगस्त-नवंबर, दिसंबर-मार्च)। यह राशि बीज, खाद और खेती के दैनिक खर्चों के लिए है। कोई बिचौलिया नहीं — पैसा सीधे खाते में आता है। सरकारी कर्मचारियों और आयकर दाताओं को यह लाभ नहीं मिलता।",
+  "benefit_summary_hindi": "₹6,000/साल — 3 किस्तों में ₹2,000, सीधे बैंक खाते में (DBT)"
 }

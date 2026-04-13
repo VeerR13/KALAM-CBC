@@ -143,5 +143,9 @@
       "locator_url": null,
       "find_instruction": "Block Development Office (BDO) in your block or tehsil"
     }
-  ]
+  ],
+  "full_name_hindi": "इंदिरा गांधी राष्ट्रीय वृद्धावस्था पेंशन योजना",
+  "description": "Monthly pension for senior citizens aged 60+ who are below the poverty line. Central government contributes ₹200/month (60–79 years) and ₹500/month (80+ years). Most states add a significant top-up, making total pensions ₹500–₹3,000+ depending on state. Pension is paid directly to bank/post office account.",
+  "description_hindi": "60 वर्ष या उससे अधिक उम्र के गरीबी रेखा से नीचे (BPL) के बुज़ुर्गों को हर महीने पेंशन मिलती है। केंद्र सरकार ₹200/माह (60–79 वर्ष) और ₹500/माह (80+ वर्ष) देती है। राज्य सरकार इसमें अपनी हिस्सेदारी जोड़ती है — कुल पेंशन ₹500 से ₹3,000+ हो सकती है। पेंशन सीधे बैंक खाते में आती है।",
+  "benefit_summary_hindi": "₹200–500/माह (केंद्र) + राज्य का टॉप-अप, कुल ₹500–3,000+/माह"
 }

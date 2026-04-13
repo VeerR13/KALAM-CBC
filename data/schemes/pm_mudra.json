@@ -151,5 +151,9 @@
       "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
       "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री मुद्रा योजना",
+  "description": "Collateral-free loans for non-farm micro and small enterprises under three tiers: Shishu (up to ₹50,000 for new businesses), Kishore (₹50,001–₹5 lakh for expanding businesses), and Tarun/Tarun+ (₹5 lakh–₹20 lakh for well-established businesses). Available through all scheduled banks, MFIs, and NBFCs. No processing fee charged.",
+  "description_hindi": "छोटे और सूक्ष्म व्यवसाय के लिए बिना गिरवी के ऋण: शिशु (₹50,000 तक — नए व्यवसाय), किशोर (₹50,001–₹5 लाख — बढ़ते व्यवसाय), तरुण/तरुण+ (₹5 लाख–₹20 लाख — स्थापित व्यवसाय)। सभी बैंकों, MFI और NBFC से मिलता है। कोई प्रोसेसिंग शुल्क नहीं। खेती को छोड़कर सभी व्यवसायों के लिए।",
+  "benefit_summary_hindi": "₹50,000–₹20 लाख ऋण, बिना गिरवी, तीन चरणों में (शिशु, किशोर, तरुण)"
 }

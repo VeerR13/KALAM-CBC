@@ -145,5 +145,9 @@
       "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
       "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
     }
-  ]
+  ],
+  "full_name_hindi": "स्टैंड-अप इंडिया",
+  "description": "Bank loans of ₹10 lakh to ₹1 crore to at least one SC/ST borrower and at least one woman borrower per bank branch for setting up greenfield enterprises. The enterprise must be in manufacturing, services, or trading and the borrower must be setting up a new business (not a takeover or expansion). Repayment period up to 7 years.",
+  "description_hindi": "प्रत्येक बैंक शाखा से कम से कम एक SC/ST उद्यमी और एक महिला उद्यमी को ₹10 लाख से ₹1 करोड़ तक का ऋण नया व्यवसाय शुरू करने के लिए। उत्पादन, सेवा, या व्यापार क्षेत्र में नया उद्यम होना चाहिए। 7 साल तक की किस्त सुविधा।",
+  "benefit_summary_hindi": "₹10 लाख–₹1 करोड़ ऋण, SC/ST या महिला उद्यमी, नए उद्यम के लिए"
 }

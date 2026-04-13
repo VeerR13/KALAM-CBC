@@ -93,5 +93,9 @@
       "locator_url": null,
       "find_instruction": "Your village Gram Panchayat. Ask your Sarpanch for help."
     }
-  ]
+  ],
+  "full_name_hindi": "महात्मा गांधी राष्ट्रीय ग्रामीण रोज़गार गारंटी अधिनियम",
+  "description": "Guarantees at least 100 days of paid manual work per household per year in rural areas. Wages are paid directly to bank/post office accounts within 15 days. If work is not provided within 15 days of application, unemployment allowance is paid. Work is available on demand — no seasonal restriction.",
+  "description_hindi": "ग्रामीण क्षेत्र के हर परिवार को साल में कम से कम 100 दिन का गारंटीशुदा रोज़गार मिलता है। मजदूरी 15 दिनों के अंदर सीधे बैंक खाते में भेजी जाती है। अगर 15 दिनों में काम न मिले तो बेरोज़गारी भत्ता मिलता है। जॉब कार्ड मुफ़्त बनता है — ग्राम पंचायत में आवेदन करें। महिला मजदूरों को प्राथमिकता और समान वेतन मिलता है।",
+  "benefit_summary_hindi": "100 दिन/साल गारंटीशुदा काम, ₹220–262/दिन (राज्य अनुसार), मजदूरी सीधे खाते में"
 }

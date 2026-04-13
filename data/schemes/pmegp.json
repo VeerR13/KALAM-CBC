@@ -144,5 +144,9 @@
       "locator_url": "https://locator.csccloud.in",
       "find_instruction": "Find the nearest CSC at locator.csccloud.in"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री रोज़गार सृजन कार्यक्रम",
+  "description": "Subsidy-linked loan for setting up new micro-enterprises in manufacturing, service, or trading. Subsidy (called Margin Money) is 15% of project cost in urban areas and 25% in rural areas; for SC/ST/OBC/women/ex-servicemen the rate is 25% urban / 35% rural. Maximum project cost: ₹50 lakh (manufacturing), ₹20 lakh (service/trading). EDP training is mandatory before disbursement.",
+  "description_hindi": "नया उद्योग, व्यवसाय या सेवा उद्यम शुरू करने पर परियोजना लागत का 15–35% सब्सिडी (मार्जिन मनी) मिलती है। SC/ST, OBC, महिला, विकलांग उद्यमियों को अधिक सब्सिडी। अधिकतम परियोजना: ₹50 लाख (उत्पादन), ₹20 लाख (सेवा/व्यापार)। ऋण मिलने से पहले 2-सप्ताह का EDP प्रशिक्षण अनिवार्य।",
+  "benefit_summary_hindi": "परियोजना लागत का 15–35% सब्सिडी, अधिकतम ₹50 लाख (उत्पादन)"
 }

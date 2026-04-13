@@ -60,12 +60,37 @@
     <!-- TAB 1: Eligibility -->
     <div id="tab-eligibility" class="tab-panel active">
 
-        {% if result.benefit_summary %}
-        <div class="detail-section">
-            <div class="detail-section-title">What is this scheme? / यह योजना क्या है?</div>
-            <div class="benefit-box">{{ result.benefit_summary }}</div>
+        <!-- Scheme overview — bilingual -->
+        <div class="detail-section scheme-overview-card">
+            <div class="scheme-overview-header">
+                <div>
+                    <div class="scheme-overview-fullname">{{ scheme.full_name }}</div>
+                    {% if scheme.full_name_hindi %}<div class="scheme-overview-fullname-hi">{{ scheme.full_name_hindi }}</div>{% endif %}
+                </div>
+                <button class="speak-btn" data-speak="{% if scheme.description_hindi %}{{ scheme.description_hindi }}{% else %}{{ result.benefit_summary }}{% endif %}" aria-label="सुनें">🔊</button>
+            </div>
+
+            {% if scheme.description %}
+            <div class="scheme-desc-en">{{ scheme.description }}</div>
+            {% endif %}
+            {% if scheme.description_hindi %}
+            <div class="scheme-desc-hi">{{ scheme.description_hindi }}</div>
+            {% endif %}
+
+            <div class="scheme-benefit-row">
+                <div class="scheme-benefit-en">💰 {{ result.benefit_summary }}</div>
+                {% if scheme.benefit_summary_hindi %}
+                <div class="scheme-benefit-hi">💰 {{ scheme.benefit_summary_hindi }}</div>
+                {% endif %}
+            </div>
+
+            {% if scheme.target_description %}
+            <div class="scheme-target">
+                <span class="scheme-target-label">Who this is for / यह किसके लिए है:</span>
+                {{ scheme.target_description }}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
 
         <div class="detail-section">
             <div class="detail-section-title">
@@ -111,7 +136,7 @@
             <div class="detail-section-title">Apply these first / पहले यह करें</div>
             {% for prereq_id in result.prerequisite_scheme_ids %}
             <div class="order-item">
-                <div class="order-num">01</div>
+                <div class="order-num">{{ loop.index|string.zfill(2) if loop.index < 10 else loop.index }}</div>
                 <strong>{{ prereq_id.replace('_', ' ').upper() }}</strong>
             </div>
             {% endfor %}
@@ -126,9 +151,12 @@
         <div class="detail-section">
             <div class="detail-section-title">
                 Benefit summary / लाभ का विवरण
-                <button class="speak-btn" data-speak="{{ result.benefit_summary }}" aria-label="Listen">🔊</button>
+                <button class="speak-btn" data-speak="{% if scheme.benefit_summary_hindi %}{{ scheme.benefit_summary_hindi }}. {% endif %}{{ result.benefit_summary }}" aria-label="सुनें">🔊</button>
             </div>
             <div class="benefit-box">{{ result.benefit_summary }}</div>
+            {% if scheme.benefit_summary_hindi %}
+            <div class="benefit-box-hindi">{{ scheme.benefit_summary_hindi }}</div>
+            {% endif %}
         </div>
 
         {% if result.required_documents %}

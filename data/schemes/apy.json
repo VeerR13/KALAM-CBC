@@ -112,5 +112,9 @@
       "locator_url": "https://www.indiapost.gov.in/VAS/Pages/FindPinCode.aspx",
       "find_instruction": "Your nearest post office"
     }
-  ]
+  ],
+  "full_name_hindi": "अटल पेंशन योजना",
+  "description": "Pension savings scheme for unorganised sector workers aged 18–40. The subscriber chooses a pension of ₹1,000–₹5,000/month at age 60. Monthly contribution depends on age and chosen pension level — younger subscribers pay less. Government co-contributes 50% (up to ₹1,000/year) for those who joined before March 2016. In case of premature death, spouse gets the pension; after both die, nominee gets the corpus.",
+  "description_hindi": "18 से 40 वर्ष के असंगठित क्षेत्र के कामगार हर महीने छोटी राशि जमा करके 60 वर्ष की उम्र में ₹1,000–5,000/माह की गारंटीशुदा पेंशन पा सकते हैं। जितनी कम उम्र में खाता खुलवाएं, उतनी कम मासिक किस्त। पति/पत्नी की मृत्यु पर जीवनसाथी को पेंशन जारी रहती है। पेंशन की राशि और योगदान की किस्त का विकल्प आप चुनते हैं।",
+  "benefit_summary_hindi": "₹1,000–5,000/माह पेंशन, 60 वर्ष के बाद, जीवनभर गारंटीशुदा"
 }

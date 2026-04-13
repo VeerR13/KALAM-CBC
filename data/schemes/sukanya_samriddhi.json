@@ -118,5 +118,9 @@
       "locator_url": "https://www.rbi.org.in/Scripts/query.aspx",
       "find_instruction": "Any scheduled commercial bank (SBI, PNB, Bank of Baroda, etc.)"
     }
-  ]
+  ],
+  "full_name_hindi": "सुकन्या समृद्धि योजना",
+  "description": "High-interest savings account for a girl child below 10 years, operated by her parents/guardian. Interest rate: 8.2% per annum (highest among small savings schemes). Annual deposit: ₹250 minimum to ₹1.5 lakh maximum. Deposits eligible for tax deduction under Section 80C. Account matures 21 years from opening. Partial withdrawal allowed at age 18 for education.",
+  "description_hindi": "10 वर्ष से कम उम्र की बेटी के नाम पर पोस्ट ऑफिस या बैंक में खाता खुलता है। 8.2% सालाना ब्याज — सभी छोटी बचत योजनाओं में सबसे ज़्यादा। हर साल ₹250 से ₹1.5 लाख तक जमा। धारा 80C के तहत टैक्स छूट। खाता 21 साल बाद परिपक्व होता है। 18 साल की उम्र में पढ़ाई के लिए 50% निकाल सकते हैं।",
+  "benefit_summary_hindi": "8.2% ब्याज/साल — सबसे ऊँचा, टैक्स छूट, बेटी के भविष्य के लिए"
 }

@@ -144,5 +144,9 @@
       "locator_url": "https://locator.csccloud.in",
       "find_instruction": "Find the nearest CSC at locator.csccloud.in"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री आवास योजना — शहरी",
+  "description": "Urban housing assistance for EWS/LIG/MIG families through four verticals: in-situ slum redevelopment, affordable housing through credit-linked subsidy (home loan interest subsidy of 3–6.5%), partnership with private developers, and direct beneficiary-led construction. Covers first-time home buyers only.",
+  "description_hindi": "शहरी गरीब और मध्यम वर्ग के परिवारों के लिए पक्का घर बनाने या खरीदने पर सरकारी सहायता। होम लोन पर 3–6.5% तक ब्याज सब्सिडी मिलती है (क्रेडिट लिंक्ड सब्सिडी)। झुग्गी-बस्तियों का पुनर्निर्माण और किफायती मकानों का निर्माण भी इसमें शामिल है। पहली बार घर खरीदने वालों के लिए ही लागू।",
+  "benefit_summary_hindi": "होम लोन पर 3–6.5% ब्याज सब्सिडी या सीधी निर्माण सहायता"
 }

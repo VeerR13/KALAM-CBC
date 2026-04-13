@@ -138,5 +138,9 @@
       "locator_url": null,
       "find_instruction": "Block Development Office (BDO) in your block or tehsil"
     }
-  ]
+  ],
+  "full_name_hindi": "इंदिरा गांधी राष्ट्रीय विकलांगता पेंशन योजना",
+  "description": "Monthly pension for BPL persons with severe disability (80%+ disability certificate) aged 18–79. Central contribution is ₹300/month. At 80, transitions to IGNOAPS. States provide additional top-ups. A valid disability certificate from a government hospital or medical board is required.",
+  "description_hindi": "18 से 79 वर्ष के BPL व्यक्ति जिनकी विकलांगता 80% या उससे अधिक है, उन्हें ₹300/माह पेंशन मिलती है। सरकारी अस्पताल या मेडिकल बोर्ड से विकलांगता प्रमाण पत्र ज़रूरी है। 80 वर्ष की आयु पर IGNOAPS में बदल जाती है। राज्य सरकार अतिरिक्त राशि जोड़ सकती है।",
+  "benefit_summary_hindi": "₹300/माह (केंद्र) + राज्य टॉप-अप, 80%+ विकलांगता, BPL"
 }

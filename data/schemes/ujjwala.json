@@ -157,5 +157,9 @@
       "locator_url": "https://www.mylpg.in",
       "find_instruction": "Your nearest LPG distributor (HP Gas, Indane, or Bharat Gas)"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री उज्ज्वला योजना 2.0",
+  "description": "Free LPG connection for women from BPL/SC/ST/PM-KISAN/MGNREGA beneficiary households who do not already have a connection. Includes security deposit waiver, free regulator, free first refill, and access to installation. Migrant workers do not need address proof from the place of origin.",
+  "description_hindi": "BPL, SC/ST, PM-KISAN, MGNREGA लाभार्थी परिवारों की महिलाओं को मुफ़्त LPG गैस कनेक्शन मिलता है। सिक्योरिटी डिपॉजिट माफ, मुफ़्त रेगुलेटर और पहला सिलेंडर मुफ़्त। प्रवासी मजदूरों को अपने मूल गाँव का पता प्रमाण देने की ज़रूरत नहीं। किसी भी HP, Indane, या Bharat Gas वितरक के पास जाएं।",
+  "benefit_summary_hindi": "मुफ़्त LPG कनेक्शन + पहला सिलेंडर मुफ़्त + सिक्योरिटी डिपॉजिट माफ"
 }

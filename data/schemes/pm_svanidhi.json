@@ -139,5 +139,9 @@
       "locator_url": "https://locator.csccloud.in",
       "find_instruction": "Find the nearest CSC at locator.csccloud.in"
     }
-  ]
+  ],
+  "full_name_hindi": "प्रधानमंत्री स्वनिधि",
+  "description": "Working capital loans for urban street vendors. First loan: ₹10,000 (repayable in 12 months). On timely repayment, enhanced loans: ₹20,000 then ₹50,000. No collateral required. Digital transactions earn an incentive of up to ₹1,200/year. Vendors must have a vendor certificate or letter of recommendation from ULB.",
+  "description_hindi": "शहरी रेहड़ी-पटरी और फेरी वाले विक्रेताओं को बिना किसी गिरवी के ₹10,000 का कर्ज मिलता है। समय पर चुकाने पर ₹20,000, फिर ₹50,000 तक ऋण मिलता है। UPI/डिजिटल लेनदेन करने पर हर साल ₹1,200 तक का कैशबैक। नगर निगम का विक्रेता प्रमाण पत्र या सिफारिश पत्र ज़रूरी है।",
+  "benefit_summary_hindi": "₹10,000 (पहला), ₹20,000 (दूसरा), ₹50,000 (तीसरा) — बिना गिरवी के"
 }
