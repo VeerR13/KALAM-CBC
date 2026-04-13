@@ -4,6 +4,8 @@
 {% block content %}
 
 {# ── helpers ── #}
+{% macro conf_color(pct) %}{% if pct >= 80 %}var(--eligible){% elif pct >= 60 %}var(--likely){% elif pct >= 40 %}var(--ambiguous){% else %}var(--text-muted){% endif %}{% endmacro %}
+
 {% macro status_badge(status) %}
     {% if status.value == 'ELIGIBLE' %}<span class="badge badge-eligible">🟢 Mil sakta hai</span>
     {% elif status.value == 'LIKELY_ELIGIBLE' %}<span class="badge badge-likely">🟡 Shayad mile</span>
@@ -16,6 +18,7 @@
 {% macro rule_char(result) %}{% if result.value == 'PASS' %}✓{% elif result.value == 'FAIL' %}✗{% elif result.value == 'AMBIGUOUS' %}~{% else %}?{% endif %}{% endmacro %}
 
 {% macro scheme_card(r, show_detail=true) %}
+{% set pct = r.confidence | round | int %}
 {% set ben = benefits.get(r.scheme_id) %}
 <div class="scheme-card" data-status="{{ r.status.value.lower() }}">
     <div class="card-row">
@@ -42,6 +45,10 @@
         </div>
         <div class="card-right">
             {{ status_badge(r.status) }}
+            <div class="conf-row">
+                <div class="confidence-bar"><div class="confidence-fill" style="width:{{ pct }}%;background:{{ conf_color(pct) }}"></div></div>
+                <span class="conf-pct">{{ pct }}%</span>
+            </div>
         </div>
     </div>
     {% if show_detail %}
