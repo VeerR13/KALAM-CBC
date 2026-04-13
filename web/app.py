@@ -436,10 +436,15 @@ def _office_script(profile: UserProfile, scheme: Scheme, needs_docs: list = None
         (f"{name_hindi} में आवेदन करना है।", f"{scheme.name} mein aavedan karna hai."),
     )
 
+    # Gender-inflected verb: female → आई/aayi, everyone else → आया/aaya
+    is_female = (profile.gender or "").upper() == "F"
+    aaya_hi = "आई" if is_female else "आया"
+    aaya_hl = "aayi" if is_female else "aaya"
+
     # Build greeting — personalised if name provided
     if applicant_name and applicant_village:
-        greet_hi = f"नमस्ते, मेरा नाम {applicant_name} है, मैं {applicant_village} से आया/आई हूँ।"
-        greet_hl = f"Namaskar, mera naam {applicant_name} hai, main {applicant_village} se aaya/aayi hoon."
+        greet_hi = f"नमस्ते, मेरा नाम {applicant_name} है, मैं {applicant_village} से {aaya_hi} हूँ।"
+        greet_hl = f"Namaskar, mera naam {applicant_name} hai, main {applicant_village} se {aaya_hl} hoon."
     elif applicant_name:
         greet_hi = f"नमस्ते, मेरा नाम {applicant_name} है।"
         greet_hl = f"Namaskar, mera naam {applicant_name} hai."
@@ -530,6 +535,7 @@ async def scheme_detail(request: Request, scheme_id: str):
         "needs_docs": needs_docs,
         "office_script_hindi": scripts["hindi"],
         "office_script_hinglish": scripts["hinglish"],
+        "profile_gender": (profile.gender or "").upper(),
     })
 
 

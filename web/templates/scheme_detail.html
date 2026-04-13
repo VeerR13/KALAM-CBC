@@ -370,6 +370,10 @@ function speakScript(text) {
 // Real-time office script personalisation
 const BASE_HL = document.getElementById('script-hl-text')?.textContent || '';
 const BASE_HI = document.getElementById('script-hi-text')?.textContent || '';
+const PROFILE_GENDER = "{{ profile_gender }}";
+const _isF = PROFILE_GENDER === 'F';
+const _aayaHI = _isF ? 'आई' : 'आया';
+const _aayaHL = _isF ? 'aayi' : 'aaya';
 
 function _rebuildScript() {
     const name = (document.getElementById('script-name-inp')?.value || '').trim();
@@ -377,8 +381,8 @@ function _rebuildScript() {
 
     let greetHI, greetHL;
     if (name && village) {
-        greetHI = `नमस्ते, मेरा नाम ${name} है, मैं ${village} से आया/आई हूँ।`;
-        greetHL = `Namaskar, mera naam ${name} hai, main ${village} se aaya/aayi hoon.`;
+        greetHI = `नमस्ते, मेरा नाम ${name} है, मैं ${village} से ${_aayaHI} हूँ।`;
+        greetHL = `Namaskar, mera naam ${name} hai, main ${village} se ${_aayaHL} hoon.`;
     } else if (name) {
         greetHI = `नमस्ते, मेरा नाम ${name} है।`;
         greetHL = `Namaskar, mera naam ${name} hai.`;
