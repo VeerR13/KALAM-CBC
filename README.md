@@ -1,8 +1,29 @@
-# Kalam — Welfare Scheme Eligibility Engine
+# कलम · Kalam — Welfare Scheme Eligibility Engine
 
-Find which Indian government welfare schemes you qualify for. Input a profile; get eligibility results, benefit amounts, document checklists, and step-by-step application guidance for 20 schemes.
+> **आपके लिए कौन सी सरकारी योजना है?** · Which government schemes do you qualify for?
+
+[![Tests](https://img.shields.io/badge/tests-92%20passing-brightgreen)](#)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
+[![Deploy](https://img.shields.io/badge/deployed%20on-Render-46E3B7)](#)
+
+Find which Indian government welfare schemes you qualify for. Answer 5 short questions → get eligibility results, benefit amounts, personalised document checklists, Hindi office-visit scripts, and step-by-step application guidance for 20 schemes.
 
 **No API key required. No sign-up. Works with partial information.**
+
+---
+
+## Live demo
+
+The app is deployed at: [https://kalam.onrender.com](https://kalam.onrender.com) *(Render free tier — may take 30s to wake)*
+
+---
+
+## Screenshots
+
+| Landing | Form | Results |
+|:---:|:---:|:---:|
+| Hindi-first landing page with scheme stats | 5-step profile form, works on mobile | Confidence bars, Hindi scripts, speak buttons |
 
 ---
 

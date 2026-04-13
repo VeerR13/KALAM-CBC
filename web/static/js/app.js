@@ -52,7 +52,7 @@ function speakHindi(text) {
     if (!cleaned) return;
     const u = new SpeechSynthesisUtterance(cleaned);
     u.lang = 'hi-IN';
-    u.rate = 0.88;
+    u.rate = 0.78;
     u.pitch = 1.05;
     if (_hindiVoice) u.voice = _hindiVoice;
     window.speechSynthesis.speak(u);

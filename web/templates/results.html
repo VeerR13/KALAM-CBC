@@ -357,7 +357,6 @@
             <div class="ix-header">
                 <span class="ix-severity-dot"></span>
                 <strong>{{ ix.title }}</strong>
-                <button class="speak-btn" data-speak="{{ ix.title }}. {{ ix.description }}" aria-label="सुनें">🔊</button>
             </div>
             <p class="ix-desc">{{ ix.description }}</p>
             {% if ix.recommendation %}
@@ -371,9 +370,7 @@
     <!-- ── Sensitivity Analysis ────────────────────────────────────────────── -->
     {% if sensitivity_flags %}
     <div class="sensitivity-section">
-        <h3>⚠️ Things to watch out for · ध्यान रखें
-            <button class="speak-btn" data-speak="ध्यान रखें। आपकी स्थिति बदली तो इन योजनाओं पर असर पड़ सकता है।" aria-label="सुनें">🔊</button>
-        </h3>
+        <h3>⚠️ Things to watch out for · ध्यान रखें</h3>
         <p class="sensitivity-intro">These results could change if your situation changes slightly:</p>
         {% for flag in sensitivity_flags[:6] %}
         <div class="sensitivity-flag {% if flag.is_opportunity %}flag-opportunity{% else %}flag-warning{% endif %}">
@@ -390,9 +387,7 @@
     <!-- ── Life Event Projector ─────────────────────────────────────────────── -->
     {% if life_events %}
     <div class="life-events-section">
-        <h3>🔮 Coming up · आगे क्या होगा
-            <button class="speak-btn" data-speak="आगे क्या होगा। उम्र बढ़ने पर इन योजनाओं में बदलाव होगा।" aria-label="सुनें">🔊</button>
-        </h3>
+        <h3>🔮 Coming up · आगे क्या होगा</h3>
         <p class="le-intro">Based on your age, here's what changes in the next few years:</p>
         {% set deadlines = life_events | selectattr('is_deadline') | list %}
         {% set opportunities = life_events | selectattr('is_opportunity') | list %}
@@ -473,21 +468,7 @@
 <script>
 const PROFILE_DICT = {{ profile_dict | tojson }};
 
-// ── Audio (Web Speech API) ───────────────────────────────────────────────────
-function speakHindi(text) {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'hi-IN';
-    u.rate = 0.85;
-    window.speechSynthesis.speak(u);
-}
-document.querySelectorAll('.speak-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-        e.stopPropagation();
-        speakHindi(btn.getAttribute('data-speak') || '');
-    });
-});
+// speakHindi() and speak-btn wiring are in app.js (loaded before this block)
 
 function toggleSection(btn) {
     const body = btn.closest('.results-section').querySelector('.section-body');

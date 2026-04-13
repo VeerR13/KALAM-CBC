@@ -95,7 +95,6 @@
         <div class="detail-section">
             <div class="detail-section-title">
                 Your eligibility breakdown / आपकी योग्यता का विवरण
-                <button class="speak-btn" data-speak="Eligibility breakdown for {{ scheme.name }}. {% for ev in result.rule_evaluations %}{{ ev.rule_id }}: {{ ev.explanation or ev.rule_id }}. {% endfor %}" aria-label="Listen">🔊</button>
             </div>
             {% for ev in result.rule_evaluations %}
             <div class="rule-detail-item">
@@ -219,7 +218,6 @@
         <div class="apply-card">
             <div class="apply-card-title">
                 📋 What to bring / क्या लेकर जाएं
-                <button class="speak-btn" data-speak="Documents you already have: {% for d in has_docs %}{{ d }}. {% endfor %} Documents you still need: {% for d in needs_docs %}{{ d.name }}. {% endfor %}" aria-label="Listen">🔊</button>
             </div>
 
             {% if has_docs %}{% for doc_name in has_docs %}
