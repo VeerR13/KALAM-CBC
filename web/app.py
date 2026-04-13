@@ -1,6 +1,5 @@
 """Kalam Web — FastAPI application."""
 import json
-import os
 import re
 from pathlib import Path
 from typing import Optional
@@ -11,9 +10,6 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from dotenv import load_dotenv
-
-load_dotenv()
 
 from src.engine.benefit_calculator import calculate_benefit
 from src.engine.bureaucratic_distance import BureaucraticDistanceCalculator
@@ -385,67 +381,9 @@ async def chat_api(request: Request):
     message: str = body.get("message", "")
     profile: dict = body.get("profile", {})
     turn: int = body.get("turn", 0)
-
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
-        # Fallback: basic keyword extraction
-        extracted = _chat_regex_extract(message)
-        reply = _chat_fallback_reply(extracted, profile, turn)
-        return JSONResponse({"reply": reply, "extracted": extracted})
-
-    try:
-        from anthropic import Anthropic
-        client = Anthropic(api_key=api_key)
-
-        known = {k: v for k, v in profile.items() if v is not None and v != ""}
-        context = []
-        if known:
-            context.append(f"Already collected: {json.dumps(known, ensure_ascii=False)}")
-        context.append(f"User just said: {message}")
-
-        system = """You are a friendly government welfare eligibility assistant for India. Speak a mix of Hindi and English (Hinglish is fine).
-
-Your job has two parts:
-1. Extract any profile fields the user mentioned and return them in extracted_fields JSON.
-2. Ask a natural follow-up question to collect what's still missing — keep it conversational, not like a form.
-
-Priority fields (collect in order): age, state, is_urban (village/city), caste_category (General/OBC/SC/ST), annual_income, occupation, family_size, has_aadhaar, has_bank_account.
-
-VALID VALUES:
-- gender: "M" | "F" | "Transgender"
-- caste_category: "General" | "OBC" | "SC" | "ST"
-- is_urban (bool): true=city, false=village
-- land_ownership: "owns" | "leases" | "sharecrop" | "none"
-- marital_status: "unmarried" | "married" | "widowed" | "divorced"
-- Boolean: has_bank_account, has_aadhaar, is_aadhaar_linked, is_govt_employee, is_income_tax_payer, is_epf_member
-- Integer: age, annual_income, family_size
-- State: full name e.g. "Uttar Pradesh"
-
-Return exactly this JSON:
-{
-  "extracted_fields": { ...only what user mentioned... },
-  "reply": "Your friendly follow-up message (1-2 sentences, mix Hindi+English)"
-}"""
-
-        resp = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=300,
-            system=system,
-            messages=[{"role": "user", "content": "\n".join(context)}],
-        )
-        text = resp.content[0].text.strip()
-        if text.startswith("```"):
-            text = re.sub(r"^```(?:json)?\s*", "", text)
-            text = re.sub(r"\s*```$", "", text)
-        result = json.loads(text)
-        return JSONResponse({
-            "reply": result.get("reply", "Theek hai! Kuch aur batayein."),
-            "extracted": result.get("extracted_fields", {}),
-        })
-    except Exception as exc:
-        extracted = _chat_regex_extract(message)
-        reply = _chat_fallback_reply(extracted, profile, turn)
-        return JSONResponse({"reply": reply, "extracted": extracted})
+    extracted = _chat_regex_extract(message)
+    reply = _chat_fallback_reply(extracted, profile, turn)
+    return JSONResponse({"reply": reply, "extracted": extracted})
 
 
 def _chat_regex_extract(message: str) -> dict:
@@ -490,48 +428,6 @@ def _chat_fallback_reply(extracted: dict, profile: dict, turn: int) -> str:
     return missing[0] if missing else "Kuch aur batayein apne baare mein?"
 
 
-@app.post("/api/parse-voice", response_class=JSONResponse)
-async def parse_voice(request: Request):
-    """Parse a spoken Hindi/Hinglish sentence into profile fields."""
-    body = await request.json()
-    text: str = body.get("text", "")
-    if not text:
-        return JSONResponse({"fields": {}, "summary_hindi": ""})
-
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if api_key:
-        try:
-            from anthropic import Anthropic
-            client = Anthropic(api_key=api_key)
-            resp = client.messages.create(
-                model="claude-haiku-4-5-20251001",
-                max_tokens=200,
-                system="""Extract profile fields from the Hindi/Hinglish sentence.
-Return JSON only:
-{"fields": {"age": int|null, "state": str|null, "gender": "M"|"F"|"Transgender"|null,
- "caste_category": "General"|"OBC"|"SC"|"ST"|null,
- "is_urban": true|false|null, "marital_status": "unmarried"|"married"|"widowed"|"divorced"|null,
- "occupation": str|null, "annual_income": int|null,
- "has_aadhaar": true|false|null, "has_bank_account": true|false|null,
- "family_size": int|null},
-"summary_hindi": "one-line Hindi summary of what was understood"}
-Only include fields explicitly mentioned. Null = not mentioned.""",
-                messages=[{"role": "user", "content": text}],
-            )
-            raw = resp.content[0].text.strip()
-            if raw.startswith("```"):
-                raw = re.sub(r"^```(?:json)?\s*", "", raw)
-                raw = re.sub(r"\s*```$", "", raw)
-            return JSONResponse(json.loads(raw))
-        except Exception:
-            pass
-
-    # Fallback: reuse the regex extractor
-    extracted = _chat_regex_extract(text)
-    return JSONResponse({
-        "fields": extracted,
-        "summary_hindi": f"Samjha: {', '.join(f'{k}={v}' for k, v in extracted.items())}",
-    })
 
 
 @app.get("/checklist", response_class=HTMLResponse)

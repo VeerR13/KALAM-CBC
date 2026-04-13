@@ -4,8 +4,6 @@
 {% block content %}
 
 {# ── helpers ── #}
-{% macro conf_color(pct) %}{% if pct >= 80 %}var(--eligible){% elif pct >= 60 %}var(--likely){% elif pct >= 40 %}var(--ambiguous){% else %}var(--text-muted){% endif %}{% endmacro %}
-
 {% macro status_badge(status) %}
     {% if status.value == 'ELIGIBLE' %}<span class="badge badge-eligible">🟢 Mil sakta hai</span>
     {% elif status.value == 'LIKELY_ELIGIBLE' %}<span class="badge badge-likely">🟡 Shayad mile</span>
@@ -18,7 +16,6 @@
 {% macro rule_char(result) %}{% if result.value == 'PASS' %}✓{% elif result.value == 'FAIL' %}✗{% elif result.value == 'AMBIGUOUS' %}~{% else %}?{% endif %}{% endmacro %}
 
 {% macro scheme_card(r, show_detail=true) %}
-{% set pct = r.confidence | round | int %}
 {% set ben = benefits.get(r.scheme_id) %}
 <div class="scheme-card" data-status="{{ r.status.value.lower() }}">
     <div class="card-row">
@@ -36,18 +33,15 @@
             {% endif %}
             {% set dist = distances.get(r.scheme_id) %}
             {% if dist %}
-            <div class="difficulty-badge difficulty-{{ dist.difficulty_label }}">
-                📊 {{ dist.difficulty_label | capitalize }} · {{ dist.score }} pts
-                {% if dist.unmet_prerequisites %}· needs {{ dist.unmet_prerequisites | join(', ') }} first{% endif %}
+            <div class="doc-status">
+                {% if dist.can_apply_online %}✅ Apply online{% else %}📍 Office visit needed{% endif %}
+                {% if dist.missing_docs %} &nbsp;·&nbsp; 📄 {{ dist.missing_docs|length }} doc{{ 's' if dist.missing_docs|length != 1 }} to collect{% endif %}
+                {% if dist.unmet_prerequisites %} &nbsp;·&nbsp; ⚠️ Apply {{ dist.unmet_prerequisites | join(', ') }} first{% endif %}
             </div>
             {% endif %}
         </div>
         <div class="card-right">
             {{ status_badge(r.status) }}
-            <div class="conf-row">
-                <div class="confidence-bar"><div class="confidence-fill" style="width:{{ pct }}%;background:{{ conf_color(pct) }}"></div></div>
-                <span class="conf-pct">{{ pct }}%</span>
-            </div>
         </div>
     </div>
     {% if show_detail %}
@@ -516,7 +510,7 @@ async function recheckScheme(schemeId) {
         const data = await resp.json();
         const statusColors = { ELIGIBLE: 'var(--eligible)', LIKELY_ELIGIBLE: 'var(--likely)', AMBIGUOUS: 'var(--ambiguous)', INELIGIBLE: 'var(--ineligible)', INSUFFICIENT_DATA: 'var(--needinfo)' };
         const labels = { ELIGIBLE: '✅ Eligible!', LIKELY_ELIGIBLE: '🟡 Likely eligible', AMBIGUOUS: '🟠 Unclear', INELIGIBLE: '❌ Not eligible', INSUFFICIENT_DATA: '⬜ Still need more info' };
-        resultEl.textContent = (labels[data.status] || data.status) + (data.confidence ? ' — ' + data.confidence + '%' : '');
+        resultEl.textContent = labels[data.status] || data.status;
         resultEl.style.color = statusColors[data.status] || 'var(--text)';
     } catch (e) {
         resultEl.textContent = 'Error — please try again';
