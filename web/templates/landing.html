@@ -1,41 +1,247 @@
 {% extends "base.html" %}
-{% block title %}Kalam — Sarkari Yojanaein{% endblock %}
+{% block title %}Kalam — सरकारी योजनाएं{% endblock %}
 
 {% block content %}
 
-<div class="hero">
-    <h1>Kalam</h1>
-    <p class="hero-hi">कलाम</p>
-    <p class="hero-tagline">Find government schemes you're eligible for</p>
-    <p class="hero-tagline-sub">आपके लिए सरकारी योजनाएं खोजें &nbsp;·&nbsp; Answer a few questions. We check 20 schemes.</p>
-
-    <a href="/details" class="btn-cta">Check my eligibility →<br><small style="font-size:0.78em;font-weight:400;opacity:0.85">अपनी पात्रता जांचें</small></a>
-
-    <div class="hero-meta">
-        <span>Free · मुफ़्त</span>
-        <span class="hero-meta-dot"></span>
-        <span>No sign-up · बिना रजिस्ट्रेशन</span>
-        <span class="hero-meta-dot"></span>
-        <span>Works with partial info</span>
+<!-- ── HERO ────────────────────────────────────────────────────────────────── -->
+<section class="hero">
+    <div class="hero-gov-badge">
+        <span class="hero-gov-emblem">☸</span>
+        भारत सरकार · Government of India
     </div>
-</div>
 
+    <h1>Kalam <span class="hero-h1-hi">· कलाम</span></h1>
+    <p class="hero-tagline-hi">आपके लिए सरकारी योजनाएं खोजें</p>
+    <p class="hero-tagline-en">Find which government schemes you qualify for</p>
+
+    <!-- Stat counters -->
+    <div class="stat-strip">
+        <div class="stat-item">
+            <div class="stat-num">20</div>
+            <div class="stat-label-hi">सरकारी योजनाएं</div>
+            <div class="stat-label-en">government schemes</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <div class="stat-num">₹6 लाख+</div>
+            <div class="stat-label-hi">संभावित सालाना फायदा</div>
+            <div class="stat-label-en">potential annual benefits</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <div class="stat-num">2 मिनट</div>
+            <div class="stat-label-hi">में पता करें</div>
+            <div class="stat-label-en">to find out</div>
+        </div>
+    </div>
+
+    <a href="/details" class="btn-cta">
+        <span class="btn-cta-hi">अपनी पात्रता जांचें →</span>
+        <small class="btn-cta-en">Check my eligibility</small>
+    </a>
+
+    <!-- Trust strip -->
+    <div class="trust-strip">
+        <div class="trust-main">सरकारी आंकड़ों पर आधारित · Based on official government data</div>
+        <div class="trust-sources">PM-KISAN guidelines · NSAP guidelines · PMAY-U 2.0 Sept 2024 · and 17 more official documents</div>
+    </div>
+</section>
+
+<!-- ── SCHEME LOGOS ─────────────────────────────────────────────────────────── -->
+<section class="logo-strip-section">
+    <div class="logo-strip">
+        <div class="logo-badge">
+            <span class="logo-icon">🌾</span>
+            <div class="logo-text">
+                <div class="logo-name">PM-KISAN</div>
+                <div class="logo-ministry">कृषि मंत्रालय</div>
+            </div>
+        </div>
+        <div class="logo-sep">·</div>
+        <div class="logo-badge">
+            <span class="logo-icon">🏥</span>
+            <div class="logo-text">
+                <div class="logo-name">Ayushman Bharat</div>
+                <div class="logo-ministry">स्वास्थ्य मंत्रालय</div>
+            </div>
+        </div>
+        <div class="logo-sep">·</div>
+        <div class="logo-badge">
+            <span class="logo-icon">🏠</span>
+            <div class="logo-text">
+                <div class="logo-name">PMAY</div>
+                <div class="logo-ministry">आवास मंत्रालय</div>
+            </div>
+        </div>
+        <div class="logo-sep">·</div>
+        <div class="logo-badge">
+            <span class="logo-icon">⛏️</span>
+            <div class="logo-text">
+                <div class="logo-name">MGNREGA</div>
+                <div class="logo-ministry">ग्रामीण विकास</div>
+            </div>
+        </div>
+        <div class="logo-sep">·</div>
+        <div class="logo-badge">
+            <span class="logo-icon">🔥</span>
+            <div class="logo-text">
+                <div class="logo-name">Ujjwala</div>
+                <div class="logo-ministry">पेट्रोलियम मंत्रालय</div>
+            </div>
+        </div>
+        <div class="logo-sep">·</div>
+        <div class="logo-badge">
+            <span class="logo-icon">💻</span>
+            <div class="logo-text">
+                <div class="logo-name">Digital India</div>
+                <div class="logo-ministry">MeitY</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── HOW IT WORKS ────────────────────────────────────────────────────────── -->
+<section class="how-section">
+    <div class="how-inner">
+        <h2 class="how-heading">
+            <span class="how-heading-hi">कैसे काम करता है?</span>
+            <span class="how-heading-en">How it works</span>
+        </h2>
+        <div class="how-steps">
+            <div class="how-step">
+                <div class="how-icon-wrap">
+                    <span class="how-icon">📝</span>
+                </div>
+                <div class="how-text">
+                    <div class="how-title-hi">सवालों के जवाब दें</div>
+                    <div class="how-title-en">Answer simple questions</div>
+                    <div class="how-desc">2 मिनट लगते हैं। जो नहीं पता, वो छोड़ दें। Takes 2 minutes. Skip what you don't know.</div>
+                </div>
+            </div>
+            <div class="how-connector">↓</div>
+            <div class="how-step">
+                <div class="how-icon-wrap">
+                    <span class="how-icon">⚡</span>
+                </div>
+                <div class="how-text">
+                    <div class="how-title-hi">हम 20 योजनाएं जांचते हैं</div>
+                    <div class="how-title-en">We check 20 schemes instantly</div>
+                    <div class="how-desc">पात्रता, भरोसे का स्कोर, और सटीक फायदे। Eligibility, confidence score, and exact benefits.</div>
+                </div>
+            </div>
+            <div class="how-connector">↓</div>
+            <div class="how-step">
+                <div class="how-icon-wrap">
+                    <span class="how-icon">📋</span>
+                </div>
+                <div class="how-text">
+                    <div class="how-title-hi">अपना प्लान पाएं</div>
+                    <div class="how-title-en">Get your personalised plan</div>
+                    <div class="how-desc">कौन सी योजना, कौन से कागज़, कौन सा दफ्तर, किस क्रम में। Which schemes, which documents, which office, what order.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── EXAMPLE PREVIEW ─────────────────────────────────────────────────────── -->
+<section class="preview-section">
+    <div class="preview-inner">
+        <div class="preview-eyebrow">उदाहरण · Example · Rajasthan के एक किसान का नतीजा</div>
+        <div class="preview-card" aria-label="Example result preview">
+            <div class="preview-watermark">उदाहरण</div>
+
+            <div class="preview-row">
+                <div class="preview-left">
+                    <span class="preview-emoji">🌾</span>
+                    <div>
+                        <div class="preview-scheme-name">PM-KISAN</div>
+                        <div class="preview-benefit-amt">₹6,000/साल · per year</div>
+                    </div>
+                </div>
+                <div class="preview-right">
+                    <span class="prev-badge prev-eligible">✅ पात्र</span>
+                    <div class="prev-bar-row">
+                        <div class="prev-bar-track"><div class="prev-bar-fill eligible" style="width:92%"></div></div>
+                        <span class="prev-pct">92%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-divider"></div>
+
+            <div class="preview-row">
+                <div class="preview-left">
+                    <span class="preview-emoji">🏥</span>
+                    <div>
+                        <div class="preview-scheme-name">Ayushman Bharat</div>
+                        <div class="preview-benefit-amt">₹5,00,000 स्वास्थ्य बीमा</div>
+                    </div>
+                </div>
+                <div class="preview-right">
+                    <span class="prev-badge prev-likely">🟡 संभावित</span>
+                    <div class="prev-bar-row">
+                        <div class="prev-bar-track"><div class="prev-bar-fill likely" style="width:78%"></div></div>
+                        <span class="prev-pct">78%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-divider"></div>
+
+            <div class="preview-row">
+                <div class="preview-left">
+                    <span class="preview-emoji">⛏️</span>
+                    <div>
+                        <div class="preview-scheme-name">MGNREGA</div>
+                        <div class="preview-benefit-amt">100 दिन गारंटी काम</div>
+                    </div>
+                </div>
+                <div class="preview-right">
+                    <span class="prev-badge prev-eligible">✅ पात्र</span>
+                    <div class="prev-bar-row">
+                        <div class="prev-bar-track"><div class="prev-bar-fill eligible" style="width:100%"></div></div>
+                        <span class="prev-pct">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="preview-note">यह एक उदाहरण है — असली नतीजे आपकी जानकारी पर निर्भर होंगे · This is a sample result, not live data</div>
+    </div>
+</section>
+
+<!-- ── FEATURE CARDS ───────────────────────────────────────────────────────── -->
 <div class="feature-grid">
     <div class="feature-card">
         <div class="feature-icon">📋</div>
-        <div class="feature-title">20 Schemes · 20 योजनाएं</div>
-        <div class="feature-desc">Central government welfare — PM-KISAN, MGNREGA, Ayushman Bharat, PMAY, and more.</div>
+        <div class="feature-title-hi">20 योजनाएं</div>
+        <div class="feature-title">20 Schemes</div>
+        <div class="feature-desc">केंद्र सरकार की योजनाएं — PM-KISAN, MGNREGA, Ayushman Bharat, PMAY, और बहुत कुछ।</div>
     </div>
     <div class="feature-card">
         <div class="feature-icon">🔍</div>
-        <div class="feature-title">Smart Matching · स्मार्ट मिलान</div>
-        <div class="feature-desc">Shows what you qualify for, what's unclear, and exactly why — no black boxes.</div>
+        <div class="feature-title-hi">स्मार्ट मिलान</div>
+        <div class="feature-title">Smart Matching</div>
+        <div class="feature-desc">क्या मिलता है, क्या अस्पष्ट है, और क्यों — कोई ब्लैक बॉक्स नहीं।</div>
     </div>
     <div class="feature-card">
         <div class="feature-icon">📄</div>
-        <div class="feature-title">Document Checklist · दस्तावेज़ सूची</div>
-        <div class="feature-desc">Exactly which documents to get, where to get them, and which order to apply.</div>
+        <div class="feature-title-hi">दस्तावेज़ सूची</div>
+        <div class="feature-title">Document Checklist</div>
+        <div class="feature-desc">कौन से कागज़ चाहिए, कहाँ से मिलेंगे, और किस क्रम में आवेदन करें।</div>
     </div>
 </div>
+
+<!-- ── BOTTOM CTA ──────────────────────────────────────────────────────────── -->
+<section class="bottom-cta-section">
+    <a href="/details" class="btn-cta btn-cta-large">
+        <span class="btn-cta-hi">अपनी पात्रता जांचें →</span>
+        <small class="btn-cta-en">Check my eligibility</small>
+    </a>
+    <div class="bottom-assurance">
+        मुफ़्त &nbsp;·&nbsp; कोई रजिस्ट्रेशन नहीं &nbsp;·&nbsp; डेटा सेव नहीं होता<br>
+        <span style="font-size:0.82rem;opacity:0.7">Free · No sign-up · No data stored</span>
+    </div>
+</section>
 
 {% endblock %}
