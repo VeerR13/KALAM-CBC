@@ -1,0 +1,10 @@
+{
+  "profile_id": "edge_03_no_bank_account",
+  "notes": "No bank account blocks DBT schemes; PMJDY itself is ELIGIBLE",
+  "expected_results": {
+    "pmjdy": {"status": "ELIGIBLE"},
+    "pm_kisan": {"status": "INELIGIBLE", "reason": "is_aadhaar_linked=false"},
+    "mgnrega": {"status": "ELIGIBLE"},
+    "pm_sym": {"status": "INELIGIBLE", "reason": "no bank account"}
+  }
+}

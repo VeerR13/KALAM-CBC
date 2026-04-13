@@ -1,0 +1,7 @@
+{
+  "age": 35, "state": "Tamil Nadu", "is_urban": true, "caste_category": "OBC",
+  "gender": "Transgender", "annual_income": 30000, "occupation": "informal_trade",
+  "family_size": 1, "has_bank_account": true, "has_aadhaar": true,
+  "is_aadhaar_linked": true, "has_ration_card": "AAY",
+  "is_govt_employee": false, "is_income_tax_payer": false
+}

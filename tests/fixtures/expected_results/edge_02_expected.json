@@ -1,0 +1,10 @@
+{
+  "profile_id": "edge_02_leased_farmer",
+  "notes": "Leased land is AMBIGUOUS for PM-KISAN — not clearly included or excluded",
+  "expected_results": {
+    "pm_kisan": {"status": "AMBIGUOUS", "key_flags": ["AMB-01: leased land"]},
+    "mgnrega": {"status": "ELIGIBLE"},
+    "ayushman_bharat": {"status": "ELIGIBLE"},
+    "nfsa": {"status": "ELIGIBLE"}
+  }
+}

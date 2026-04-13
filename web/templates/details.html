@@ -1,0 +1,611 @@
+{% extends "base.html" %}
+{% block title %}Your Details — Kalam{% endblock %}
+
+{% block content %}
+<div class="form-page">
+<div class="form-inner">
+
+    <!-- Voice input -->
+    <div class="mic-section">
+        <button id="mic-btn" class="mic-button" type="button" style="display:none" aria-label="Speak your details">🎤</button>
+        <p class="mic-label">Apni details bolein · Speak your details</p>
+        <p id="voice-status" style="display:none" class="voice-status"></p>
+    </div>
+
+    <!-- Step progress indicator -->
+    <div class="step-progress" id="step-progress">
+        <div class="step-prog-item active" id="prog-1"><span class="step-prog-icon">👤</span><span class="step-prog-label">Aap</span></div>
+        <div class="step-prog-arrow">→</div>
+        <div class="step-prog-item" id="prog-2"><span class="step-prog-icon">💰</span><span class="step-prog-label">Kaam</span></div>
+        <div class="step-prog-arrow">→</div>
+        <div class="step-prog-item" id="prog-3"><span class="step-prog-icon">📄</span><span class="step-prog-label">Kagaz</span></div>
+        <div class="step-prog-arrow">→</div>
+        <div class="step-prog-item" id="prog-4"><span class="step-prog-icon">👨‍👩‍👧‍👦</span><span class="step-prog-label">Parivar</span></div>
+        <div class="step-prog-arrow">→</div>
+        <div class="step-prog-item" id="prog-5"><span class="step-prog-icon">✅</span><span class="step-prog-label">Ho gaya!</span></div>
+    </div>
+
+    <form id="profile-form" action="/results" method="POST">
+
+        <!-- ── Step 1: About You ── -->
+        <div class="step" id="step-1">
+            <div class="step-label">Step 1 of 5</div>
+            <h2>About you <button class="speak-btn" type="button" data-speak="स्टेप एक। आपके बारे में। अपनी जानकारी भरें।" aria-label="सुनें">🔊</button></h2>
+            <p class="step-subtitle">आपके बारे में</p>
+
+            <div class="field-group">
+                <label class="field-label" for="age">Age <span class="field-label-hi">/ उम्र</span></label>
+                <input type="number" id="age" name="age" min="0" max="120" placeholder="e.g. 34">
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Gender <span class="field-label-hi">/ लिंग</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="gender" value="M">
+                        <span class="opt-wrap"><span class="opt-en">Male</span><span class="opt-hi">पुरुष</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="gender" value="F">
+                        <span class="opt-wrap"><span class="opt-en">Female</span><span class="opt-hi">महिला</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="gender" value="Transgender">
+                        <span class="opt-wrap"><span class="opt-en">Other</span><span class="opt-hi">ट्रांसजेंडर</span></span>
+                    </label>
+                    <label class="option-card skip-card" style="grid-column:1/-1">
+                        <input type="radio" name="gender" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="state">State <span class="field-label-hi">/ राज्य</span></label>
+                <select id="state" name="state">
+                    <option value="">Select state / राज्य चुनें</option>
+                    {% for s in states %}
+                    <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Where you live <span class="field-label-hi">/ कहाँ रहते हैं</span></label>
+                <div class="option-cards two-col">
+                    <label class="option-card">
+                        <input type="radio" name="is_urban" value="rural">
+                        <span class="opt-wrap"><span class="opt-en">Village</span><span class="opt-hi">गाँव</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="is_urban" value="urban">
+                        <span class="opt-wrap"><span class="opt-en">City / Town</span><span class="opt-hi">शहर</span></span>
+                    </label>
+                    <label class="option-card skip-card" style="grid-column:1/-1">
+                        <input type="radio" name="is_urban" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Category <span class="field-label-hi">/ वर्ग</span></label>
+                <div class="option-cards two-col">
+                    <label class="option-card">
+                        <input type="radio" name="caste_category" value="General">
+                        <span class="opt-wrap"><span class="opt-en">General</span><span class="opt-hi">सामान्य</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="caste_category" value="OBC">
+                        <span class="opt-wrap"><span class="opt-en">OBC</span><span class="opt-hi">अन्य पिछड़ा वर्ग</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="caste_category" value="SC">
+                        <span class="opt-wrap"><span class="opt-en">SC</span><span class="opt-hi">अनुसूचित जाति</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="caste_category" value="ST">
+                        <span class="opt-wrap"><span class="opt-en">ST</span><span class="opt-hi">अनुसूचित जनजाति</span></span>
+                    </label>
+                    <label class="option-card skip-card" style="grid-column:1/-1">
+                        <input type="radio" name="caste_category" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Marital status <span class="field-label-hi">/ वैवाहिक स्थिति</span></label>
+                <div class="option-cards two-col">
+                    <label class="option-card">
+                        <input type="radio" name="marital_status" value="unmarried">
+                        <span class="opt-wrap"><span class="opt-en">Unmarried</span><span class="opt-hi">अविवाहित</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="marital_status" value="married">
+                        <span class="opt-wrap"><span class="opt-en">Married</span><span class="opt-hi">विवाहित</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="marital_status" value="widowed">
+                        <span class="opt-wrap"><span class="opt-en">Widowed</span><span class="opt-hi">विधवा / विधुर</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="marital_status" value="divorced">
+                        <span class="opt-wrap"><span class="opt-en">Divorced</span><span class="opt-hi">तलाकशुदा</span></span>
+                    </label>
+                    <label class="option-card skip-card" style="grid-column:1/-1">
+                        <input type="radio" name="marital_status" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Step 2: Work & Income ── -->
+        <div class="step" id="step-2">
+            <button class="step-back" type="button" onclick="goBack()">← Back / पीछे</button>
+            <div class="step-label">Step 2 of 5</div>
+            <h2>Work &amp; Income <button class="speak-btn" type="button" data-speak="स्टेप दो। आप क्या काम करते हैं और आमदनी कितनी है?" aria-label="सुनें">🔊</button></h2>
+            <p class="step-subtitle">काम और आमदनी</p>
+
+            <div class="field-group">
+                <label class="field-label">Occupation <span class="field-label-hi">/ पेशा</span></label>
+                <div class="occ-grid">
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="Farmer">
+                        <span class="occ-icon">🌾</span>
+                        <span class="occ-en">Farmer</span><span class="occ-hi">किसान</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="Daily wage worker">
+                        <span class="occ-icon">⛏️</span>
+                        <span class="occ-en">Daily wage</span><span class="occ-hi">मजदूर</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="street_vendor">
+                        <span class="occ-icon">🛒</span>
+                        <span class="occ-en">Vendor</span><span class="occ-hi">फेरीवाला</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="Artisan">
+                        <span class="occ-icon">🔨</span>
+                        <span class="occ-en">Artisan</span><span class="occ-hi">कारीगर</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="Shopkeeper">
+                        <span class="occ-icon">🏪</span>
+                        <span class="occ-en">Shopkeeper</span><span class="occ-hi">दुकानदार</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="Homemaker">
+                        <span class="occ-icon">🏠</span>
+                        <span class="occ-en">Homemaker</span><span class="occ-hi">गृहिणी</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="Student">
+                        <span class="occ-icon">📚</span>
+                        <span class="occ-en">Student</span><span class="occ-hi">छात्र</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="Unemployed">
+                        <span class="occ-icon">🔍</span>
+                        <span class="occ-en">Unemployed</span><span class="occ-hi">बेरोज़गार</span>
+                    </label>
+                    <label class="occ-card">
+                        <input type="radio" name="occupation" value="">
+                        <span class="occ-icon">·</span>
+                        <span class="occ-en">Skip</span><span class="occ-hi">पता नहीं</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Yearly income <span class="field-label-hi">/ सालाना आमदनी</span>
+                    <button class="speak-btn" type="button" data-speak="सालाना आमदनी कितनी है? लगभग बताइये।" aria-label="सुनें">🔊</button>
+                </label>
+                <p class="field-hint">Lagbhag kitni? / लगभग कितनी? — Select the range that fits</p>
+                <div class="income-ranges" id="income-ranges">
+                    <label class="range-card" data-value="25000">
+                        <input type="radio" name="_income_range" value="25000">
+                        <span class="range-amount">₹50,000 se kam</span>
+                        <span class="range-hi">50 हज़ार से कम</span>
+                    </label>
+                    <label class="range-card" data-value="75000">
+                        <input type="radio" name="_income_range" value="75000">
+                        <span class="range-amount">₹50,000 – ₹1 lakh</span>
+                        <span class="range-hi">50 हज़ार – 1 लाख</span>
+                    </label>
+                    <label class="range-card" data-value="200000">
+                        <input type="radio" name="_income_range" value="200000">
+                        <span class="range-amount">₹1 lakh – ₹3 lakh</span>
+                        <span class="range-hi">1 – 3 लाख</span>
+                    </label>
+                    <label class="range-card" data-value="450000">
+                        <input type="radio" name="_income_range" value="450000">
+                        <span class="range-amount">₹3 lakh – ₹6 lakh</span>
+                        <span class="range-hi">3 – 6 लाख</span>
+                    </label>
+                    <label class="range-card" data-value="750000">
+                        <input type="radio" name="_income_range" value="750000">
+                        <span class="range-amount">₹6 lakh – ₹9 lakh</span>
+                        <span class="range-hi">6 – 9 लाख</span>
+                    </label>
+                    <label class="range-card" data-value="1000000">
+                        <input type="radio" name="_income_range" value="1000000">
+                        <span class="range-amount">₹9 lakh+</span>
+                        <span class="range-hi">9 लाख से ज़्यादा</span>
+                    </label>
+                    <label class="range-card range-card-skip" data-value="">
+                        <input type="radio" name="_income_range" value="">
+                        <span class="range-amount">🤷 Pata nahi</span>
+                        <span class="range-hi">पता नहीं</span>
+                    </label>
+                </div>
+                <input type="hidden" id="annual_income" name="annual_income">
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Land <span class="field-label-hi">/ ज़मीन</span></label>
+                <div class="option-cards two-col">
+                    <label class="option-card">
+                        <input type="radio" name="land_ownership" value="owns">
+                        <span class="opt-wrap"><span class="opt-en">Own land</span><span class="opt-hi">अपनी ज़मीन</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="land_ownership" value="leases">
+                        <span class="opt-wrap"><span class="opt-en">Leased</span><span class="opt-hi">पट्टे पर</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="land_ownership" value="sharecrop">
+                        <span class="opt-wrap"><span class="opt-en">Sharecrop</span><span class="opt-hi">बटाई</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="land_ownership" value="none">
+                        <span class="opt-wrap"><span class="opt-en">None</span><span class="opt-hi">नहीं है</span></span>
+                    </label>
+                    <label class="option-card skip-card" style="grid-column:1/-1">
+                        <input type="radio" name="land_ownership" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="conditional" id="cond-land-area">
+                <div class="field-group">
+                    <label class="field-label">Land size <span class="field-label-hi">/ ज़मीन का आकार</span></label>
+                    <div class="land-combo">
+                        <input type="number" name="land_area" placeholder="Amount / मात्रा" min="0" step="0.1">
+                        <select name="land_unit">
+                            <option value="hectare">Hectare</option>
+                            <option value="bigha">Bigha / बीघा</option>
+                            <option value="acre">Acre / एकड़</option>
+                            <option value="gaj">Gaj / गज (sq yard)</option>
+                            <option value="sqft">Sq ft / वर्ग फुट</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Do you run a business? <span class="field-label-hi">/ कोई कारोबार है?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="has_enterprise" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_enterprise" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="has_enterprise" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Step 3: Documents ── -->
+        <div class="step" id="step-3">
+            <button class="step-back" type="button" onclick="goBack()">← Back / पीछे</button>
+            <div class="step-label">Step 3 of 5</div>
+            <h2>Documents &amp; Accounts <button class="speak-btn" type="button" data-speak="स्टेप तीन। आपके पास कौन से कागज़ात हैं?" aria-label="सुनें">🔊</button></h2>
+            <p class="step-subtitle">दस्तावेज़ और खाते</p>
+
+            <div class="field-group">
+                <label class="field-label">Aadhaar card <span class="field-label-hi">/ आधार कार्ड है?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="has_aadhaar" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_aadhaar" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="has_aadhaar" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Bank account <span class="field-label-hi">/ बैंक खाता है?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="has_bank_account" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_bank_account" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="has_bank_account" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="conditional" id="cond-aadhaar-linked">
+                <div class="field-group">
+                    <label class="field-label">Aadhaar linked to bank? <span class="field-label-hi">/ आधार बैंक से जुड़ा है?</span></label>
+                    <div class="option-cards three-col">
+                        <label class="option-card">
+                            <input type="radio" name="is_aadhaar_linked" value="yes">
+                            <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="is_aadhaar_linked" value="no">
+                            <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                        </label>
+                        <label class="option-card skip-card">
+                            <input type="radio" name="is_aadhaar_linked" value="">
+                            <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Ration card <span class="field-label-hi">/ राशन कार्ड</span></label>
+                <div class="option-cards two-col">
+                    <label class="option-card">
+                        <input type="radio" name="has_ration_card" value="AAY">
+                        <span class="opt-wrap"><span class="opt-en">Yellow (AAY)</span><span class="opt-hi">पीला कार्ड</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_ration_card" value="PHH">
+                        <span class="opt-wrap"><span class="opt-en">Other (PHH)</span><span class="opt-hi">अन्य कार्ड</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_ration_card" value="none">
+                        <span class="opt-wrap"><span class="opt-en">None</span><span class="opt-hi">नहीं है</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_ration_card" value="unknown">
+                        <span class="opt-wrap"><span class="opt-en">Don't know</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card" style="grid-column:1/-1">
+                        <input type="radio" name="has_ration_card" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Disability <span class="field-label-hi">/ विकलांगता</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="disability_percent" value="none">
+                        <span class="opt-wrap"><span class="opt-en">None</span><span class="opt-hi">नहीं है</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="disability_percent" value="40_79">
+                        <span class="opt-wrap"><span class="opt-en">40 – 79%</span><span class="opt-hi">मध्यम विकलांगता</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="disability_percent" value="80_plus">
+                        <span class="opt-wrap"><span class="opt-en">80%+</span><span class="opt-hi">गंभीर विकलांगता</span></span>
+                    </label>
+                    <label class="option-card skip-card" style="grid-column:1/-1">
+                        <input type="radio" name="disability_percent" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Government employee? <span class="field-label-hi">/ सरकारी नौकरी?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="is_govt_employee" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="is_govt_employee" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="is_govt_employee" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">File income tax? <span class="field-label-hi">/ इनकम टैक्स भरते हैं?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="is_income_tax_payer" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="is_income_tax_payer" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="is_income_tax_payer" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">EPF / PF member? <span class="field-label-hi">/ PF कटता है?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="is_epf_member" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="is_epf_member" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="is_epf_member" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Household assets <span class="field-label-hi">/ घर में क्या है?</span></label>
+                <p class="field-hint">Check everything that applies — this helps us rule out schemes you won't qualify for.<br>
+                <span style="color:var(--text-faint);font-size:0.83rem;">जो भी है वो चुनें — इससे गलत योजनाएं नहीं दिखेंगी।</span></p>
+                <div class="asset-checklist">
+                    <label class="asset-item">
+                        <input type="checkbox" name="has_motorized_vehicle" value="yes">
+                        <div class="asset-text">
+                            <span class="asset-en">Two / three / four-wheeler vehicle</span>
+                            <span class="asset-hi">दो / तीन / चार पहिया वाहन</span>
+                        </div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="has_mechanized_farm_equipment" value="yes">
+                        <div class="asset-text">
+                            <span class="asset-en">Tractor or mechanized farm equipment</span>
+                            <span class="asset-hi">ट्रैक्टर या कृषि मशीन</span>
+                        </div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="has_kisan_credit_card" value="yes">
+                        <div class="asset-text">
+                            <span class="asset-en">Kisan Credit Card (KCC) with ₹50,000+ limit</span>
+                            <span class="asset-hi">किसान क्रेडिट कार्ड ₹50,000 से ज़्यादा</span>
+                        </div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="has_refrigerator" value="yes">
+                        <div class="asset-text">
+                            <span class="asset-en">Refrigerator</span>
+                            <span class="asset-hi">फ्रिज</span>
+                        </div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="has_landline" value="yes">
+                        <div class="asset-text">
+                            <span class="asset-en">Landline phone</span>
+                            <span class="asset-hi">लैंडलाइन फोन</span>
+                        </div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="has_pucca_house" value="yes">
+                        <div class="asset-text">
+                            <span class="asset-en">Permanent (pucca) house</span>
+                            <span class="asset-hi">पक्का मकान</span>
+                        </div>
+                    </label>
+                </div>
+                <p class="field-hint" style="margin-top:6px;">Nothing to check? Leave all boxes empty / सब खाली छोड़ें</p>
+            </div>
+        </div>
+
+        <!-- ── Step 4: Family ── -->
+        <div class="step" id="step-4">
+            <button class="step-back" type="button" onclick="goBack()">← Back / पीछे</button>
+            <div class="step-label">Step 4 of 5</div>
+            <h2>Family <button class="speak-btn" type="button" data-speak="स्टेप चार। आपके परिवार के बारे में बताएं।" aria-label="सुनें">🔊</button></h2>
+            <p class="step-subtitle">परिवार</p>
+
+            <div class="field-group">
+                <label class="field-label" for="family_size">Family members <span class="field-label-hi">/ परिवार में सदस्य</span></label>
+                <input type="number" id="family_size" name="family_size" min="1" max="50" placeholder="e.g. 4">
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="num_children">Children <span class="field-label-hi">/ बच्चे</span></label>
+                <input type="number" id="num_children" name="num_children" min="0" max="20" placeholder="0">
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Girl child under 10? <span class="field-label-hi">/ 10 साल से छोटी बेटी?</span></label>
+                <div class="option-cards three-col">
+                    <label class="option-card">
+                        <input type="radio" name="has_girl_child_under_10" value="yes">
+                        <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="has_girl_child_under_10" value="no">
+                        <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                    </label>
+                    <label class="option-card skip-card">
+                        <input type="radio" name="has_girl_child_under_10" value="">
+                        <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="conditional" id="cond-pregnant">
+                <div class="field-group">
+                    <label class="field-label">Pregnant or nursing? <span class="field-label-hi">/ गर्भवती या स्तनपान?</span></label>
+                    <div class="option-cards three-col">
+                        <label class="option-card">
+                            <input type="radio" name="is_pregnant_or_lactating" value="yes">
+                            <span class="opt-wrap"><span class="opt-en">Yes</span><span class="opt-hi">हाँ</span></span>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="is_pregnant_or_lactating" value="no">
+                            <span class="opt-wrap"><span class="opt-en">No</span><span class="opt-hi">नहीं</span></span>
+                        </label>
+                        <label class="option-card skip-card">
+                            <input type="radio" name="is_pregnant_or_lactating" value="">
+                            <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="conditional" id="cond-pregnant-births">
+                <div class="field-group">
+                    <label class="field-label" for="num_live_births">Number of live births <span class="field-label-hi">/ कितनी बार बच्चा हुआ</span></label>
+                    <input type="number" id="num_live_births" name="num_live_births" min="0" max="20" placeholder="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Step 5: Summary ── -->
+        <div class="step" id="step-5">
+            <button class="step-back" type="button" onclick="goBack()">← Back / पीछे</button>
+            <div class="step-label">Step 5 of 5</div>
+            <h2>Review &amp; submit</h2>
+            <p class="step-subtitle">क्या ये सही है? — Check your details before submitting.</p>
+
+            <div class="summary-grid" id="summary-grid">
+                <!-- filled by JS -->
+            </div>
+
+            <p class="field-label" style="margin-bottom:16px; color: var(--text-secondary); font-weight:400;">
+                Skipped fields show as "Not provided". The engine will still check all schemes you might be eligible for — skipped fields just mean more schemes show under "Need more info".
+            </p>
+        </div>
+
+    </form>
+</div>
+</div>
+
+<div class="step-nav">
+    <button id="btn-next" class="btn-next" type="button">Next →</button>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{
+  "scheme_id": "pm_sym",
+  "name": "PM-SYM",
+  "full_name": "Pradhan Mantri Shram Yogi Maan-dhan",
+  "target_description": "Unorganised workers aged 18-40 with monthly income up to \u20b915,000",
+  "ministry": "Ministry of Labour and Employment",
+  "data_source": "PM-SYM Brief from Ministry of Labour and Employment official document",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "PMSYM-R01",
+      "parameter": "age",
+      "description": "Applicant must be between 18 and 40 years of age",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 18,
+        "max": 40
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMSYM-R02",
+      "parameter": "income",
+      "description": "Monthly income must be up to \u20b915,000 (\u20b91,80,000 annually)",
+      "condition": {
+        "type": "range_check",
+        "field": "annual_income",
+        "min": 0,
+        "max": 180000
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": ["AMB-25"],
+      "ambiguity_note": "Monthly income up to \u20b915,000 (\u20b91,80,000 annually). AMB-25: income verification difficult for informal workers."
+    },
+    {
+      "rule_id": "PMSYM-R03",
+      "parameter": "not_epf_member",
+      "description": "Applicant must not be a member of EPF/NPS/ESIC",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_epf_member",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Not a member of EPF/NPS/ESIC"
+    },
+    {
+      "rule_id": "PMSYM-R04",
+      "parameter": "not_income_tax_payer",
+      "description": "Applicant must not be an income tax payer",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_income_tax_payer",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMSYM-R05",
+      "parameter": "aadhaar_bank",
+      "description": "Applicant must have Aadhaar linked to bank account",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_aadhaar_linked",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card",
+      "where_to_obtain": "CSC-Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Savings Bank or Jan Dhan Account with IFSC",
+      "where_to_obtain": "Any bank branch",
+      "processing_time_days": "0",
+      "priority": 2
+    }
+  ],
+  "prerequisites": ["pmjdy"],
+  "benefit_summary": "\u20b93,000/month guaranteed pension after age 60. 50:50 govt-worker contribution. Contribution \u20b955-\u20b9200/month based on entry age. Spouse gets 50% family pension."
+}

@@ -1,0 +1,7 @@
+{
+  "age": 28, "state": "Bihar", "is_urban": true, "caste_category": "SC",
+  "gender": "M", "annual_income": 120000, "occupation": "construction_worker",
+  "family_size": 4, "has_bank_account": true, "has_aadhaar": true,
+  "is_aadhaar_linked": true, "has_ration_card": "PHH",
+  "is_govt_employee": false, "is_income_tax_payer": false, "is_epf_member": false
+}

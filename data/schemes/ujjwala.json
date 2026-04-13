@@ -1,0 +1,130 @@
+{
+  "scheme_id": "ujjwala",
+  "name": "Ujjwala 2.0",
+  "full_name": "Pradhan Mantri Ujjwala Yojana",
+  "target_description": "Adult women (18+) from poor households without an existing LPG connection",
+  "ministry": "Ministry of Petroleum and Natural Gas",
+  "data_source": "PMUY official eligibility criteria from pmuy.gov.in and myscheme.gov.in",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "PMUY-R01",
+      "parameter": "gender_female",
+      "description": "Applicant must be female",
+      "condition": {
+        "type": "field_check",
+        "field": "gender",
+        "values": ["F"],
+        "ambiguous_values": ["Transgender"]
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMUY-R02",
+      "parameter": "age",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 18
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMUY-R03",
+      "parameter": "poor_household",
+      "description": "Poor household based on deprivation declaration. BPL ration card or low income as proxy.",
+      "condition": {
+        "type": "composite",
+        "logic": "OR",
+        "sub_conditions": [
+          {
+            "type": "field_check",
+            "field": "has_ration_card",
+            "values": ["AAY", "PHH"],
+            "ambiguous_values": []
+          },
+          {
+            "type": "range_check",
+            "field": "annual_income",
+            "min": 0,
+            "max": 200000
+          }
+        ]
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": ["AMB-15"],
+      "ambiguity_note": "Poor household determination is based on self-declaration of deprivation — BPL ration card or low income used as proxy indicators"
+    },
+    {
+      "rule_id": "PMUY-R04",
+      "parameter": "aadhaar_bank",
+      "description": "Bank account must be seeded with Aadhaar for DBT subsidy transfer",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_aadhaar_linked",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMUY-EX01",
+      "parameter": "no_existing_lpg",
+      "description": "No other LPG connection from any OMC in same household. has_existing_enterprise used as proxy — existing enterprise often has commercial LPG.",
+      "condition": {
+        "type": "field_check",
+        "field": "has_existing_enterprise",
+        "values": ["false"],
+        "ambiguous_values": []
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": ["AMB-16"],
+      "ambiguity_note": "has_existing_enterprise is used as a proxy for existing commercial LPG connection — this is an imperfect proxy and may require manual verification"
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "KYC Form",
+      "where_to_obtain": "LPG distributor",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Aadhaar Card",
+      "where_to_obtain": "CSC / Post Office",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "Address Proof (or self-declaration for migrants)",
+      "where_to_obtain": "Self / Gram Panchayat",
+      "processing_time_days": "0-3",
+      "priority": 3
+    },
+    {
+      "document": "Ration Card or Family Composition Document (or self-declaration)",
+      "where_to_obtain": "PDS office",
+      "processing_time_days": "1-3",
+      "priority": 4
+    },
+    {
+      "document": "Bank Passbook / Cancelled Cheque",
+      "where_to_obtain": "Any bank branch",
+      "processing_time_days": "1-3",
+      "priority": 5
+    }
+  ],
+  "prerequisites": ["pmjdy"],
+  "benefit_summary": "Free LPG connection (cylinder + regulator + hose) + first refill free. Subsidy on subsequent refills via DBT."
+}

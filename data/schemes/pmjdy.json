@@ -1,0 +1,55 @@
+{
+  "scheme_id": "pmjdy",
+  "name": "PMJDY",
+  "full_name": "Pradhan Mantri Jan Dhan Yojana",
+  "target_description": "Every unbanked Indian citizen aged 10 and above",
+  "ministry": "Department of Financial Services, Ministry of Finance",
+  "data_source": "PMJDY scheme features from pmjdy.gov.in + life cover guidelines",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "PMJDY-R01",
+      "parameter": "age",
+      "description": "Applicant must be at least 10 years old",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 10
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMJDY-R02",
+      "parameter": "identity",
+      "description": "Aadhaar or any govt ID required. Small account possible with self-declaration if no ID.",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_aadhaar",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 40,
+      "ambiguity_refs": ["AMB-14"],
+      "ambiguity_note": "Aadhaar is the primary ID but any government-issued identity document is acceptable; small accounts allowed even without ID via self-declaration"
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card (or any govt ID)",
+      "where_to_obtain": "CSC / Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Passport Photograph",
+      "where_to_obtain": "Photo studio",
+      "processing_time_days": "0-1",
+      "priority": 2
+    }
+  ],
+  "prerequisites": [],
+  "benefit_summary": "Zero-balance bank account + RuPay debit card (₹1 lakh accidental cover) + overdraft up to ₹10,000 + life cover ₹30,000 (for eligible accounts opened in initial period)"
+}

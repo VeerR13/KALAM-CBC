@@ -1,0 +1,119 @@
+{
+  "scheme_id": "pm_mudra",
+  "name": "PM-MUDRA",
+  "full_name": "Pradhan Mantri MUDRA Yojana",
+  "target_description": "Non-farm sector micro and small enterprises — proprietorships, partnerships, companies, shopkeepers, vendors, artisans, food processors, transport operators",
+  "ministry": "Ministry of Finance (Department of Financial Services)",
+  "data_source": "PMMY official scheme details from mudra.org.in and myscheme.gov.in",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "MUDRA-R01",
+      "parameter": "age",
+      "description": "Applicant must be at least 18 years of age",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 18
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "MUDRA-R02",
+      "parameter": "non_farm_enterprise",
+      "description": "Applicant must have or intend to start a non-farm micro enterprise",
+      "condition": {
+        "type": "composite",
+        "logic": "OR",
+        "sub_conditions": [
+          {
+            "type": "boolean_check",
+            "field": "has_existing_enterprise",
+            "equals": true
+          },
+          {
+            "type": "field_check",
+            "field": "occupation",
+            "values": ["Self-employed", "Shopkeeper", "Vendor", "Artisan", "Food Processor", "Trader", "Micro Enterprise", "Small Business", "Repair Shop", "Transport", "Service Business", "Manufacturing", "Street Vendor", "Hawker"],
+            "ambiguous_values": ["Farmer", "Agricultural Labourer"]
+          }
+        ]
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": ["AMB-28"],
+      "ambiguity_note": "Manufacturing, trading, service or allied-agriculture micro enterprise. NOT core farming."
+    },
+    {
+      "rule_id": "MUDRA-R03",
+      "parameter": "not_defaulter",
+      "description": "Applicant must not be a defaulter to any bank or financial institution",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_income_tax_payer",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Must not be a defaulter to any bank or financial institution. Satisfactory credit track record required."
+    },
+    {
+      "rule_id": "MUDRA-R04",
+      "parameter": "aadhaar",
+      "description": "Applicant should have an Aadhaar card",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_aadhaar",
+        "equals": true
+      },
+      "is_mandatory": false,
+      "weight": 15,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "ID Proof (Aadhaar-Voter-DL-PAN)",
+      "where_to_obtain": "Any",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Address Proof (utility bill or Aadhaar)",
+      "where_to_obtain": "Any",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "Passport Photographs (2)",
+      "where_to_obtain": "Photo studio",
+      "processing_time_days": "0-1",
+      "priority": 3
+    },
+    {
+      "document": "Business Identity or License (if any)",
+      "where_to_obtain": "Municipality-Registrar",
+      "processing_time_days": "3-15",
+      "priority": 4
+    },
+    {
+      "document": "Bank Statement (6 months — for Kishore-Tarun)",
+      "where_to_obtain": "Bank",
+      "processing_time_days": "0-1",
+      "priority": 5
+    },
+    {
+      "document": "Project Report (for Kishore-Tarun-Tarun Plus)",
+      "where_to_obtain": "Self-CA",
+      "processing_time_days": "0-3",
+      "priority": 6
+    }
+  ],
+  "prerequisites": [],
+  "benefit_summary": "Shishu: up to \u20b950,000 (no collateral). Kishore: \u20b950,001-\u20b95 lakh. Tarun: \u20b95-\u20b910 lakh. Tarun Plus: up to \u20b920 lakh (for successful Tarun repayers)."
+}

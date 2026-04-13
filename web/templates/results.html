@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+{% block title %}Your Results — Kalam{% endblock %}
+
+{% block content %}
+
+{# ── helpers ── #}
+{% macro conf_color(pct) %}{% if pct >= 80 %}var(--eligible){% elif pct >= 60 %}var(--likely){% elif pct >= 40 %}var(--ambiguous){% else %}var(--text-muted){% endif %}{% endmacro %}
+
+{% macro status_badge(status) %}
+    {% if status.value == 'ELIGIBLE' %}<span class="badge badge-eligible">🟢 Mil sakta hai</span>
+    {% elif status.value == 'LIKELY_ELIGIBLE' %}<span class="badge badge-likely">🟡 Shayad mile</span>
+    {% elif status.value == 'AMBIGUOUS' %}<span class="badge badge-ambiguous">🟠 Pata nahi</span>
+    {% elif status.value == 'INELIGIBLE' %}<span class="badge badge-ineligible">🔴 Nahi milega</span>
+    {% else %}<span class="badge badge-needinfo">🟣 Aur info chahiye</span>{% endif %}
+{% endmacro %}
+
+{% macro rule_icon_class(result) %}{% if result.value == 'PASS' %}pass{% elif result.value == 'FAIL' %}fail{% elif result.value == 'AMBIGUOUS' %}amb{% else %}miss{% endif %}{% endmacro %}
+{% macro rule_char(result) %}{% if result.value == 'PASS' %}✓{% elif result.value == 'FAIL' %}✗{% elif result.value == 'AMBIGUOUS' %}~{% else %}?{% endif %}{% endmacro %}
+
+{% macro scheme_card(r, show_detail=true) %}
+{% set pct = r.confidence | round | int %}
+{% set ben = benefits.get(r.scheme_id) %}
+<div class="scheme-card" data-status="{{ r.status.value.lower() }}">
+    <div class="card-row">
+        <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
+        <div class="card-body">
+            <div class="card-name">{{ r.scheme_name }}
+                <button class="speak-btn" data-speak="{{ icons.get(r.scheme_id,'') }} {{ r.scheme_name }}. {% if ben %}{{ ben.primary }}. {{ ben.secondary }}{% else %}{{ r.benefit_summary[:80] }}{% endif %}" aria-label="सुनें">🔊</button>
+            </div>
+            {% if ben and ben.primary %}
+            <div class="benefit-amount">{{ ben.primary }}</div>
+            {% if ben.secondary %}<div class="benefit-secondary">{{ ben.secondary }}</div>{% endif %}
+            {% if ben.note %}<div class="benefit-note">💡 {{ ben.note }}</div>{% endif %}
+            {% else %}
+            <div class="card-benefit">{{ r.benefit_summary[:100] }}{% if r.benefit_summary|length > 100 %}…{% endif %}</div>
+            {% endif %}
+            {% set dist = distances.get(r.scheme_id) %}
+            {% if dist %}
+            <div class="difficulty-badge difficulty-{{ dist.difficulty_label }}">
+                📊 {{ dist.difficulty_label | capitalize }} · {{ dist.score }} pts
+                {% if dist.unmet_prerequisites %}· needs {{ dist.unmet_prerequisites | join(', ') }} first{% endif %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-right">
+            {{ status_badge(r.status) }}
+            <div class="conf-row">
+                <div class="confidence-bar"><div class="confidence-fill" style="width:{{ pct }}%;background:{{ conf_color(pct) }}"></div></div>
+                <span class="conf-pct">{{ pct }}%</span>
+            </div>
+        </div>
+    </div>
+    {% if show_detail %}
+    <div class="card-detail">
+        {% if r.rule_evaluations %}
+        <ul class="rule-list">
+            {% for ev in r.rule_evaluations[:6] %}
+            <li class="rule-item">
+                <span class="rule-icon {{ rule_icon_class(ev.result) }}">{{ rule_char(ev.result) }}</span>
+                <div class="rule-text">{{ ev.rule_id }}{% if ev.explanation %}<span class="rule-explain">{{ ev.explanation[:100] }}</span>{% endif %}</div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <a class="detail-link" href="/scheme/{{ r.scheme_id }}?{{ profile_dict | urlencode }}">Full breakdown →</a>
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+<div class="results-page">
+
+    <!-- Header -->
+    <div class="results-hero">
+        <h2>Eligibility Results</h2>
+        <p class="results-hero-sub">
+            आपके नतीजे &nbsp;·&nbsp;
+            {% set pos = grouped.eligible|length + grouped.likely|length %}
+            {% if pos > 0 %}{{ pos }} scheme{{ 's' if pos != 1 }} you may qualify for
+            {% else %}Fill in more details to see results{% endif %}
+        </p>
+    </div>
+
+    <!-- Profile summary card -->
+    <div class="profile-card">
+        <div class="profile-details">
+            {% set parts = [] %}
+            {% if profile.age %}{% set _ = parts.append(profile.age|string + ' yrs') %}{% endif %}
+            {% if profile.gender %}{% set _ = parts.append(profile.gender) %}{% endif %}
+            {% if profile.caste_category %}{% set _ = parts.append(profile.caste_category) %}{% endif %}
+            {% if profile.state %}{% set _ = parts.append(profile.state) %}{% endif %}
+            {% if profile.is_urban is not none %}{% set _ = parts.append('Urban' if profile.is_urban else 'Rural') %}{% endif %}
+            {% if profile.annual_income %}{% set _ = parts.append('₹' + '{:,}'.format(profile.annual_income) + '/yr') %}{% endif %}
+            {% if profile.occupation %}{% set _ = parts.append(profile.occupation) %}{% endif %}
+            {% if parts %}
+            <strong>{{ parts | join(' · ') }}</strong>
+            {% else %}
+            <strong>No details provided</strong> — showing all schemes as "Need more info"
+            {% endif %}
+        </div>
+        <a href="/details" class="profile-edit-btn">✏️ Edit</a>
+    </div>
+
+    <!-- Total benefits summary -->
+    {% if optimal_path and (optimal_path.total_annual_cash or optimal_path.total_annual_food or optimal_path.total_insurance_cover) %}
+    <div class="total-benefits-box">
+        <div class="total-benefits-title">
+            <span>Aapko mil sakta hai / Based on your details, you could receive:</span>
+            <button class="speak-btn" data-speak="आपके नतीजे। {% for line in optimal_path.summary_lines %}{{ line }}. {% endfor %}" aria-label="सुनें">🔊</button>
+        </div>
+        <div class="total-benefits-grid">
+            {% if optimal_path.total_annual_cash %}
+            <div class="total-benefit-item">
+                <span class="total-icon">💰</span>
+                <div>
+                    <div class="total-amount">₹{{ '{:,}'.format(optimal_path.total_annual_cash) }}/year</div>
+                    <div class="total-label">in direct cash &amp; subsidies</div>
+                </div>
+            </div>
+            {% endif %}
+            {% if optimal_path.total_annual_food %}
+            <div class="total-benefit-item">
+                <span class="total-icon">🌾</span>
+                <div>
+                    <div class="total-amount">~₹{{ '{:,}'.format(optimal_path.total_annual_food) }}/year</div>
+                    <div class="total-label">saved on food (subsidised ration)</div>
+                </div>
+            </div>
+            {% endif %}
+            {% if optimal_path.total_insurance_cover %}
+            <div class="total-benefit-item">
+                <span class="total-icon">🏥</span>
+                <div>
+                    <div class="total-amount">₹{{ '{:,}'.format(optimal_path.total_insurance_cover) }}</div>
+                    <div class="total-label">health insurance coverage</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Eligible -->
+    {% if grouped.eligible %}
+    <div class="results-section">
+        <div class="section-heading">
+            <h3>✅ Eligible · योग्य</h3>
+            <span class="section-count-badge">{{ grouped.eligible|length }}</span>
+        </div>
+        <div class="section-body">
+            {% for r in grouped.eligible %}{{ scheme_card(r) }}{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Likely eligible -->
+    {% if grouped.likely %}
+    <div class="results-section">
+        <div class="section-heading">
+            <h3>🟡 Likely eligible · संभावित</h3>
+            <span class="section-count-badge">{{ grouped.likely|length }}</span>
+        </div>
+        <div class="section-body">
+            {% for r in grouped.likely %}{{ scheme_card(r) }}{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Ambiguous -->
+    {% if grouped.ambiguous %}
+    <div class="results-section">
+        <div class="section-heading">
+            <h3>🟠 Unclear · अस्पष्ट</h3>
+            <span class="section-hi">Eligibility is ambiguous — read the details</span>
+            <span class="section-count-badge">{{ grouped.ambiguous|length }}</span>
+        </div>
+        <div class="section-body">
+            {% for r in grouped.ambiguous %}{{ scheme_card(r) }}{% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Need more info — interactive -->
+    {% if grouped.insufficient %}
+    <div class="results-section">
+        <div class="section-heading">
+            <h3>⬜ Need more info · जानकारी दें</h3>
+            <span class="section-hi">These might be available to you</span>
+            <span class="section-count-badge">{{ grouped.insufficient|length }}</span>
+            <button class="section-toggle-btn" onclick="toggleSection(this)">Hide</button>
+        </div>
+        <div class="section-body" id="needinfo-body">
+            <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
+                We couldn't check these schemes because some details are missing. Click "Answer now" to provide just the info needed for that scheme.
+            </p>
+            {% for r in grouped.insufficient %}
+            <div class="needinfo-card" id="nicard-{{ r.scheme_id }}">
+                <div class="needinfo-top">
+                    <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
+                    <div>
+                        <div class="needinfo-name">{{ r.scheme_name }}</div>
+                        <span class="badge badge-needinfo" style="font-size:0.7rem;">Need more info</span>
+                    </div>
+                    <div style="margin-left:auto;font-size:0.82rem;color:var(--text-secondary)">{{ r.benefit_summary[:50] }}…</div>
+                </div>
+
+                {% if r.gaps %}
+                <div class="needinfo-why">
+                    We couldn't check because:
+                    {% for g in r.gaps[:2] %}
+                    <strong>{{ g.description[:60] }}</strong>{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <button class="answer-now-btn" onclick="toggleMiniForm('{{ r.scheme_id }}')">Answer now →</button>
+
+                <div class="mini-form" id="mini-{{ r.scheme_id }}">
+                    <div class="mini-form-fields" id="mini-fields-{{ r.scheme_id }}">
+                        {% if r.scheme_id == 'pmmvy' %}
+                        <div class="field-group" style="margin-bottom:10px">
+                            <label class="field-label" style="font-size:0.85rem">Are you pregnant or nursing? / गर्भवती हैं?</label>
+                            <div class="option-cards three-col">
+                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_is_pregnant_or_lactating" value="yes"><span class="opt-en">Yes</span></label>
+                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_is_pregnant_or_lactating" value="no"><span class="opt-en">No</span></label>
+                            </div>
+                        </div>
+                        {% elif r.scheme_id == 'sukanya_samriddhi' %}
+                        <div class="field-group" style="margin-bottom:10px">
+                            <label class="field-label" style="font-size:0.85rem">Do you have a daughter under 10? / 10 साल से छोटी बेटी है?</label>
+                            <div class="option-cards three-col">
+                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_has_girl_child_under_10" value="yes"><span class="opt-en">Yes</span></label>
+                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_has_girl_child_under_10" value="no"><span class="opt-en">No</span></label>
+                            </div>
+                        </div>
+                        {% elif r.scheme_id in ['nsap_igndps'] %}
+                        <div class="field-group" style="margin-bottom:10px">
+                            <label class="field-label" style="font-size:0.85rem">Disability level / विकलांगता</label>
+                            <div class="option-cards two-col">
+                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_disability_percent" value="80_plus"><span class="opt-en">80%+</span></label>
+                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_disability_percent" value="40_79"><span class="opt-en">40-79%</span></label>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="field-group" style="margin-bottom:10px">
+                            <label class="field-label" style="font-size:0.85rem">Age / उम्र (if not provided)</label>
+                            <input type="number" name="mini_{{ r.scheme_id }}_age" placeholder="e.g. 34" style="max-width:200px">
+                        </div>
+                        {% endif %}
+                    </div>
+                    <button class="mini-submit" onclick="recheckScheme('{{ r.scheme_id }}')">Check this scheme →</button>
+                    <div class="recheck-result" id="recheck-result-{{ r.scheme_id }}"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Not eligible (collapsed) -->
+    {% if grouped.ineligible %}
+    <div class="results-section">
+        <div class="section-heading">
+            <h3>❌ Not eligible · अयोग्य</h3>
+            <span class="section-count-badge">{{ grouped.ineligible|length }}</span>
+            <button class="section-toggle-btn" onclick="toggleSection(this)">Show</button>
+        </div>
+        <div class="section-body collapsed">
+            {% for r in grouped.ineligible %}
+            <div class="scheme-card" data-status="ineligible">
+                <div class="card-row">
+                    <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
+                    <div class="card-body">
+                        <div class="card-name">{{ r.scheme_name }}</div>
+                        {% if r.rule_evaluations %}
+                        {% for ev in r.rule_evaluations if ev.result.value == 'FAIL' %}
+                        <div class="card-benefit" style="color:var(--ineligible)">✗ {{ ev.explanation[:70] if ev.explanation else ev.rule_id }}</div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="card-right">{{ status_badge(r.status) }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ── Recommended Path ─────────────────────────────────────────────────── -->
+    {% if optimal_path and optimal_path.steps %}
+    <div class="optimal-path-section">
+        <div class="path-header">
+            <h3>Sabse pehle kya karein? / What to do first?</h3>
+            <p class="path-subtitle">सबसे पहले क्या करें — step by step guide</p>
+            <button class="speak-btn" data-speak="सबसे पहले क्या करें। {% for step in optimal_path.steps[:4] %}Step {{ loop.index }}: {{ step.scheme_name }}. {{ step.benefit_headline }}. {{ step.where_to_go }}. {% endfor %}" aria-label="सुनें">🔊</button>
+        </div>
+
+        <!-- Visual step strip (first 5) -->
+        <div class="path-strip">
+            {% for step in optimal_path.steps[:5] %}
+            <div class="path-node {% if loop.first %}path-node-first{% endif %}" onclick="togglePathDetail('pd-{{ step.scheme_id }}')">
+                <div class="path-step-icon">{{ step.icon }}</div>
+                <div class="path-step-label">{{ step.scheme_name[:12] }}{% if step.scheme_name|length > 12 %}…{% endif %}</div>
+                <div class="path-step-num">{{ loop.index }}</div>
+            </div>
+            {% if not loop.last %}<div class="path-arrow">→</div>{% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Expandable step details -->
+        <div class="path-steps-list">
+            {% for step in optimal_path.steps %}
+            <div class="path-step-card" id="pd-{{ step.scheme_id }}">
+                <div class="path-step-header">
+                    <span class="path-step-num-badge">{{ loop.index }}</span>
+                    <span class="path-step-big-icon">{{ step.icon }}</span>
+                    <div class="path-step-info">
+                        <div class="path-step-name">{{ step.scheme_name }}</div>
+                        {% if step.benefit_headline %}<div class="path-benefit-hl">{{ step.benefit_headline }}</div>{% endif %}
+                    </div>
+                    <button class="speak-btn" data-speak="{{ step.scheme_name }}. {{ step.benefit_headline }}. {{ step.where_to_go }}. समय: {{ step.time_estimate }}" aria-label="सुनें">🔊</button>
+                </div>
+                <div class="path-step-body">
+                    {% if step.reason %}<div class="path-why">{{ step.reason }}</div>{% endif %}
+                    <div class="path-where">📍 <strong>Where:</strong> {{ step.where_to_go }}</div>
+                    <div class="path-time">⏱ <strong>Time:</strong> {{ step.time_estimate }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ── Interaction warnings & choices ──────────────────────────────────── -->
+    {% if interactions %}
+    <div class="interactions-section">
+        <h3>⚠️ Important choices &amp; warnings · ज़रूरी फैसले</h3>
+        {% for ix in interactions %}
+        <div class="interaction-card interaction-{{ ix.severity }}">
+            <div class="ix-header">
+                <span class="ix-severity-dot"></span>
+                <strong>{{ ix.title }}</strong>
+                <button class="speak-btn" data-speak="{{ ix.title }}. {{ ix.description }}" aria-label="सुनें">🔊</button>
+            </div>
+            <p class="ix-desc">{{ ix.description }}</p>
+            {% if ix.recommendation %}
+            <div class="ix-recommendation">💡 {{ ix.recommendation }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ── Sensitivity Analysis ────────────────────────────────────────────── -->
+    {% if sensitivity_flags %}
+    <div class="sensitivity-section">
+        <h3>⚠️ Things to watch out for · ध्यान रखें
+            <button class="speak-btn" data-speak="ध्यान रखें। आपकी स्थिति बदली तो इन योजनाओं पर असर पड़ सकता है।" aria-label="सुनें">🔊</button>
+        </h3>
+        <p class="sensitivity-intro">These results could change if your situation changes slightly:</p>
+        {% for flag in sensitivity_flags[:6] %}
+        <div class="sensitivity-flag {% if flag.is_opportunity %}flag-opportunity{% else %}flag-warning{% endif %}">
+            <div class="flag-icon">{% if flag.is_opportunity %}💡{% else %}⚠️{% endif %}</div>
+            <div class="flag-body">
+                <div class="flag-msg">{{ flag.message }}</div>
+                {% if flag.proximity_note %}<div class="flag-proximity">{{ flag.proximity_note }}</div>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ── Life Event Projector ─────────────────────────────────────────────── -->
+    {% if life_events %}
+    <div class="life-events-section">
+        <h3>🔮 Coming up · आगे क्या होगा
+            <button class="speak-btn" data-speak="आगे क्या होगा। उम्र बढ़ने पर इन योजनाओं में बदलाव होगा।" aria-label="सुनें">🔊</button>
+        </h3>
+        <p class="le-intro">Based on your age, here's what changes in the next few years:</p>
+        {% set deadlines = life_events | selectattr('is_deadline') | list %}
+        {% set opportunities = life_events | selectattr('is_opportunity') | list %}
+        {% if deadlines %}
+        <div class="le-group">
+            <div class="le-group-label">⏰ Act now — window closing</div>
+            {% for ev in deadlines[:4] %}
+            <div class="le-item le-deadline">
+                <span class="le-icon">{{ ev.scheme_icon }}</span>
+                <div class="le-body">
+                    <div class="le-scheme">{{ ev.scheme_name }}</div>
+                    <div class="le-detail">
+                        {% if ev.years_ahead %}In {{ ev.years_ahead }} year{% if ev.years_ahead != 1 %}s{% endif %} (age {{ ev.future_age }}): becomes {{ ev.future_status.value.replace('_',' ').lower() }}{% endif %}
+                        {% if ev.note %} — {{ ev.note }}{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if opportunities %}
+        <div class="le-group">
+            <div class="le-group-label">📅 Upcoming opportunities</div>
+            {% for ev in opportunities[:4] %}
+            <div class="le-item le-opportunity">
+                <span class="le-icon">{{ ev.scheme_icon }}</span>
+                <div class="le-body">
+                    <div class="le-scheme">{{ ev.scheme_name }}</div>
+                    <div class="le-detail">
+                        {% if ev.years_ahead %}In {{ ev.years_ahead }} year{% if ev.years_ahead != 1 %}s{% endif %} (age {{ ev.future_age }}): becomes {{ ev.future_status.value.replace('_',' ').lower() }}{% endif %}
+                        {% if ev.note %} — {{ ev.note }}{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Unlock more schemes -->
+    {% set missing_fields = [] %}
+    {% for r in grouped.insufficient %}
+        {% if r.gaps %}{% for g in r.gaps %}{% set _ = missing_fields.append((r.scheme_name, r.scheme_id, g.description, r.benefit_summary)) %}{% endfor %}{% endif %}
+    {% endfor %}
+
+    {% if missing_fields %}
+    <div class="unlock-section">
+        <h3>Information that could unlock more schemes</h3>
+        <p class="unlock-intro">You can find these out and come back anytime — the system never blocks you.</p>
+        {% set seen = [] %}
+        {% for scheme_name, scheme_id, gap_desc, benefit in missing_fields[:8] %}
+        {% if gap_desc not in seen %}
+        {% set _ = seen.append(gap_desc) %}
+        <div class="unlock-item">
+            <span class="unlock-icon">📋</span>
+            <div>
+                <div class="unlock-what">{{ gap_desc[:80] }}</div>
+                <div class="unlock-schemes">→ {{ scheme_name }}: {{ benefit[:50] }}…</div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="results-actions">
+        <a class="btn-primary" href="/checklist?{{ profile_dict | urlencode }}">View document checklist →</a>
+        <a class="btn-ghost" href="/details">← Edit details</a>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PROFILE_DICT = {{ profile_dict | tojson }};
+
+// ── Audio (Web Speech API) ───────────────────────────────────────────────────
+function speakHindi(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'hi-IN';
+    u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+}
+document.querySelectorAll('.speak-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        speakHindi(btn.getAttribute('data-speak') || '');
+    });
+});
+
+function toggleSection(btn) {
+    const body = btn.closest('.results-section').querySelector('.section-body');
+    const collapsed = body.classList.toggle('collapsed');
+    btn.textContent = collapsed ? 'Show' : 'Hide';
+}
+
+function togglePathDetail(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('expanded');
+}
+
+function toggleMiniForm(schemeId) {
+    const f = document.getElementById('mini-' + schemeId);
+    f.classList.toggle('open');
+    f.querySelectorAll('.option-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const radio = card.querySelector('input[type="radio"]');
+            if (!radio) return;
+            f.querySelectorAll(`.option-card input[name="${radio.name}"]`).forEach(r => r.closest('.option-card').classList.remove('selected'));
+            radio.checked = true;
+            card.classList.add('selected');
+        });
+    });
+}
+
+async function recheckScheme(schemeId) {
+    const f = document.getElementById('mini-' + schemeId);
+    const resultEl = document.getElementById('recheck-result-' + schemeId);
+    const newFields = {};
+    f.querySelectorAll('input[type="radio"]:checked, input[type="number"]').forEach(el => {
+        const key = el.name.replace('mini_' + schemeId + '_', '');
+        if (el.value !== '') newFields[key] = el.value;
+    });
+    resultEl.textContent = 'Checking…';
+    resultEl.style.color = 'var(--text-muted)';
+    try {
+        const resp = await fetch('/api/recheck', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ profile: PROFILE_DICT, new_fields: newFields, scheme_id: schemeId })
+        });
+        const data = await resp.json();
+        const statusColors = { ELIGIBLE: 'var(--eligible)', LIKELY_ELIGIBLE: 'var(--likely)', AMBIGUOUS: 'var(--ambiguous)', INELIGIBLE: 'var(--ineligible)', INSUFFICIENT_DATA: 'var(--needinfo)' };
+        const labels = { ELIGIBLE: '✅ Eligible!', LIKELY_ELIGIBLE: '🟡 Likely eligible', AMBIGUOUS: '🟠 Unclear', INELIGIBLE: '❌ Not eligible', INSUFFICIENT_DATA: '⬜ Still need more info' };
+        resultEl.textContent = (labels[data.status] || data.status) + (data.confidence ? ' — ' + data.confidence + '%' : '');
+        resultEl.style.color = statusColors[data.status] || 'var(--text)';
+    } catch (e) {
+        resultEl.textContent = 'Error — please try again';
+        resultEl.style.color = 'var(--ineligible)';
+    }
+}
+
+// Scheme card expand/collapse
+document.querySelectorAll('.scheme-card').forEach(card => {
+    card.addEventListener('click', e => {
+        if (e.target.closest('a') || e.target.closest('button')) return;
+        card.classList.toggle('expanded');
+    });
+});
+</script>
+{% endblock %}

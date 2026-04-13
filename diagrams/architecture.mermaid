@@ -1,0 +1,14 @@
+graph TD
+    A[User Input\nHinglish/English] --> B[Conversational Interface\nClaude API NLP]
+    B --> C[Profile Builder\nPydantic Validation + Unit Normalization]
+    C --> D[Rule Engine\nDeterministic Evaluation\nPASS/FAIL/AMBIGUOUS/MISSING]
+    E[(Scheme Knowledge Base\n20 JSON Rule Files)] --> D
+    F[(Ambiguity Map\n10+ Annotations)] --> D
+    D --> G[Confidence Scorer\nWeighted Aggregation\nsum_passed + 0.5×sum_ambiguous / sum_evaluated]
+    G --> H[Gap Analyzer\nMISSING_INPUT\nAMBIGUOUS_CRITERION\nMISSING_PREREQUISITE]
+    G --> I[Doc Checklist Generator\nPrioritised by processing time]
+    G --> J[Prerequisite Sequencer\nTopological sort via networkx]
+    H --> K[Output Formatter\nrich tables + panels]
+    I --> K
+    J --> K
+    K --> L[Results\nELIGIBLE / LIKELY / AMBIGUOUS / INELIGIBLE\nwith full explainability]

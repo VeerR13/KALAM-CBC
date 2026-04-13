@@ -1,0 +1,7 @@
+{
+  "age": 40, "state": "Odisha", "is_urban": false, "caste_category": "SC",
+  "gender": "M", "annual_income": 20000, "occupation": "unemployed",
+  "family_size": 3, "has_bank_account": false, "has_aadhaar": false,
+  "is_aadhaar_linked": false, "has_ration_card": "AAY",
+  "disability_percent": 85, "is_govt_employee": false, "is_income_tax_payer": false
+}

@@ -1,0 +1,10 @@
+{
+  "profile_id": "edge_07_just_turned_18",
+  "notes": "Age-boundary: exactly 18. PMJDY eligible (no bank). APY/PM-SYM eligible. PM-KISAN not applicable (no land).",
+  "expected_results": {
+    "pmjdy": {"status": "ELIGIBLE"},
+    "apy": {"status": "INELIGIBLE", "reason": "no bank account"},
+    "mgnrega": {"status": "ELIGIBLE"},
+    "pm_kisan": {"status": "INELIGIBLE", "reason": "no land ownership data or income_tax exclusion"}
+  }
+}

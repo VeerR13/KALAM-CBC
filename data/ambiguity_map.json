@@ -1,0 +1,503 @@
+[
+  {
+    "id": "AMB-01",
+    "category": "definitional",
+    "schemes_affected": [
+      "pm_kisan"
+    ],
+    "description": "Does leased/sharecropped land qualify? Guidelines say 'landholding families' which implies ownership, not lease or sharecrop.",
+    "system_handling": "Return AMBIGUOUS for land_ownership in [leases, sharecrop]",
+    "resolution": null,
+    "source": "PM-KISAN Revised Operational Guidelines dated 21.06.2019"
+  },
+  {
+    "id": "AMB-02",
+    "category": "definitional",
+    "schemes_affected": [
+      "pm_kisan"
+    ],
+    "description": "Cut-off date rule: new land purchases after 01.02.2019 do not qualify the transferee, but inheritance due to death of landowner DOES allow new eligibility.",
+    "system_handling": "Flag as AMBIGUOUS — cannot determine from profile whether land was acquired before/after Feb 2019 or via inheritance",
+    "resolution": null,
+    "source": "PM-KISAN Revised Operational Guidelines dated 21.06.2019"
+  },
+  {
+    "id": "AMB-03",
+    "category": "state_variation",
+    "schemes_affected": [
+      "pm_kisan"
+    ],
+    "description": "NE States exception: Assam, Meghalaya, J&K have alternate identification (community-based land certificates, Vanshavali lineage charts).",
+    "system_handling": "Flag as AMBIGUOUS for state in [Assam, Meghalaya, Jammu & Kashmir, J&K]",
+    "resolution": null,
+    "source": "PM-KISAN Revised Operational Guidelines dated 21.06.2019"
+  },
+  {
+    "id": "AMB-04",
+    "category": "data_staleness",
+    "schemes_affected": [
+      "ayushman_bharat",
+      "pmay_g"
+    ],
+    "description": "SECC 2011 database is 15 years stale. Current household status (housing, income, deprivation) may differ significantly from 2011 data used for eligibility.",
+    "system_handling": "Return AMBIGUOUS — cannot verify SECC listing from profile; use ration card as proxy",
+    "resolution": null,
+    "source": "PM-JAY Operational Guidelines; PMAY-G guidelines"
+  },
+  {
+    "id": "AMB-05",
+    "category": "state_variation",
+    "schemes_affected": [
+      "ayushman_bharat"
+    ],
+    "description": "Several states extend Ayushman Bharat coverage beyond SECC to additional families. State-specific eligibility extensions vary.",
+    "system_handling": "Return AMBIGUOUS for income between ₹1.2L-₹3L since state may cover them",
+    "resolution": null,
+    "source": "PM-JAY Operational Guidelines"
+  },
+  {
+    "id": "AMB-06",
+    "category": "definitional",
+    "schemes_affected": [
+      "mgnrega"
+    ],
+    "description": "Census towns vs gram panchayat areas: residents of census towns notified under panchayat may or may not qualify as 'rural' for MGNREGA.",
+    "system_handling": "Flag is_urban=true as FAIL; is_urban=false as PASS; peri-urban as AMBIGUOUS",
+    "resolution": null,
+    "source": "MGNREGA Act 2005"
+  },
+  {
+    "id": "AMB-07",
+    "category": "definitional",
+    "schemes_affected": [
+      "mgnrega"
+    ],
+    "description": "Migrant workers: which panchayat do they register in — origin or destination? Guidelines suggest origin but practice varies.",
+    "system_handling": "Cannot determine from profile; flag occupation=Migrant Worker as AMBIGUOUS",
+    "resolution": null,
+    "source": "MGNREGA Act 2005, implementation guidelines"
+  },
+  {
+    "id": "AMB-08",
+    "category": "definitional",
+    "schemes_affected": [
+      "ayushman_bharat"
+    ],
+    "description": "Informal urban workers without documentation cannot prove occupational category membership for PM-JAY urban eligibility.",
+    "system_handling": "Flag as AMBIGUOUS if occupation matches urban category but no supporting documents",
+    "resolution": null,
+    "source": "PM-JAY Operational Guidelines"
+  },
+  {
+    "id": "AMB-09",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmay_g"
+    ],
+    "description": "'Dilapidated house' not quantitatively defined in all states — local gram sabha verification determines this.",
+    "system_handling": "Cannot determine from profile; flag land_ownership=owns with no housing data as AMBIGUOUS",
+    "resolution": null,
+    "source": "PMAY-G official guidelines"
+  },
+  {
+    "id": "AMB-10",
+    "category": "verification",
+    "schemes_affected": [
+      "pmay_u"
+    ],
+    "description": "No national property registry for cross-verification of pucca house ownership across states. Self-declaration is the only mechanism.",
+    "system_handling": "land_ownership=owns marked AMBIGUOUS for PMAY-U (could be non-pucca); cannot cross-verify nationally",
+    "resolution": null,
+    "source": "PMAY-U 2.0 Scheme Guidelines, September 2024"
+  },
+  {
+    "id": "AMB-11",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmay_g"
+    ],
+    "description": "Unclear land title: beneficiary may need land allotted by gram panchayat. If they have no land at all, eligibility unclear.",
+    "system_handling": "Return AMBIGUOUS for land_ownership=none — they may qualify if GP allots land",
+    "resolution": null,
+    "source": "PMAY-G official guidelines"
+  },
+  {
+    "id": "AMB-12",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmay_u"
+    ],
+    "description": "Income criteria: household income vs individual income unclear in some states. Annual income calculation methodology varies.",
+    "system_handling": "Use annual_income as household income proxy; flag boundary cases (±20% of EWS/LIG/MIG thresholds) as AMBIGUOUS",
+    "resolution": null,
+    "source": "PMAY-U 2.0 Scheme Guidelines, September 2024"
+  },
+  {
+    "id": "AMB-13",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmay_u"
+    ],
+    "description": "States/UTs may set a cut-off date for urban residency. Migrants may not qualify if they haven't lived in the urban area long enough.",
+    "system_handling": "Cannot determine from profile; flag as AMBIGUOUS for recent migrants",
+    "resolution": null,
+    "source": "PMAY-U 2.0 Scheme Guidelines, September 2024"
+  },
+  {
+    "id": "AMB-14",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmjdy"
+    ],
+    "description": "Multiple PMJDY accounts across banks during initial drive (2014). Technically only one PMJDY account allowed but duplicates exist.",
+    "system_handling": "Flag has_bank_account=true as AMBIGUOUS rather than FAIL — may already have PMJDY",
+    "resolution": null,
+    "source": "PMJDY guidelines"
+  },
+  {
+    "id": "AMB-15",
+    "category": "definitional",
+    "schemes_affected": [
+      "ujjwala"
+    ],
+    "description": "Proof requirements for 'poor household' vary by pathway — BPL ration card required for some, self-declaration sufficient for migrants.",
+    "system_handling": "Accept ration card (AAY/PHH) OR low income as proxy for poor household",
+    "resolution": null,
+    "source": "PMUY official eligibility criteria"
+  },
+  {
+    "id": "AMB-16",
+    "category": "definitional",
+    "schemes_affected": [
+      "ujjwala"
+    ],
+    "description": "Household definition for migrant families — 'no LPG in household' but migrant's origin family may have one.",
+    "system_handling": "Cannot verify from profile; flag migrant workers as AMBIGUOUS",
+    "resolution": null,
+    "source": "PMUY 2.0 guidelines"
+  },
+  {
+    "id": "AMB-17",
+    "category": "state_variation",
+    "schemes_affected": [
+      "nsap_ignoaps",
+      "nsap_ignwps",
+      "nsap_igndps"
+    ],
+    "description": "State BPL lists vary in criteria, methodology, and freshness. NSAP uses state BPL lists which may differ from SECC or central BPL criteria.",
+    "system_handling": "Use has_ration_card in [AAY, PHH] as proxy for BPL status; flag 'unknown' as AMBIGUOUS",
+    "resolution": null,
+    "source": "NSAP scheme details from nsap.nic.in"
+  },
+  {
+    "id": "AMB-18",
+    "category": "state_variation",
+    "schemes_affected": [
+      "nsap_ignoaps",
+      "nsap_ignwps",
+      "nsap_igndps"
+    ],
+    "description": "State top-up amounts vary widely — from ₹0 to ₹2,500+ per month depending on state. Central amount is the floor.",
+    "system_handling": "Report central contribution only; note state top-up varies. Not an eligibility ambiguity.",
+    "resolution": null,
+    "source": "NSAP scheme details"
+  },
+  {
+    "id": "AMB-19",
+    "category": "state_variation",
+    "schemes_affected": [
+      "nsap_ignoaps"
+    ],
+    "description": "State-level interpretation of 'no other pension' varies. Some states exclude family support, others only formal pension.",
+    "system_handling": "Flag is_govt_employee=true as FAIL; otherwise AMBIGUOUS on pension from other sources",
+    "resolution": null,
+    "source": "NSAP IGNOAPS scheme details"
+  },
+  {
+    "id": "AMB-20",
+    "category": "definitional",
+    "schemes_affected": [
+      "nsap_ignwps"
+    ],
+    "description": "Pension on remarriage: central IGNWPS guidelines clearly revoke pension on remarriage. State implementation may vary.",
+    "system_handling": "Central rule is clear — marital_status=married after widowhood = FAIL",
+    "resolution": "PARTIALLY RESOLVED — central IGNWPS explicitly revokes pension on remarriage",
+    "source": "NSAP IGNWPS scheme details"
+  },
+  {
+    "id": "AMB-21",
+    "category": "definitional",
+    "schemes_affected": [
+      "nsap_ignwps"
+    ],
+    "description": "Age range for IGNWPS: central guidelines say 40-79 (with 80+ getting higher rate). Some states have different age entry points.",
+    "system_handling": "Use central rule: age >= 40 for eligibility",
+    "resolution": null,
+    "source": "NSAP IGNWPS scheme details"
+  },
+  {
+    "id": "AMB-22",
+    "category": "definitional",
+    "schemes_affected": [
+      "nsap_igndps"
+    ],
+    "description": "Disability 40-79% excluded from central IGNDPS (requires 80%+) but some states run separate schemes for 40-79% disabled.",
+    "system_handling": "Central rule: disability_percent < 80 = FAIL for IGNDPS. Mention state schemes may cover 40-79%.",
+    "resolution": null,
+    "source": "NSAP IGNDPS scheme details"
+  },
+  {
+    "id": "AMB-23",
+    "category": "overlap",
+    "schemes_affected": [
+      "nsap_igndps",
+      "nsap_ignwps"
+    ],
+    "description": "Dual NSAP eligibility: a disabled widow could theoretically qualify for both IGNDPS and IGNWPS. No clear central guideline on whether both can be claimed.",
+    "system_handling": "Flag as AMBIGUOUS; show both as potentially eligible with note",
+    "resolution": null,
+    "source": "NSAP scheme details"
+  },
+  {
+    "id": "AMB-24",
+    "category": "definitional",
+    "schemes_affected": [
+      "apy"
+    ],
+    "description": "Informal workers with brief formal stints may have been EPF members technically but are now informal. EPF membership status may be stale.",
+    "system_handling": "Flag is_epf_member as AMBIGUOUS if occupation suggests informal worker with prior formal history",
+    "resolution": null,
+    "source": "APY Scheme Details from PFRDA"
+  },
+  {
+    "id": "AMB-25",
+    "category": "verification",
+    "schemes_affected": [
+      "pm_sym"
+    ],
+    "description": "Income verification for informal workers is difficult — no payslip or ITR. Self-declaration basis.",
+    "system_handling": "Accept self-declared annual_income; flag boundary cases (₹1.6L-₹1.8L) as AMBIGUOUS",
+    "resolution": null,
+    "source": "PM-SYM Brief from Ministry of Labour and Employment"
+  },
+  {
+    "id": "AMB-26",
+    "category": "definitional",
+    "schemes_affected": [
+      "pm_svanidhi"
+    ],
+    "description": "Vendors without any documentation need Letter of Recommendation from ULB. ULB discretion applies — LoR not guaranteed.",
+    "system_handling": "Flag occupation=Street Vendor without documents as AMBIGUOUS (LoR is pathway but not guaranteed)",
+    "resolution": null,
+    "source": "PM SVANidhi scheme details"
+  },
+  {
+    "id": "AMB-27",
+    "category": "definitional",
+    "schemes_affected": [
+      "pm_svanidhi"
+    ],
+    "description": "Previously believed there was a March 2020 cut-off for vendor identification. This is incorrect.",
+    "system_handling": "No cut-off date. New vendors eligible via Category C/D LoR route.",
+    "resolution": "RESOLVED — PM-SVANidhi has no March 2020 cut-off; new vendors eligible via LoR",
+    "source": "PM SVANidhi scheme details"
+  },
+  {
+    "id": "AMB-28",
+    "category": "definitional",
+    "schemes_affected": [
+      "pm_mudra"
+    ],
+    "description": "Activities 'allied to agriculture' boundary unclear — specifically poultry, dairy, beekeeping qualify; core crop farming does NOT.",
+    "system_handling": "Flag occupation=Farmer/Agricultural Labourer as AMBIGUOUS; allied activities as PASS",
+    "resolution": null,
+    "source": "PMMY official scheme details"
+  },
+  {
+    "id": "AMB-29",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmegp"
+    ],
+    "description": "Bank may require skills/experience/knowledge for proposed activity. Requirement is discretionary at bank level.",
+    "system_handling": "Cannot determine from profile; note as bank-discretionary requirement",
+    "resolution": null,
+    "source": "PMEGP Guidelines Final"
+  },
+  {
+    "id": "AMB-30",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmegp"
+    ],
+    "description": "One per family rule: 'family' defined as self and spouse. Multiple adult children starting separate enterprises — unclear if each counts as separate family.",
+    "system_handling": "Flag previous_scheme_loans containing pmegp as AMBIGUOUS rather than definitive FAIL",
+    "resolution": null,
+    "source": "PMEGP Guidelines Final"
+  },
+  {
+    "id": "AMB-31",
+    "category": "definitional",
+    "schemes_affected": [
+      "stand_up_india"
+    ],
+    "description": "If first enterprise was closed/wound up, is a second enterprise still 'greenfield'? Not explicitly addressed.",
+    "system_handling": "Flag has_existing_enterprise=true as FAIL; closed enterprise as AMBIGUOUS",
+    "resolution": null,
+    "source": "Stand-Up India scheme details"
+  },
+  {
+    "id": "AMB-32",
+    "category": "definitional",
+    "schemes_affected": [
+      "stand_up_india"
+    ],
+    "description": "For non-individual enterprises (companies), 51% shareholding by SC/ST or woman required. Cannot verify from profile.",
+    "system_handling": "For individual applicants, check caste/gender directly. Corporate structure requires manual verification.",
+    "resolution": null,
+    "source": "Stand-Up India scheme details"
+  },
+  {
+    "id": "AMB-33",
+    "category": "definitional",
+    "schemes_affected": [
+      "sukanya_samriddhi"
+    ],
+    "description": "Blended families (step-children, adopted children) — one account per girl child but family limit of 2 may cause issues.",
+    "system_handling": "Flag previous_scheme_loans containing sukanya_samriddhi as AMBIGUOUS for blended families",
+    "resolution": null,
+    "source": "SSY scheme details"
+  },
+  {
+    "id": "AMB-34",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmmvy"
+    ],
+    "description": "Whether miscarriage/stillbirth counts as 'first birth' for PMMVY. Previously unclear.",
+    "system_handling": "Miscarriage/stillbirth treated as fresh case — does NOT count as first birth.",
+    "resolution": "RESOLVED — PMMVY 2.0 guidelines treat miscarriage/stillbirth as fresh case for future pregnancy",
+    "source": "PMMVY 2.0 guidelines (Mission Shakti, effective 01.04.2022)"
+  },
+  {
+    "id": "AMB-35",
+    "category": "definitional",
+    "schemes_affected": [
+      "pmmvy"
+    ],
+    "description": "Twins/triplets in second pregnancy — if one or more are girls, incentive applies per PMMVY 2.0 norms.",
+    "system_handling": "Flag is_pregnant_or_lactating=true with num_children>=2 as AMBIGUOUS — may qualify for second child incentive",
+    "resolution": null,
+    "source": "PMMVY 2.0 guidelines"
+  },
+  {
+    "id": "AMB-36",
+    "category": "state_variation",
+    "schemes_affected": [
+      "nfsa"
+    ],
+    "description": "AAY identification criteria vary by state — state determines who qualifies as 'poorest of poor' for AAY vs PHH.",
+    "system_handling": "Cannot determine AAY vs PHH from profile; use income and vulnerability proxies; flag as AMBIGUOUS",
+    "resolution": null,
+    "source": "NFSA 2013 + state-specific portals"
+  },
+  {
+    "id": "AMB-37",
+    "category": "state_variation",
+    "schemes_affected": [
+      "nfsa"
+    ],
+    "description": "PHH inclusion/exclusion criteria entirely state-specific. Central NFSA sets coverage percentage (75% rural, 50% urban) but states choose who is included.",
+    "system_handling": "Use income proxy and vulnerability proxy as signals; always flag as AMBIGUOUS due to state variation",
+    "resolution": null,
+    "source": "NFSA 2013"
+  },
+  {
+    "id": "AMB-38",
+    "category": "definitional",
+    "schemes_affected": [
+      "nfsa"
+    ],
+    "description": "One Nation One Ration Card (ONORC): portability across states enabled but implementation varies. Migrant workers may face access issues.",
+    "system_handling": "Note ONORC availability; flag migrant workers as AMBIGUOUS for ration card portability",
+    "resolution": null,
+    "source": "NFSA 2013 + ONORC scheme"
+  },
+  {
+    "id": "AMB-39",
+    "category": "definitional",
+    "schemes_affected": [
+      "nfsa"
+    ],
+    "description": "Head of family on ration card must be eldest woman member (18+). Male only if no adult woman. This affects who can apply.",
+    "system_handling": "Note in results that female head of family preferred for ration card application",
+    "resolution": null,
+    "source": "NFSA 2013"
+  },
+  {
+    "id": "AMB-40",
+    "category": "definitional",
+    "schemes_affected": [
+      "pm_vishwakarma"
+    ],
+    "description": "Part-time artisan who also has another job — does 'on self-employment basis' exclude them?",
+    "system_handling": "Flag occupation ambiguously matching traditional trade as AMBIGUOUS if also shows formal employment indicators",
+    "resolution": null,
+    "source": "PM Vishwakarma official portal"
+  },
+  {
+    "id": "AMB-41",
+    "category": "definitional",
+    "schemes_affected": [
+      "pm_vishwakarma"
+    ],
+    "description": "'Availed' vs 'outstanding': no-recent-credit-scheme rule uses 'availed' not 'outstanding' — fully repaid loans still count as disqualifying.",
+    "system_handling": "Flag previous_scheme_loans containing pmegp/pm_svanidhi/pm_mudra as AMBIGUOUS with note that repaid loans may still disqualify",
+    "resolution": null,
+    "source": "PM Vishwakarma official portal"
+  },
+  {
+    "id": "AMB-42",
+    "category": "state_variation",
+    "schemes_affected": [
+      "pm_vishwakarma"
+    ],
+    "description": "Gram panchayat/ULB verification step for PM Vishwakarma registration may have local backlogs or varying criteria.",
+    "system_handling": "Cannot determine from profile; note verification step required",
+    "resolution": null,
+    "source": "PM Vishwakarma official portal"
+  },
+  {
+    "id": "AMB-43",
+    "category": "state_variation",
+    "schemes_affected": [
+      "pmay_u"
+    ],
+    "description": "States can redefine EWS income criteria with MoHUA concurrence — EWS income ceiling of ₹3L is central default but states may change it.",
+    "system_handling": "Use ₹3L/₹6L/₹9L as central defaults; flag boundary cases as AMBIGUOUS",
+    "resolution": null,
+    "source": "PMAY-U 2.0 Scheme Guidelines, September 2024"
+  },
+  {
+    "id": "AMB-44",
+    "category": "definitional",
+    "schemes_affected": [
+      "nsap_ignoaps"
+    ],
+    "description": "IGNOAPS requires 'no other pension' — unclear whether family support (children sending money) counts as pension/financial assistance.",
+    "system_handling": "Only formal pension/govt financial assistance counts; family support does not disqualify",
+    "resolution": null,
+    "source": "NSAP IGNOAPS scheme details"
+  },
+  {
+    "id": "AMB-45",
+    "category": "exclusion_exception",
+    "schemes_affected": [
+      "pm_kisan"
+    ],
+    "description": "PM-KISAN excludes government employees but explicitly carves out Class IV / Multi-Tasking Staff / Group D workers (peons, sweepers, gardeners). The engine cannot distinguish Group D from other government employees — both is_govt_employee=true cases map to FAIL.",
+    "system_handling": "Flag is_govt_employee=true as FAIL with note that Group D employees may still qualify. User must self-verify at pmkisan.gov.in.",
+    "resolution": null,
+    "source": "PM-KISAN Revised Operational Guidelines dated 21.06.2019, Clause 3.3"
+  }
+]

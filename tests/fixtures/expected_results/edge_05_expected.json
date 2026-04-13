@@ -1,0 +1,10 @@
+{
+  "profile_id": "edge_05_transgender_bpl",
+  "notes": "Transgender person — schemes with gender=F requirement return AMBIGUOUS",
+  "expected_results": {
+    "ujjwala": {"status": "AMBIGUOUS", "key_flags": ["gender=Transgender ambiguous for female-only scheme"]},
+    "pmmvy": {"status": "AMBIGUOUS", "key_flags": ["gender=Transgender ambiguous"]},
+    "ayushman_bharat": {"status": "ELIGIBLE"},
+    "pm_sym": {"status": "INELIGIBLE", "reason": "annual_income=30000 <= 180000 OK but is_urban=true, age OK"}
+  }
+}

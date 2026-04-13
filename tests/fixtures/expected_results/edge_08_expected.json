@@ -1,0 +1,10 @@
+{
+  "profile_id": "edge_08_migrant_worker",
+  "notes": "Urban flag means MGNREGA ineligible. SC construction worker — PM-SYM income within limit.",
+  "expected_results": {
+    "mgnrega": {"status": "INELIGIBLE", "reason": "is_urban=true"},
+    "pm_sym": {"status": "ELIGIBLE"},
+    "ayushman_bharat": {"status": "ELIGIBLE"},
+    "stand_up_india": {"status": "INELIGIBLE", "reason": "no enterprise"}
+  }
+}

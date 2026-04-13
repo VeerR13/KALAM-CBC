@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Document Checklist — Kalam{% endblock %}
+
+{% block content %}
+<div class="checklist-page container">
+
+    <a href="/results?{{ profile_qs }}" class="back-link">← Back to results</a>
+
+    <div class="checklist-hero">
+        <h1>Document Checklist</h1>
+        <p>दस्तावेज़ सूची &nbsp;&middot;&nbsp; {{ eligible_results|length }} scheme{{ 's' if eligible_results|length != 1 }}</p>
+    </div>
+
+    {% if docs %}
+    <div class="detail-section-title" style="margin-bottom:10px;">Documents to gather</div>
+    {% for doc in docs %}
+    <div class="checklist-card">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="color:var(--text-faint);font-size:0.95rem;flex-shrink:0;padding-top:1px;">—</div>
+            <div style="flex:1;">
+                <h3>{{ doc.get('document', 'Document') }}</h3>
+                {% if doc.get('where_to_obtain') %}
+                <div style="font-size:0.92rem;color:var(--text-dim);margin-top:3px;">{{ doc['where_to_obtain'] }}</div>
+                {% endif %}
+                {% if doc.get('processing_time_days') %}
+                <div style="font-size:0.82rem;color:var(--text-faint);margin-top:2px;">{{ doc['processing_time_days'] }} days</div>
+                {% endif %}
+                {% if doc.needed_for %}
+                <div class="needed-for">For: {{ doc.needed_for | join(', ') }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="padding:32px;text-align:center;color:var(--text-faint);font-size:0.95rem;border:1px solid var(--border);border-radius:var(--radius);">
+        No specific documents identified. Check individual scheme pages.
+    </div>
+    {% endif %}
+
+    {% if app_order %}
+    <div class="detail-section-title" style="margin:28px 0 10px;">Application order</div>
+    <p style="font-size:0.92rem;color:var(--text-faint);margin-bottom:12px;;">
+        Apply in this order — some schemes require others first.
+    </p>
+    {% for scheme_id in app_order %}
+    <div class="order-item">
+        <div class="order-num">{{ "%02d" % loop.index }}</div>
+        <div style="flex:1;">
+            <div>{{ icons.get(scheme_id, '') }} {{ scheme_id.replace('_', ' ').upper() }}</div>
+            {% for r in eligible_results %}
+                {% if r.scheme_id == scheme_id %}
+                <div style="font-size:0.82rem;color:var(--text-faint);margin-top:2px;">{{ r.benefit_summary[:60] }}{% if r.benefit_summary|length > 60 %}…{% endif %}</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="tip-box">
+        <strong style="color:var(--text);">Tip:</strong>
+        Link Aadhaar to your bank account first — it's required for most schemes.
+        Aadhaar ko bank se link karna sabse pehle karein.
+    </div>
+
+    <div style="margin-top:20px;padding-bottom:32px;">
+        <a href="/results?{{ profile_qs }}"
+           style="display:block;text-align:center;padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border);color:var(--text-dim);font-size:0.92rem;font-weight:600;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:border-color 0.18s;">
+            ← Back to all results
+        </a>
+    </div>
+
+</div>
+{% endblock %}

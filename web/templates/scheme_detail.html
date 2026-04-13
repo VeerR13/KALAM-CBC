@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ scheme.name }} — Kalam{% endblock %}
+
+{% block content %}
+
+{% macro rule_icon(result) %}
+    {% if result.value == 'PASS' %}+{% elif result.value == 'FAIL' %}–{% elif result.value == 'AMBIGUOUS' %}~{% else %}?{% endif %}
+{% endmacro %}
+
+{% macro rule_color(result) %}
+    {% if result.value == 'PASS' %}var(--eligible){% elif result.value == 'FAIL' %}var(--ineligible){% elif result.value == 'AMBIGUOUS' %}var(--ambiguous){% else %}var(--text-faint){% endif %}
+{% endmacro %}
+
+<div class="detail-page container">
+
+    <a href="/results?{{ profile_qs }}" class="back-link">← Back to results</a>
+
+    <!-- Header -->
+    <div class="detail-header">
+        <div class="detail-icon">{{ icon }}</div>
+        <div class="detail-name">
+            <h1>{{ scheme.name }}</h1>
+            <h2>{{ scheme.full_name }}</h2>
+            <h3>{{ scheme.ministry }}</h3>
+        </div>
+    </div>
+
+    <!-- Status row -->
+    <div class="detail-status-row">
+        {% if result.status.value == 'ELIGIBLE' %}
+            <span class="badge badge-eligible">Eligible</span>
+        {% elif result.status.value == 'LIKELY_ELIGIBLE' %}
+            <span class="badge badge-likely">Likely eligible</span>
+        {% elif result.status.value == 'AMBIGUOUS' %}
+            <span class="badge badge-ambiguous">Unclear</span>
+        {% elif result.status.value == 'INELIGIBLE' %}
+            <span class="badge badge-ineligible">Not eligible</span>
+        {% else %}
+            <span class="badge badge-insufficient">Need more info</span>
+        {% endif %}
+        <div>
+            <div class="conf-big">{{ result.confidence | round | int }}%</div>
+            <div class="conf-big-label">confidence</div>
+        </div>
+    </div>
+
+    <!-- Benefit -->
+    {% if result.benefit_summary %}
+    <div class="detail-section">
+        <div class="detail-section-title">What is this scheme?</div>
+        <div class="benefit-box">{{ result.benefit_summary }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Rule breakdown -->
+    <div class="detail-section">
+        <div class="detail-section-title">Your eligibility breakdown / आपकी योग्यता</div>
+        {% for ev in result.rule_evaluations %}
+        <div class="rule-detail-item">
+            <div class="rule-detail-icon" style="color:{{ rule_color(ev.result) }};font-weight:700;font-size:1.1rem;">
+                {{ rule_icon(ev.result) }}
+            </div>
+            <div class="rule-detail-body">
+                <div class="rule-detail-id">{{ ev.rule_id }}{% if ev.is_mandatory %} &middot; mandatory{% endif %}</div>
+                <div class="rule-detail-desc">{{ ev.explanation or ev.rule_id }}</div>
+                {% if ev.result.value == 'AMBIGUOUS' %}
+                <div class="rule-detail-explain" style="color:var(--ambiguous);">
+                    This rule is unclear — you may still qualify. Verify at the scheme office.
+                </div>
+                {% elif ev.result.value == 'MISSING' %}
+                <div class="rule-detail-explain">
+                    Not enough information to check this rule.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Gaps -->
+    {% if result.gaps %}
+    <div class="detail-section">
+        <div class="detail-section-title">Gaps / क्या रोक रहा है</div>
+        {% for gap in result.gaps %}
+        <div class="gap-item">
+            <strong>{{ gap.description }}</strong>
+            <div class="gap-action">{{ gap.action }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Documents -->
+    {% if result.required_documents %}
+    <div class="detail-section">
+        <div class="detail-section-title">Documents needed / ज़रूरी दस्तावेज़</div>
+        {% for doc in result.required_documents %}
+        <div class="doc-item">
+            <div class="doc-check">—</div>
+            <div>
+                <div class="doc-name">{{ doc.get('document', 'Document') }}</div>
+                {% if doc.get('where_to_obtain') %}
+                <div class="doc-hint">{{ doc['where_to_obtain'] }}</div>
+                {% endif %}
+                {% if doc.get('processing_time_days') %}
+                <div class="doc-hint">{{ doc['processing_time_days'] }} days</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Prerequisites -->
+    {% if result.prerequisite_scheme_ids %}
+    <div class="detail-section">
+        <div class="detail-section-title">Apply these first</div>
+        {% for prereq_id in result.prerequisite_scheme_ids %}
+        <div class="order-item">
+            <div class="order-num">01</div>
+            <strong>{{ prereq_id.replace('_', ' ').upper() }}</strong>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <a href="/checklist?{{ profile_qs }}"
+       class="btn-checklist"
+       style="display:block;text-align:center;text-decoration:none;margin-top:24px;">
+        View document checklist →
+    </a>
+
+</div>
+{% endblock %}

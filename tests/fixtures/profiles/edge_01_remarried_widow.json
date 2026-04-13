@@ -1,0 +1,7 @@
+{
+  "age": 52, "state": "UP", "is_urban": false, "caste_category": "OBC",
+  "gender": "F", "annual_income": 48000, "occupation": "agricultural_labourer",
+  "family_size": 3, "has_bank_account": true, "has_aadhaar": true,
+  "is_aadhaar_linked": true, "marital_status": "married",
+  "has_ration_card": "AAY", "is_govt_employee": false, "is_income_tax_payer": false
+}

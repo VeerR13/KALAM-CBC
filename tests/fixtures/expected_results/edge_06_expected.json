@@ -1,0 +1,9 @@
+{
+  "profile_id": "edge_06_govt_employee_spouse_farmer",
+  "notes": "Woman farmer, husband is govt employee — PM-KISAN exclusion only if SHE is govt employee",
+  "expected_results": {
+    "pm_kisan": {"status": "ELIGIBLE", "notes": "is_govt_employee=false for her"},
+    "mgnrega": {"status": "ELIGIBLE"},
+    "nfsa": {"status": "INELIGIBLE", "reason": "has_ration_card=none"}
+  }
+}

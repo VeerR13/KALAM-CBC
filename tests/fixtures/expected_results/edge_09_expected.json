@@ -1,0 +1,10 @@
+{
+  "profile_id": "edge_09_income_crossed_tax",
+  "notes": "Income tax payer — excluded from PM-KISAN, NFSA. Farmer with 4ha land.",
+  "expected_results": {
+    "pm_kisan": {"status": "INELIGIBLE", "reason": "is_income_tax_payer=true"},
+    "nfsa": {"status": "INELIGIBLE", "reason": "is_income_tax_payer=true"},
+    "mgnrega": {"status": "ELIGIBLE"},
+    "pm_mudra": {"status": "INELIGIBLE", "reason": "no enterprise"}
+  }
+}

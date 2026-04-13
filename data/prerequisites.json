@@ -1,0 +1,19 @@
+{
+  "edges": [
+    {"from": "pmjdy", "to": "pm_kisan", "reason": "Aadhaar-seeded bank account required for DBT"},
+    {"from": "pmjdy", "to": "ujjwala", "reason": "Bank account required for LPG subsidy transfer"},
+    {"from": "pmjdy", "to": "pm_sym", "reason": "Savings/Jan Dhan account required for contribution auto-debit"},
+    {"from": "pmjdy", "to": "apy", "reason": "Savings bank account required for contribution auto-debit"},
+    {"from": "pmjdy", "to": "pmmvy", "reason": "Aadhaar-mapped bank/post office account for DBT"},
+    {"from": "pmjdy", "to": "nsap_ignoaps", "reason": "Bank account required for pension DBT"},
+    {"from": "pmjdy", "to": "nsap_ignwps", "reason": "Bank account required for pension DBT"},
+    {"from": "pmjdy", "to": "nsap_igndps", "reason": "Bank account required for pension DBT"},
+    {"from": "pmjdy", "to": "pmay_g", "reason": "Bank account required for installment DBT"},
+    {"from": "pmjdy", "to": "pmay_u", "reason": "Bank account required for subsidy transfer"},
+    {"from": "nfsa", "to": "ujjwala", "reason": "BPL ration card is one qualifying pathway for Ujjwala"},
+    {"from": "nfsa", "to": "ayushman_bharat", "reason": "NFSA ration card (AAY/PHH) is proxy for SECC deprivation criteria"},
+    {"from": "nfsa", "to": "pmmvy", "reason": "NFSA ration card is one of the disadvantaged category proofs for PMMVY"},
+    {"from": "pm_svanidhi", "to": "pm_svanidhi_loan2", "reason": "Must fully repay Loan 1 (₹10,000) before 2nd loan"},
+    {"from": "pm_svanidhi_loan2", "to": "pm_svanidhi_loan3", "reason": "Must fully repay Loan 2 (₹20,000) before 3rd loan"}
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "scheme_id": "pm_svanidhi",
+  "name": "PM SVANidhi",
+  "full_name": "PM Street Vendor's AtmaNirbhar Nidhi",
+  "target_description": "Street vendors with Certificate of Vending, survey identification, or Letter of Recommendation from ULB",
+  "ministry": "Ministry of Housing and Urban Affairs (MoHUA)",
+  "data_source": "PM SVANidhi scheme details from pmsvanidhi.mohua.gov.in and myscheme.gov.in",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "SVA-R01",
+      "parameter": "street_vendor_occupation",
+      "description": "Applicant must be a street vendor or hawker engaged in vending activities",
+      "condition": {
+        "type": "field_check",
+        "field": "occupation",
+        "values": ["Street Vendor", "Vendor", "Hawker", "Cobbler", "Ragpicker", "Food Vendor", "Cart Vendor", "Mobile Vendor", "street_vendor", "vendor", "hawker", "cobbler", "ragpicker"],
+        "ambiguous_values": ["Self-employed", "Petty Business", "Other", "self_employed", "informal_trade"]
+      },
+      "is_mandatory": true,
+      "weight": 35,
+      "ambiguity_refs": ["AMB-26"],
+      "ambiguity_note": "Must be street vendor. Category A/B: Certificate of Vending. Category C/D: Letter of Recommendation from ULB. No March 2020 cut-off — new vendors eligible via LoR route."
+    },
+    {
+      "rule_id": "SVA-R02",
+      "parameter": "aadhaar",
+      "description": "Applicant must have an Aadhaar card",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_aadhaar",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "SVA-R03",
+      "parameter": "bank_account",
+      "description": "Applicant must have a bank account",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_bank_account",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "SVA-R04",
+      "parameter": "loan_progression",
+      "description": "For enhanced loans, prior loan must have been fully repaid",
+      "condition": {
+        "type": "field_check",
+        "field": "previous_scheme_loans",
+        "values": [],
+        "ambiguous_values": ["pm_svanidhi"]
+      },
+      "is_mandatory": false,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "For 2nd loan: must have fully repaid 1st. For 3rd: must have fully repaid 2nd."
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Certificate of Vending or Identity Card (Cat A-B) OR Letter of Recommendation from ULB (Cat C-D)",
+      "where_to_obtain": "Urban Local Body",
+      "processing_time_days": "3-15",
+      "priority": 1
+    },
+    {
+      "document": "Aadhaar or Voter ID or Driving License",
+      "where_to_obtain": "Any",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "Bank Account Passbook",
+      "where_to_obtain": "Any bank branch",
+      "processing_time_days": "0-1",
+      "priority": 3
+    },
+    {
+      "document": "KYC Documents",
+      "where_to_obtain": "Self",
+      "processing_time_days": "0",
+      "priority": 4
+    }
+  ],
+  "prerequisites": [],
+  "benefit_summary": "1st loan \u20b910,000 (7% interest subsidy, 1-year repayment). On repayment: 2nd loan \u20b920,000. On repayment: 3rd loan \u20b950,000. Digital transaction cashback up to \u20b9100/month."
+}

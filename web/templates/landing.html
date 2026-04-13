@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Kalam — Sarkari Yojanaein{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+    <h1>Kalam</h1>
+    <p class="hero-hi">कलाम</p>
+    <p class="hero-tagline">Find government schemes you're eligible for</p>
+    <p class="hero-tagline-sub">आपके लिए सरकारी योजनाएं खोजें &nbsp;·&nbsp; Answer a few questions. We check 20 schemes.</p>
+
+    <!-- Mode tabs -->
+    <div class="landing-tabs">
+        <a href="/details" class="landing-tab active">
+            <span class="tab-en">📋 Fill a Form</span>
+            <span class="tab-hi">फॉर्म भरें</span>
+        </a>
+        <a href="/chat" class="landing-tab">
+            <span class="tab-en">💬 Chat with us</span>
+            <span class="tab-hi">बात करें</span>
+        </a>
+    </div>
+
+    <a href="/details" class="btn-cta">Check my eligibility →<br><small style="font-size:0.78em;font-weight:400;opacity:0.85">अपनी पात्रता जांचें</small></a>
+
+    <div class="hero-meta">
+        <span>Free · मुफ़्त</span>
+        <span class="hero-meta-dot"></span>
+        <span>No sign-up · बिना रजिस्ट्रेशन</span>
+        <span class="hero-meta-dot"></span>
+        <span>Works with partial info</span>
+    </div>
+</div>
+
+<div class="feature-grid">
+    <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">20 Schemes · 20 योजनाएं</div>
+        <div class="feature-desc">Central government welfare — PM-KISAN, MGNREGA, Ayushman Bharat, PMAY, and more.</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Smart Matching · स्मार्ट मिलान</div>
+        <div class="feature-desc">Shows what you qualify for, what's unclear, and exactly why — no black boxes.</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <div class="feature-title">Document Checklist · दस्तावेज़ सूची</div>
+        <div class="feature-desc">Exactly which documents to get, where to get them, and which order to apply.</div>
+    </div>
+</div>
+
+{% endblock %}

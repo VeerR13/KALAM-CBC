@@ -1,0 +1,112 @@
+{
+  "scheme_id": "pmay_u",
+  "name": "PMAY-U 2.0",
+  "full_name": "Pradhan Mantri Awas Yojana – Urban 2.0",
+  "target_description": "Urban families in EWS (≤₹3L), LIG (₹3-6L), MIG (₹6-9L) without a pucca house",
+  "ministry": "Ministry of Housing and Urban Affairs",
+  "data_source": "PMAY-U 2.0 Scheme Guidelines, September 2024, Ministry of Housing and Urban Affairs",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "PMAYU-R01",
+      "parameter": "urban",
+      "description": "Applicant must reside in an urban area (statutory town / notified planning area)",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_urban",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMAYU-R02",
+      "parameter": "income_ews_mig",
+      "description": "Annual household income must fall within EWS/LIG/MIG brackets. EWS ≤3L, LIG 3-6L, MIG 6-9L annual household income",
+      "condition": {
+        "type": "range_check",
+        "field": "annual_income",
+        "min": 0,
+        "max": 900000
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": ["AMB-12"],
+      "ambiguity_note": "Income refers to annual household income — ambiguity whether individual vs. combined household income is used"
+    },
+    {
+      "rule_id": "PMAYU-R03",
+      "parameter": "no_pucca_house",
+      "description": "Must not own a pucca house anywhere in India",
+      "condition": {
+        "type": "field_check",
+        "field": "land_ownership",
+        "values": ["none", "leases"],
+        "ambiguous_values": ["owns"]
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": ["AMB-10"],
+      "ambiguity_note": "Owning land does not automatically mean owning a pucca house — 'owns' is ambiguous as applicant may own land but not a habitable dwelling"
+    },
+    {
+      "rule_id": "PMAYU-R04",
+      "parameter": "aadhaar",
+      "description": "Applicant must have Aadhaar for identity and deduplication",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_aadhaar",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 15,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMAYU-EX01",
+      "parameter": "exclusion_prior_scheme",
+      "description": "Must not have been allotted house under any govt housing scheme in last 20 years",
+      "condition": {
+        "type": "field_check",
+        "field": "previous_scheme_loans",
+        "values": [],
+        "ambiguous_values": ["pmay_u", "pmay_g"]
+      },
+      "is_mandatory": false,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card (all family members)",
+      "where_to_obtain": "CSC / Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Income Declaration (self-certified)",
+      "where_to_obtain": "Self",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "Self-declaration (no pucca house — Annexure-2)",
+      "where_to_obtain": "Self",
+      "processing_time_days": "0",
+      "priority": 3
+    },
+    {
+      "document": "Bank Account Details",
+      "where_to_obtain": "Any bank branch",
+      "processing_time_days": "1-3",
+      "priority": 4
+    }
+  ],
+  "prerequisites": ["pmjdy"],
+  "benefit_summary": "Central assistance for house construction/purchase via BLC/AHP/ARH/ISS verticals. House carpet area 30-90 sqm, value up to ₹45 lakh."
+}

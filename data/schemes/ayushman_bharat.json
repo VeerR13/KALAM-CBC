@@ -1,0 +1,124 @@
+{
+  "scheme_id": "ayushman_bharat",
+  "name": "Ayushman Bharat (PM-JAY)",
+  "full_name": "Pradhan Mantri Jan Arogya Yojana",
+  "target_description": "Bottom 40% vulnerable and deprived families as per SECC 2011 data and occupational categories",
+  "ministry": "National Health Authority (NHA), Ministry of Health and Family Welfare",
+  "data_source": "PM-JAY eligibility criteria from official pmjay.gov.in and myscheme.gov.in",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-12",
+  "rules": [
+    {
+      "rule_id": "PMJAY-R01",
+      "parameter": "secc_bpl_or_occupation",
+      "description": "Eligible via EITHER: (1) AAY/PHH ration card as SECC/BPL proxy OR (2) urban occupation in PM-JAY's 11 eligible occupational categories (daily wage workers, vendors, artisans, domestic workers, ragpickers, drivers, washermen, etc.)",
+      "condition": {
+        "type": "composite",
+        "logic": "OR",
+        "sub_conditions": [
+          {
+            "type": "field_check",
+            "field": "has_ration_card",
+            "values": ["AAY", "PHH"],
+            "ambiguous_values": ["unknown"]
+          },
+          {
+            "type": "field_check",
+            "field": "occupation",
+            "values": ["Daily wage worker", "street_vendor", "Artisan", "Domestic worker", "Ragpicker", "Washerman", "Driver", "Rickshaw puller"],
+            "ambiguous_values": ["Homemaker", "Shopkeeper"]
+          }
+        ]
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": ["AMB-04"],
+      "ambiguity_note": "SECC 2011 data is 15 years stale — many genuinely poor families may not appear. Urban occupational route covers the 11 PM-JAY eligible categories. Occupation values from the form map approximately to these categories."
+    },
+    {
+      "rule_id": "PMJAY-R02",
+      "parameter": "exclusion_income",
+      "description": "Exclusion criterion: households with monthly income above ₹10,000 (annual > ₹1,20,000) are excluded per myscheme.gov.in official central criteria",
+      "condition": {
+        "type": "range_check",
+        "field": "annual_income",
+        "min": 0,
+        "max": 120000
+      },
+      "is_mandatory": true,
+      "weight": 10,
+      "ambiguity_refs": ["AMB-05"],
+      "ambiguity_note": "Central rule. Several states (Rajasthan, Kerala, Delhi) have extended PM-JAY to higher income groups — if your state has extended coverage, you may still be eligible despite failing this rule. State-specific overrides are not yet modelled."
+    },
+    {
+      "rule_id": "PMJAY-R03",
+      "parameter": "aadhaar",
+      "description": "Applicant must have an Aadhaar card for beneficiary identification",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_aadhaar",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMJAY-EX01",
+      "parameter": "exclusion_wealth",
+      "description": "Exclusion: owns 2/3/4-wheeler vehicle, mechanized farm equipment, KCC >=₹50k, is govt employee, is income tax payer, owns pucca house. Source: myscheme.gov.in official exclusion list.",
+      "condition": {
+        "type": "exclusion",
+        "any_true_fails": [
+          {"field": "is_govt_employee", "equals": true},
+          {"field": "is_income_tax_payer", "equals": true},
+          {"field": "has_motorized_vehicle", "equals": true},
+          {"field": "has_mechanized_farm_equipment", "equals": true},
+          {"field": "has_kisan_credit_card", "equals": true},
+          {"field": "has_pucca_house", "equals": true}
+        ]
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Official exclusion also includes owning refrigerator AND landline (compound condition — not fully evaluated here as it requires both together). Missing fields in this exclusion rule return MISSING, not FAIL."
+    },
+    {
+      "rule_id": "PMJAY-EX02",
+      "parameter": "exclusion_land",
+      "description": "Exclusion: owning 5 acres or more of agricultural land. 5 acres = 2.0234 hectares.",
+      "condition": {
+        "type": "range_check",
+        "field": "land_area_hectares",
+        "min": 0,
+        "max": 2.023
+      },
+      "is_mandatory": false,
+      "weight": 10,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Exclusion threshold is specifically for agricultural land. land_area_hectares may include non-agricultural plots — kept non-mandatory to avoid false exclusions."
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card",
+      "where_to_obtain": "CSC / Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Ration Card (SECC/BPL)",
+      "where_to_obtain": "PDS shop / District office",
+      "processing_time_days": "7-30",
+      "priority": 2
+    },
+    {
+      "document": "Address proof",
+      "where_to_obtain": "Tehsil / Gram Panchayat",
+      "processing_time_days": "3-7",
+      "priority": 3
+    }
+  ],
+  "prerequisites": [],
+  "benefit_summary": "₹5 lakh family floater health insurance per year for secondary/tertiary hospitalization at empanelled hospitals. Cashless and paperless."
+}

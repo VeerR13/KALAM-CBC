@@ -1,0 +1,9 @@
+{
+  "profile_id": "edge_10_disabled_no_aadhaar",
+  "notes": "No Aadhaar, no bank — most DBT schemes fail. IGNDPS disability=85% qualifies on disability criterion but fails bank account. MGNREGA is Aadhaar-free per SC ruling.",
+  "expected_results": {
+    "nsap_igndps": {"status": "INELIGIBLE", "reason": "has_bank_account=false"},
+    "pmjdy": {"status": "INELIGIBLE", "reason": "has_aadhaar=false (KYC fails)"},
+    "mgnrega": {"status": "ELIGIBLE", "notes": "MGNREGA does not require Aadhaar as mandatory in rules"}
+  }
+}

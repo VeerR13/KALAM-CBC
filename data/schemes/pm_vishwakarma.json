@@ -1,0 +1,140 @@
+{
+  "scheme_id": "pm_vishwakarma",
+  "name": "PM Vishwakarma",
+  "full_name": "PM Vishwakarma Scheme",
+  "target_description": "Artisans and craftspeople working with hands and tools in 18 identified traditional trades, in unorganised sector on self-employment basis",
+  "ministry": "Ministry of Micro, Small and Medium Enterprises",
+  "data_source": "PM Vishwakarma official portal pmvishwakarma.gov.in — Ministry of MSME",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "PMVK-R01",
+      "parameter": "traditional_trade",
+      "description": "Applicant must be engaged in one of the 18 identified traditional trades in the unorganised sector",
+      "condition": {
+        "type": "field_check",
+        "field": "occupation",
+        "values": ["Carpenter", "Suthar", "Boat Maker", "Goldsmith", "Sunar", "Mason", "Raajmistri", "Armourer", "Blacksmith", "Lohar", "Hammer and Tool Kit Maker", "Locksmith", "Sculptor", "Stone Breaker", "Potter", "Kumhaar", "Cobbler", "Charmakar", "Shoesmith", "Footwear Artisan", "Basket Maker", "Mat Maker", "Broom Maker", "Coir Weaver", "Doll and Toy Maker", "Barber", "Naai", "Garland Maker", "Malakaar", "Washerman", "Dhobi", "Tailor", "Darzi", "Fishing Net Maker", "Artisan", "Traditional Craftsman"],
+        "ambiguous_values": ["Self-employed", "Skilled Worker", "Craftsperson", "Other"]
+      },
+      "is_mandatory": true,
+      "weight": 35,
+      "ambiguity_refs": ["AMB-40"],
+      "ambiguity_note": "Must be engaged in one of 18 family-based traditional trades in unorganised sector on self-employment basis."
+    },
+    {
+      "rule_id": "PMVK-R02",
+      "parameter": "age",
+      "description": "Applicant must be at least 18 years of age",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 18
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMVK-R03",
+      "parameter": "not_govt_employee",
+      "description": "Applicant and their family members must not be in government service",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_govt_employee",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Person in government service and their family members NOT eligible."
+    },
+    {
+      "rule_id": "PMVK-R04",
+      "parameter": "not_epf_member",
+      "description": "Applicant must be in the unorganised sector (EPF membership indicates organised sector)",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_epf_member",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 15,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Must be in unorganised sector — EPF membership indicates organised sector."
+    },
+    {
+      "rule_id": "PMVK-R05",
+      "parameter": "no_recent_credit_scheme",
+      "description": "Applicant must not have availed PMEGP/SVANidhi/MUDRA or similar credit scheme in past 5 years",
+      "condition": {
+        "type": "field_check",
+        "field": "previous_scheme_loans",
+        "values": [],
+        "ambiguous_values": ["pmegp", "pm_svanidhi", "pm_mudra"]
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": ["AMB-41"],
+      "ambiguity_note": "Must not have availed PMEGP/SVANidhi/MUDRA or similar credit scheme in past 5 years — even if fully repaid."
+    },
+    {
+      "rule_id": "PMVK-R06",
+      "parameter": "aadhaar",
+      "description": "Applicant must have an Aadhaar card for portal registration",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_aadhaar",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 15,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMVK-R07",
+      "parameter": "one_per_family",
+      "description": "Only one member per family (husband, wife, unmarried children) is eligible",
+      "condition": {
+        "type": "field_check",
+        "field": "previous_scheme_loans",
+        "values": [],
+        "ambiguous_values": ["pm_vishwakarma"]
+      },
+      "is_mandatory": false,
+      "weight": 10,
+      "ambiguity_refs": [],
+      "ambiguity_note": "One member per family (husband, wife, unmarried children) eligible."
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card",
+      "where_to_obtain": "CSC-Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Bank Account Details",
+      "where_to_obtain": "Any bank branch",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "Trade Verification Documents",
+      "where_to_obtain": "Gram Panchayat-ULB",
+      "processing_time_days": "1-7",
+      "priority": 3
+    },
+    {
+      "document": "Mobile Number for portal registration",
+      "where_to_obtain": "Self",
+      "processing_time_days": "0",
+      "priority": 4
+    }
+  ],
+  "prerequisites": [],
+  "benefit_summary": "Collateral-free loans: 1st tranche \u20b91 lakh at 5% interest, 2nd tranche \u20b92 lakh at 5% interest. Skill training (basic 5 days + advanced 15 days). Toolkit incentive \u20b915,000. Digital transaction incentive. PM Vishwakarma certificate and ID card."
+}

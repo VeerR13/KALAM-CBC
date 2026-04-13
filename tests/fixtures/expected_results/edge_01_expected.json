@@ -1,0 +1,11 @@
+{
+  "profile_id": "edge_01_remarried_widow",
+  "notes": "Was widowed, now remarried — marital_status=married so IGNWPS fails widow check",
+  "expected_results": {
+    "nsap_ignwps": {"status": "INELIGIBLE", "reason": "marital_status=married, not widowed"},
+    "nsap_ignoaps": {"status": "INELIGIBLE", "reason": "age=52 < 60"},
+    "mgnrega": {"status": "ELIGIBLE"},
+    "ayushman_bharat": {"status": "ELIGIBLE"},
+    "nfsa": {"status": "ELIGIBLE"}
+  }
+}

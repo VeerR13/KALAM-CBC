@@ -1,0 +1,10 @@
+{
+  "profile_id": "edge_04_urban_vendor_overlap",
+  "notes": "Urban SC vendor — PMJDY not eligible (already has bank), SVANidhi eligible, PMEGP fails (has existing enterprise)",
+  "expected_results": {
+    "pm_svanidhi": {"status": "ELIGIBLE"},
+    "pmegp": {"status": "INELIGIBLE", "reason": "has_existing_enterprise=true"},
+    "stand_up_india": {"status": "INELIGIBLE", "reason": "has_existing_enterprise=true"},
+    "mgnrega": {"status": "INELIGIBLE", "reason": "is_urban=true"}
+  }
+}

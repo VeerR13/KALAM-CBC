@@ -1,0 +1,154 @@
+{
+  "scheme_id": "pmay_g",
+  "name": "PMAY-G",
+  "full_name": "Pradhan Mantri Awas Yojana – Gramin",
+  "target_description": "Rural houseless households or those living in zero/one/two-room houses with kutcha walls and kutcha roof as per SECC 2011",
+  "ministry": "Ministry of Rural Development",
+  "data_source": "PMAY-G official guidelines from pmayg.nic.in",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-12",
+  "rules": [
+    {
+      "rule_id": "PMAYG-R01",
+      "parameter": "rural",
+      "description": "Applicant must reside in a rural area",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_urban",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMAYG-R02",
+      "parameter": "secc_bpl",
+      "description": "Family must be in SECC 2011 BPL list or hold AAY/PHH ration card",
+      "condition": {
+        "type": "field_check",
+        "field": "has_ration_card",
+        "values": ["AAY", "PHH"],
+        "ambiguous_values": ["unknown"]
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": ["AMB-04"],
+      "ambiguity_note": "SECC 2011 data is stale — beneficiary list may not reflect current poverty status accurately"
+    },
+    {
+      "rule_id": "PMAYG-R03",
+      "parameter": "housing_need",
+      "description": "Must have land to build on OR be allotted land by gram panchayat",
+      "condition": {
+        "type": "field_check",
+        "field": "land_ownership",
+        "values": ["owns", "leases"],
+        "ambiguous_values": ["none"]
+      },
+      "is_mandatory": false,
+      "weight": 25,
+      "ambiguity_refs": ["AMB-11"],
+      "ambiguity_note": "Landless households may be allotted land by gram panchayat — 'none' is ambiguous and requires local verification"
+    },
+    {
+      "rule_id": "PMAYG-R04",
+      "parameter": "aadhaar_bank",
+      "description": "Bank account must be seeded with Aadhaar for DBT transfer",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_aadhaar_linked",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 15,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMAYG-EX01",
+      "parameter": "exclusion_wealth",
+      "description": "Exclusion: govt employee, income tax payer, owns 2/3/4-wheeler vehicle, mechanized farm equipment, KCC >=₹50k, refrigerator, pucca house. Monthly income >₹10k also excludes (checked via PMAYG-EX02). Source: PMAY-G official guidelines.",
+      "condition": {
+        "type": "exclusion",
+        "any_true_fails": [
+          {"field": "is_govt_employee", "equals": true},
+          {"field": "is_income_tax_payer", "equals": true},
+          {"field": "has_motorized_vehicle", "equals": true},
+          {"field": "has_mechanized_farm_equipment", "equals": true},
+          {"field": "has_kisan_credit_card", "equals": true},
+          {"field": "has_refrigerator", "equals": true},
+          {"field": "has_pucca_house", "equals": true}
+        ]
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Official list also includes landline phone and professional tax payer — not separately tracked. Missing fields return MISSING, not FAIL."
+    },
+    {
+      "rule_id": "PMAYG-EX02",
+      "parameter": "exclusion_income",
+      "description": "Exclusion: monthly income above ₹10,000 (annual > ₹1,20,000) is excluded.",
+      "condition": {
+        "type": "range_check",
+        "field": "annual_income",
+        "min": 0,
+        "max": 120000
+      },
+      "is_mandatory": false,
+      "weight": 5,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Kept non-mandatory to handle income approximation. Income > ₹1.2L reduces confidence significantly."
+    },
+    {
+      "rule_id": "PMAYG-EX03",
+      "parameter": "exclusion_land",
+      "description": "Exclusion: owning 7.5 acres or more of land. 7.5 acres = 3.035 hectares.",
+      "condition": {
+        "type": "range_check",
+        "field": "land_area_hectares",
+        "min": 0,
+        "max": 3.035
+      },
+      "is_mandatory": false,
+      "weight": 5,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Official criterion also separately excludes >=2.5 acres of irrigated land — not separately tracked."
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card",
+      "where_to_obtain": "CSC / Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "SECC/BPL Certificate",
+      "where_to_obtain": "Gram Panchayat / Block office",
+      "processing_time_days": "7-15",
+      "priority": 2
+    },
+    {
+      "document": "Bank Passbook",
+      "where_to_obtain": "Any bank branch",
+      "processing_time_days": "1-3",
+      "priority": 3
+    },
+    {
+      "document": "MGNREGA Job Card",
+      "where_to_obtain": "Gram Panchayat",
+      "processing_time_days": "1-3",
+      "priority": 4
+    },
+    {
+      "document": "Affidavit (no pucca house)",
+      "where_to_obtain": "Notary",
+      "processing_time_days": "1",
+      "priority": 5
+    }
+  ],
+  "prerequisites": ["pmjdy"],
+  "benefit_summary": "₹1.20 lakh (plains) / ₹1.30 lakh (hilly areas) financial assistance for pucca house construction + 90-95 MGNREGA person-days"
+}

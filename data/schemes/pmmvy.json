@@ -1,0 +1,162 @@
+{
+  "scheme_id": "pmmvy",
+  "name": "PMMVY",
+  "full_name": "Pradhan Mantri Matru Vandana Yojana",
+  "target_description": "Pregnant women and lactating mothers aged 19+ from specified disadvantaged categories for first or second child",
+  "ministry": "Ministry of Women and Child Development",
+  "data_source": "PMMVY scheme details from pmmvy.wcd.nic.in including PMMVY 2.0 guidelines (Mission Shakti, effective 01.04.2022)",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "PMMVY-R01",
+      "parameter": "gender_female",
+      "description": "Applicant must be female",
+      "condition": {
+        "type": "field_check",
+        "field": "gender",
+        "values": ["F"],
+        "ambiguous_values": []
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMMVY-R02",
+      "parameter": "age",
+      "description": "Applicant must be at least 19 years of age",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 19
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMMVY-R03",
+      "parameter": "pregnant_or_lactating",
+      "description": "Applicant must be pregnant or lactating",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_pregnant_or_lactating",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMMVY-R04",
+      "parameter": "first_two_children",
+      "description": "Benefit applies only for first child (any gender) and second child (only if girl)",
+      "condition": {
+        "type": "range_check",
+        "field": "num_live_births",
+        "min": 0,
+        "max": 2
+      },
+      "is_mandatory": false,
+      "weight": 15,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Benefit for first child (any gender) and second child (only if girl). AMB-34 RESOLVED: miscarriage/stillbirth is fresh case."
+    },
+    {
+      "rule_id": "PMMVY-R05",
+      "parameter": "disadvantaged_category",
+      "description": "Applicant must belong to at least one disadvantaged category",
+      "condition": {
+        "type": "composite",
+        "logic": "OR",
+        "sub_conditions": [
+          {
+            "type": "field_check",
+            "field": "has_ration_card",
+            "values": ["AAY", "PHH"],
+            "ambiguous_values": []
+          },
+          {
+            "type": "field_check",
+            "field": "caste_category",
+            "values": ["SC", "ST"],
+            "ambiguous_values": []
+          },
+          {
+            "type": "range_check",
+            "field": "annual_income",
+            "min": 0,
+            "max": 800000
+          },
+          {
+            "type": "range_check",
+            "field": "disability_percent",
+            "min": 40,
+            "max": 100
+          }
+        ]
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Must belong to at least one: SC/ST, 40%+ disabled, BPL ration card, PM-JAY beneficiary, e-Shram card, PM-KISAN/MGNREGA card, income <\u20b98L/year, AWW/AWH/ASHA, NFSA ration card."
+    },
+    {
+      "rule_id": "PMMVY-EX01",
+      "parameter": "not_govt_employee",
+      "description": "Women in regular employment with Central/State Govt or PSU are NOT eligible",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_govt_employee",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Women in regular employment with Central/State Govt or PSU NOT eligible. Also excludes those receiving similar maternity benefits under any other law."
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card",
+      "where_to_obtain": "CSC-Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Bank or Post Office Account (Aadhaar-mapped)",
+      "where_to_obtain": "Bank-Post Office",
+      "processing_time_days": "0-1",
+      "priority": 2
+    },
+    {
+      "document": "Eligibility Proof (any one — ration card or caste cert or income cert or MGNREGA card)",
+      "where_to_obtain": "Relevant office",
+      "processing_time_days": "0-7",
+      "priority": 3
+    },
+    {
+      "document": "MCP or RCHI Card",
+      "where_to_obtain": "Anganwadi-ASHA",
+      "processing_time_days": "0",
+      "priority": 4
+    },
+    {
+      "document": "Child Birth Certificate (for 2nd installment)",
+      "where_to_obtain": "Municipality-Hospital",
+      "processing_time_days": "1-7",
+      "priority": 5
+    },
+    {
+      "document": "Child Immunization Records",
+      "where_to_obtain": "ASHA-Anganwadi",
+      "processing_time_days": "0",
+      "priority": 6
+    }
+  ],
+  "prerequisites": ["pmjdy"],
+  "benefit_summary": "First child (any gender): \u20b95,000 in 2 installments (\u20b93,000 + \u20b92,000). Second child (only if girl): \u20b96,000 in 1 installment. Miscarriage/stillbirth treated as fresh case. Must apply within 270 days of birth."
+}

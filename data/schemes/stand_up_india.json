@@ -1,0 +1,126 @@
+{
+  "scheme_id": "stand_up_india",
+  "name": "Stand-Up India",
+  "full_name": "Stand-Up India Scheme",
+  "target_description": "SC/ST entrepreneurs and women entrepreneurs for greenfield enterprise in manufacturing, services, trading, or activities allied to agriculture",
+  "ministry": "Ministry of Finance, facilitated by SIDBI",
+  "data_source": "Stand-Up India scheme details from standupmitra.in and myscheme.gov.in",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "SUI-R01",
+      "parameter": "sc_st_or_woman",
+      "description": "Applicant must be SC/ST or a woman (male applicants must be SC/ST)",
+      "condition": {
+        "type": "composite",
+        "logic": "OR",
+        "sub_conditions": [
+          {
+            "type": "field_check",
+            "field": "caste_category",
+            "values": ["SC", "ST"],
+            "ambiguous_values": []
+          },
+          {
+            "type": "field_check",
+            "field": "gender",
+            "values": ["F"],
+            "ambiguous_values": []
+          }
+        ]
+      },
+      "is_mandatory": true,
+      "weight": 35,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Male borrowers must be SC/ST. Women of any category eligible. For companies: 51%+ held by SC/ST or woman."
+    },
+    {
+      "rule_id": "SUI-R02",
+      "parameter": "age",
+      "description": "Applicant must be at least 18 years of age",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 18
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "SUI-R03",
+      "parameter": "greenfield_enterprise",
+      "description": "Applicant must be setting up a greenfield (first-time) enterprise",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_existing_enterprise",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": ["AMB-31"],
+      "ambiguity_note": "Must be greenfield (first-time) enterprise."
+    },
+    {
+      "rule_id": "SUI-R04",
+      "parameter": "not_defaulter",
+      "description": "Applicant must have a bank account and must not be in default to any bank or financial institution",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_bank_account",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Must not be in default to any bank or financial institution."
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "ID Proof (Aadhaar-Voter-DL-PAN)",
+      "where_to_obtain": "Any",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Address Proof",
+      "where_to_obtain": "Any",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "SC/ST Category Certificate if applicable",
+      "where_to_obtain": "Tehsil-CSC",
+      "processing_time_days": "3-7",
+      "priority": 3
+    },
+    {
+      "document": "Business Address Proof",
+      "where_to_obtain": "Any",
+      "processing_time_days": "0-3",
+      "priority": 4
+    },
+    {
+      "document": "Project Report",
+      "where_to_obtain": "Self-CA",
+      "processing_time_days": "0-5",
+      "priority": 5
+    },
+    {
+      "document": "Asset and Liability Statement plus ITR",
+      "where_to_obtain": "CA-Self",
+      "processing_time_days": "0-3",
+      "priority": 6
+    },
+    {
+      "document": "Bank Statement",
+      "where_to_obtain": "Bank",
+      "processing_time_days": "0-1",
+      "priority": 7
+    }
+  ],
+  "prerequisites": [],
+  "benefit_summary": "Composite loan (term loan + working capital) \u20b910 lakh to \u20b91 crore. RuPay debit card issued. Hand-holding support via standupmitra.in."
+}

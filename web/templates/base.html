@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kalam — Find government schemes for you">
+    <title>{% block title %}Kalam{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-logo">Kalam · कलाम</a>
+        <div class="nav-dot"></div>
+        <span class="nav-subtitle" style="display:none;"></span>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+            <a href="/details" style="font-size:0.88rem;color:var(--text-secondary);font-weight:500;text-decoration:none;padding:5px 12px;border-radius:var(--radius-pill);border:1.5px solid transparent;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--border)'" onmouseout="this.style.borderColor='transparent'">📋 Form</a>
+            <a href="/chat" style="font-size:0.88rem;color:var(--text-secondary);font-weight:500;text-decoration:none;padding:5px 12px;border-radius:var(--radius-pill);border:1.5px solid transparent;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--border)'" onmouseout="this.style.borderColor='transparent'">💬 Chat</a>
+        </div>
+    </nav>
+    {% block content %}{% endblock %}
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/voice.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,90 @@
+{
+  "scheme_id": "apy",
+  "name": "Atal Pension Yojana",
+  "full_name": "Atal Pension Yojana",
+  "target_description": "Indian citizens aged 18-40 with savings bank accounts, not covered by statutory social security and not income tax payers",
+  "ministry": "Ministry of Finance, administered through PFRDA",
+  "data_source": "APY Scheme Details PDF from PFRDA/npscra.nsdl.co.in",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "APY-R01",
+      "parameter": "age",
+      "description": "Applicant must be between 18 and 40 years of age",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 18,
+        "max": 40
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "APY-R02",
+      "parameter": "bank_account",
+      "description": "Applicant must have a savings bank account",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_bank_account",
+        "equals": true
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "APY-R03",
+      "parameter": "not_income_tax_payer",
+      "description": "Applicant must not be an income tax payer (current or former). From Oct 2022: income tax payers not eligible.",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_income_tax_payer",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": [],
+      "ambiguity_note": "From Oct 2022: income tax payers (current or former) NOT eligible."
+    },
+    {
+      "rule_id": "APY-R04",
+      "parameter": "not_epf_member",
+      "description": "Applicant should not be a member of statutory social security schemes (EPF/NPS-govt/ESIC)",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_epf_member",
+        "equals": false
+      },
+      "is_mandatory": false,
+      "weight": 20,
+      "ambiguity_refs": ["AMB-24"],
+      "ambiguity_note": "Members of statutory social security (EPF/NPS-govt/ESIC) not eligible"
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Savings Bank Account",
+      "where_to_obtain": "Any bank branch",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Aadhaar Card (preferred)",
+      "where_to_obtain": "CSC-Post Office",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "Mobile Number",
+      "where_to_obtain": "Self",
+      "processing_time_days": "0",
+      "priority": 3
+    }
+  ],
+  "prerequisites": ["pmjdy"],
+  "benefit_summary": "Guaranteed monthly pension \u20b91,000-\u20b95,000 after age 60. Govt co-contribution for eligible subscribers. Spouse gets same pension after subscriber death."
+}

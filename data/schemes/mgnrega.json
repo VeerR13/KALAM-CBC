@@ -1,0 +1,81 @@
+{
+  "scheme_id": "mgnrega",
+  "name": "MGNREGA",
+  "full_name": "Mahatma Gandhi National Rural Employment Guarantee Act",
+  "target_description": "All rural households with adult members willing to do unskilled manual work",
+  "ministry": "Ministry of Rural Development",
+  "data_source": "MGNREGA eligibility criteria from official myscheme.gov.in listing",
+  "data_freshness": "VERIFIED_AGAINST_PDF_2026-04-11",
+  "rules": [
+    {
+      "rule_id": "MGNREGA-R01",
+      "parameter": "age",
+      "description": "Applicant must be at least 18 years old",
+      "condition": {
+        "type": "range_check",
+        "field": "age",
+        "min": 18
+      },
+      "is_mandatory": true,
+      "weight": 25,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "MGNREGA-R02",
+      "parameter": "rural_residence",
+      "description": "Applicant must reside in a rural area",
+      "condition": {
+        "type": "boolean_check",
+        "field": "is_urban",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 30,
+      "ambiguity_refs": [],
+      "ambiguity_note": null
+    },
+    {
+      "rule_id": "MGNREGA-R03",
+      "parameter": "aadhaar",
+      "description": "Aadhaar used for job card registration and wage payment via DBT",
+      "condition": {
+        "type": "boolean_check",
+        "field": "has_aadhaar",
+        "equals": true
+      },
+      "is_mandatory": false,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "No occupation restriction — MGNREGA is a universal rural entitlement for all adult members willing to do unskilled manual work"
+    }
+  ],
+  "required_documents": [
+    {
+      "document": "Aadhaar Card",
+      "where_to_obtain": "CSC / Post Office",
+      "processing_time_days": "0",
+      "priority": 1
+    },
+    {
+      "document": "Job Card Application (Form)",
+      "where_to_obtain": "Gram Panchayat",
+      "processing_time_days": "0",
+      "priority": 2
+    },
+    {
+      "document": "Residence Proof (Voter ID / Ration Card)",
+      "where_to_obtain": "Gram Panchayat",
+      "processing_time_days": "1-3",
+      "priority": 3
+    },
+    {
+      "document": "Photograph",
+      "where_to_obtain": "Photo studio",
+      "processing_time_days": "0-1",
+      "priority": 4
+    }
+  ],
+  "prerequisites": [],
+  "benefit_summary": "100 days guaranteed wage employment per household per financial year at state-notified wages"
+}

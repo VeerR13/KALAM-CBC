@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+dist/
+*.egg-info/
+.venv/
+venv/
+data/pdfs/*.pdf
+graphify-out/
+.claude/
+make_pdf.py
+make_prompt_log_pdf.py
+kalam_*.pdf
+{fixtures

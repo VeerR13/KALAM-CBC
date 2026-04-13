@@ -1,0 +1,150 @@
+{
+  "andhra_pradesh": {
+    "nsap_old_age_topup": 2000,
+    "nsap_widow_topup": 1500,
+    "nsap_disability_topup": 1500,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "assam": {
+    "nsap_old_age_topup": 250,
+    "nsap_widow_topup": 250,
+    "nsap_disability_topup": 250,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "bihar": {
+    "nsap_old_age_topup": 400,
+    "nsap_widow_topup": 400,
+    "nsap_disability_topup": 400,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "chhattisgarh": {
+    "nsap_old_age_topup": 350,
+    "nsap_widow_topup": 350,
+    "nsap_disability_topup": 350,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "delhi": {
+    "nsap_old_age_topup": 2500,
+    "nsap_widow_topup": 2500,
+    "nsap_disability_topup": 2500,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": 100000,
+    "nfsa_income_threshold": 100000
+  },
+  "gujarat": {
+    "nsap_old_age_topup": 400,
+    "nsap_widow_topup": 400,
+    "nsap_disability_topup": 400,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "haryana": {
+    "nsap_old_age_topup": 1800,
+    "nsap_widow_topup": 1800,
+    "nsap_disability_topup": 1800,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "himachal_pradesh": {
+    "nsap_old_age_topup": 700,
+    "nsap_widow_topup": 700,
+    "nsap_disability_topup": 700,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "jharkhand": {
+    "nsap_old_age_topup": 1000,
+    "nsap_widow_topup": 600,
+    "nsap_disability_topup": 600,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "karnataka": {
+    "nsap_old_age_topup": 800,
+    "nsap_widow_topup": 800,
+    "nsap_disability_topup": 800,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "kerala": {
+    "nsap_old_age_topup": 1600,
+    "nsap_widow_topup": 1600,
+    "nsap_disability_topup": 1600,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "madhya_pradesh": {
+    "nsap_old_age_topup": 600,
+    "nsap_widow_topup": 600,
+    "nsap_disability_topup": 600,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "maharashtra": {
+    "nsap_old_age_topup": 700,
+    "nsap_widow_topup": 700,
+    "nsap_disability_topup": 700,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "odisha": {
+    "nsap_old_age_topup": 500,
+    "nsap_widow_topup": 500,
+    "nsap_disability_topup": 500,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "punjab": {
+    "nsap_old_age_topup": 500,
+    "nsap_widow_topup": 500,
+    "nsap_disability_topup": 500,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "rajasthan": {
+    "nsap_old_age_topup": 750,
+    "nsap_widow_topup": 500,
+    "nsap_disability_topup": 500,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": 120000
+  },
+  "tamil_nadu": {
+    "nsap_old_age_topup": 1000,
+    "nsap_widow_topup": 1000,
+    "nsap_disability_topup": 1000,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "telangana": {
+    "nsap_old_age_topup": 2016,
+    "nsap_widow_topup": 2016,
+    "nsap_disability_topup": 2016,
+    "ayushman_extended_beyond_secc": true,
+    "bpl_income_threshold": null
+  },
+  "uttar_pradesh": {
+    "nsap_old_age_topup": 500,
+    "nsap_widow_topup": 500,
+    "nsap_disability_topup": 0,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "uttarakhand": {
+    "nsap_old_age_topup": 600,
+    "nsap_widow_topup": 600,
+    "nsap_disability_topup": 600,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  },
+  "west_bengal": {
+    "nsap_old_age_topup": 750,
+    "nsap_widow_topup": 750,
+    "nsap_disability_topup": 750,
+    "ayushman_extended_beyond_secc": false,
+    "bpl_income_threshold": null
+  }
+}
