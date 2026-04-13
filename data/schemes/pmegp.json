@@ -81,6 +81,21 @@
       "weight": 15,
       "ambiguity_refs": [],
       "ambiguity_note": "Only one person from one family (self + spouse) eligible."
+    },
+    {
+      "rule_id": "PMEGP-R06",
+      "parameter": "occupation",
+      "description": "PMEGP is for setting up NEW micro-enterprises — best suited for those with entrepreneurial intent, not daily wage earners or subsistence farmers",
+      "condition": {
+        "type": "field_check",
+        "field": "occupation",
+        "values": ["Self-employed", "Shopkeeper", "street_vendor", "Artisan", "Unemployed", "Student", "Homemaker", "Salaried employee"],
+        "ambiguous_values": ["Daily wage worker", "Farmer"]
+      },
+      "is_mandatory": false,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Daily wage workers and farmers can apply for PMEGP to start a new non-farm enterprise, but should confirm business intent with KVIC/DIC first. The scheme requires EDP training and a viable project report."
     }
   ],
   "required_documents": [
