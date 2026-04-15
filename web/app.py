@@ -22,7 +22,7 @@ from src.engine.sensitivity import SensitivityAnalyzer
 from src.engine.sequencer import PrerequisiteDAG
 from src.loader import load_all_schemes
 from src.models.match_result import MatchResult, RuleEvaluation
-from src.models.scheme import Scheme
+from src.models.scheme import RuleResult, Scheme
 from src.models.user_profile import (
     UserProfile,
     normalize_bigha_to_hectares,
@@ -102,6 +102,23 @@ def _evaluate_scheme(scheme: Scheme, profile: UserProfile) -> MatchResult:
     )
     result.gaps = GapAnalyzer.analyze(result)
     return result
+
+
+_MINI_FORM_UNSUPPORTED = {"previous_scheme_loans"}
+
+
+def _missing_mandatory_fields(result: MatchResult) -> list[str]:
+    """Return field names that are mandatory, missing, and collectable via mini-form."""
+    seen: set[str] = set()
+    fields: list[str] = []
+    for ev in result.rule_evaluations:
+        if ev.result == RuleResult.MISSING and ev.is_mandatory and ev.explanation:
+            if " not provided" in ev.explanation:
+                field = ev.explanation.split(" not provided")[0].strip()
+                if field and field not in seen and field not in _MINI_FORM_UNSUPPORTED:
+                    seen.add(field)
+                    fields.append(field)
+    return fields
 
 
 def _run_engine(profile: UserProfile) -> list[MatchResult]:
@@ -289,6 +306,20 @@ async def _render_results(request: Request, form: dict):
                 profile, schemes_map[r.scheme_id], unmet_prereqs
             )
 
+    missing_fields_map = {
+        r.scheme_id: _missing_mandatory_fields(r)
+        for r in grouped["insufficient"]
+    }
+
+    _schemes_raw = load_all_schemes()
+    scheme_hindi_map = {
+        sd["scheme_id"]: {
+            "name": sd.get("name_hindi") or "",
+            "benefit": sd.get("benefit_summary_hindi") or "",
+        }
+        for sd in _schemes_raw
+    }
+
     return templates.TemplateResponse(request, "results.html", {
         "profile": profile,
         "profile_dict": form,
@@ -304,6 +335,8 @@ async def _render_results(request: Request, form: dict):
         "sensitivity_flags": sensitivity_flags,
         "life_events": life_events,
         "distances": distances,
+        "missing_fields_map": missing_fields_map,
+        "scheme_hindi_map": scheme_hindi_map,
     })
 
 
@@ -554,7 +587,11 @@ async def recheck(request: Request):
     scheme_id: str = body.get("scheme_id", "")
 
     merged = {**base_form, **new_fields}
+    # previous_scheme_loans can't be collected via mini-form — default to no prior loans
+    merged.setdefault("_previous_scheme_loans_empty", "true")
     profile = _build_profile(merged)
+    if profile.previous_scheme_loans is None:
+        profile = profile.model_copy(update={"previous_scheme_loans": []})
 
     schemes_data = load_all_schemes()
     scheme_obj = None

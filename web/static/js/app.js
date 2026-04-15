@@ -22,6 +22,14 @@ function _pickHindiVoice() {
 if ('speechSynthesis' in window) {
     _pickHindiVoice();
     window.speechSynthesis.addEventListener('voiceschanged', _pickHindiVoice);
+    // Android Chrome bug: speechSynthesis dies silently after ~30s of idle.
+    // Periodic pause/resume keeps the underlying audio context alive.
+    setInterval(() => {
+        if (!window.speechSynthesis.speaking) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+        }
+    }, 14000);
 }
 
 function _cleanForTTS(text) {
@@ -29,6 +37,8 @@ function _cleanForTTS(text) {
         // Currency — say "rupaye" not the symbol
         .replace(/₹\s*([\d,]+)/g, (_, n) => n.replace(/,/g, '') + ' रुपये ')
         .replace(/₹/g, 'रुपये ')
+        // Emoji — strip so TTS doesn't spell out names like "sheaf of rice"
+        .replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]/gu, '')
         // Common symbols read as English words
         .replace(/[·•|]/g, ' ')          // separators
         .replace(/[—–\-]+/g, ' ')        // dashes
@@ -49,19 +59,37 @@ function speakHindi(text) {
     if (!('speechSynthesis' in window)) return;
     const cleaned = _cleanForTTS(text);
     if (!cleaned) return;
-    // Cancel first, then delay — Chrome cancels asynchronously; calling speak()
-    // immediately after cancel() silently kills the new utterance too.
+
+    // Build utterance synchronously — iOS Safari requires speak() to stay inside
+    // the user-gesture call stack (setTimeout breaks it on iOS).
+    const u = new SpeechSynthesisUtterance(cleaned);
+    u.lang = 'hi-IN';
+    u.rate = 0.72;
+    u.pitch = 1.0;
+    u.volume = 1;
+    if (_hindiVoice) u.voice = _hindiVoice;
+
+    // Chrome race-condition retry: if cancel() kills the new utterance silently,
+    // onend fires before onstart — catch that and re-queue after 50ms.
+    let _started = false;
+    u.onstart = () => { _started = true; };
+    u.onend = () => {
+        if (_started) return;
+        setTimeout(() => {
+            const u2 = new SpeechSynthesisUtterance(cleaned);
+            u2.lang = 'hi-IN'; u2.rate = 0.72; u2.pitch = 1.0; u2.volume = 1;
+            if (_hindiVoice) u2.voice = _hindiVoice;
+            if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            window.speechSynthesis.speak(u2);
+        }, 50);
+    };
+
+    // Cancel any ongoing speech, then speak immediately.
+    // iOS: speak() is synchronous here → stays inside user-gesture context. ✓
+    // Chrome: if cancel() races and kills u, the onend retry above handles it. ✓
     window.speechSynthesis.cancel();
-    setTimeout(() => {
-        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-        const u = new SpeechSynthesisUtterance(cleaned);
-        u.lang = 'hi-IN';
-        u.rate = 0.72;
-        u.pitch = 1.0;
-        u.volume = 1;
-        if (_hindiVoice) u.voice = _hindiVoice;
-        window.speechSynthesis.speak(u);
-    }, 50);
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    window.speechSynthesis.speak(u);
 }
 
 // Event delegation — catches all .speak-btn (data-speak) clicks on every page.

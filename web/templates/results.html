@@ -17,21 +17,158 @@
 {% macro rule_icon_class(result) %}{% if result.value == 'PASS' %}pass{% elif result.value == 'FAIL' %}fail{% elif result.value == 'AMBIGUOUS' %}amb{% else %}miss{% endif %}{% endmacro %}
 {% macro rule_char(result) %}{% if result.value == 'PASS' %}✓{% elif result.value == 'FAIL' %}✗{% elif result.value == 'AMBIGUOUS' %}~{% else %}?{% endif %}{% endmacro %}
 
+{% macro mini_field_input(scheme_id, field) %}
+<div class="field-group" style="margin-bottom:12px">
+{% if field == 'age' %}
+    <label class="field-label" style="font-size:0.85rem">Age / उम्र</label>
+    <input type="number" name="mini_{{ scheme_id }}_age" placeholder="e.g. 34" min="0" max="120" style="max-width:160px;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem">
+{% elif field == 'annual_income' %}
+    <label class="field-label" style="font-size:0.85rem">Yearly income / सालाना आमदनी</label>
+    <div class="option-cards" style="font-size:0.78rem;gap:4px">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_annual_income" value="25000"><span class="opt-en">Under ₹50k</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_annual_income" value="75000"><span class="opt-en">₹50k–1L</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_annual_income" value="200000"><span class="opt-en">₹1L–3L</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_annual_income" value="450000"><span class="opt-en">₹3L–6L</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_annual_income" value="750000"><span class="opt-en">₹6L–9L</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_annual_income" value="1000000"><span class="opt-en">₹9L+</span></label>
+    </div>
+{% elif field == 'gender' %}
+    <label class="field-label" style="font-size:0.85rem">Gender / लिंग</label>
+    <div class="option-cards three-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_gender" value="M"><span class="opt-en">Male / पुरुष</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_gender" value="F"><span class="opt-en">Female / महिला</span></label>
+    </div>
+{% elif field == 'is_urban' %}
+    <label class="field-label" style="font-size:0.85rem">Where do you live? / कहाँ रहते हैं?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_urban" value="urban"><span class="opt-en">City / शहर</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_urban" value="rural"><span class="opt-en">Village / गाँव</span></label>
+    </div>
+{% elif field == 'has_aadhaar' %}
+    <label class="field-label" style="font-size:0.85rem">Do you have Aadhaar? / आधार कार्ड है?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_aadhaar" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_aadhaar" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'has_bank_account' %}
+    <label class="field-label" style="font-size:0.85rem">Do you have a bank account? / बैंक खाता है?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_bank_account" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_bank_account" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'is_aadhaar_linked' %}
+    <label class="field-label" style="font-size:0.85rem">Aadhaar linked to bank? / आधार बैंक से जुड़ा?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_aadhaar_linked" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_aadhaar_linked" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'has_ration_card' %}
+    <label class="field-label" style="font-size:0.85rem">Ration card type / राशन कार्ड का प्रकार</label>
+    <div class="option-cards" style="font-size:0.78rem;gap:4px">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_ration_card" value="AAY"><span class="opt-en">AAY (अंत्योदय)</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_ration_card" value="PHH"><span class="opt-en">PHH / BPL</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_ration_card" value="none"><span class="opt-en">No card / नहीं है</span></label>
+    </div>
+{% elif field == 'land_ownership' %}
+    <label class="field-label" style="font-size:0.85rem">Land ownership / ज़मीन</label>
+    <div class="option-cards" style="font-size:0.78rem;gap:4px">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_land_ownership" value="owns"><span class="opt-en">Own land / खुद की</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_land_ownership" value="leases"><span class="opt-en">Leased / किराए पर</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_land_ownership" value="sharecrop"><span class="opt-en">Sharecrop / बटाई</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_land_ownership" value="none"><span class="opt-en">No land / नहीं</span></label>
+    </div>
+{% elif field == 'occupation' %}
+    <label class="field-label" style="font-size:0.85rem">Occupation / पेशा</label>
+    <div class="option-cards" style="font-size:0.78rem;gap:4px">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="farmer"><span class="opt-en">Farmer / किसान</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="daily_wage"><span class="opt-en">Daily wage / दिहाड़ी</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="street_vendor"><span class="opt-en">Vendor / फेरीवाला</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="Artisan"><span class="opt-en">Artisan / कारीगर</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="Self-employed"><span class="opt-en">Self-employed / स्वरोज़गार</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="other"><span class="opt-en">Other / अन्य</span></label>
+    </div>
+{% elif field == 'is_govt_employee' %}
+    <label class="field-label" style="font-size:0.85rem">Government employee? / सरकारी नौकरी?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_govt_employee" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_govt_employee" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'is_income_tax_payer' %}
+    <label class="field-label" style="font-size:0.85rem">Do you pay income tax? / इनकम टैक्स?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_income_tax_payer" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_income_tax_payer" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'is_epf_member' %}
+    <label class="field-label" style="font-size:0.85rem">EPF / PF member? / PF कटता है?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_epf_member" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_epf_member" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'marital_status' %}
+    <label class="field-label" style="font-size:0.85rem">Marital status / वैवाहिक स्थिति</label>
+    <div class="option-cards" style="font-size:0.78rem;gap:4px">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="widowed"><span class="opt-en">Widowed / विधवा</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="married"><span class="opt-en">Married / विवाहित</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="single"><span class="opt-en">Single / अविवाहित</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="divorced"><span class="opt-en">Divorced / तलाकशुदा</span></label>
+    </div>
+{% elif field == 'is_pregnant_or_lactating' %}
+    <label class="field-label" style="font-size:0.85rem">Pregnant or nursing? / गर्भवती या स्तनपान?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_pregnant_or_lactating" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_is_pregnant_or_lactating" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'has_girl_child_under_10' %}
+    <label class="field-label" style="font-size:0.85rem">Girl child under 10? / 10 साल से छोटी बेटी?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_girl_child_under_10" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_girl_child_under_10" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'has_existing_enterprise' %}
+    <label class="field-label" style="font-size:0.85rem">Existing business? / पहले से कारोबार?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_enterprise" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_enterprise" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'has_lpg_connection' %}
+    <label class="field-label" style="font-size:0.85rem">Already have LPG? / LPG कनेक्शन है?</label>
+    <div class="option-cards two-col">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_lpg_connection" value="yes"><span class="opt-en">Yes / हाँ</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_has_lpg_connection" value="no"><span class="opt-en">No / नहीं</span></label>
+    </div>
+{% elif field == 'disability_percent' %}
+    <label class="field-label" style="font-size:0.85rem">Disability level / विकलांगता स्तर</label>
+    <div class="option-cards" style="font-size:0.78rem;gap:4px">
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_disability_percent" value="80_plus"><span class="opt-en">80%+ (severe)</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_disability_percent" value="40_79"><span class="opt-en">40–79%</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_disability_percent" value="none"><span class="opt-en">None / नहीं</span></label>
+    </div>
+{% endif %}
+</div>
+{% endmacro %}
+
 {% macro scheme_card(r, show_detail=true) %}
 {% set pct = r.confidence | round | int %}
 {% set ben = benefits.get(r.scheme_id) %}
+{% set shi = scheme_hindi_map.get(r.scheme_id, {}) %}
 <div class="scheme-card" data-status="{{ r.status.value.lower() }}" data-href="/scheme/{{ r.scheme_id }}?{{ profile_dict | urlencode }}" role="link" tabindex="0" aria-label="View {{ r.scheme_name }} details">
     <div class="card-row">
         <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
         <div class="card-body">
-            <div class="card-name">{{ r.scheme_name }}
-                <button class="speak-btn" data-speak="{{ icons.get(r.scheme_id,'') }} {{ r.scheme_name }}. {% if ben %}{{ ben.primary }}. {{ ben.secondary }}{% else %}{{ r.benefit_summary[:80] }}{% endif %}" aria-label="सुनें">🔊</button>
+            <div class="card-name">
+                {% if shi.name %}{{ shi.name }}{% else %}{{ r.scheme_name }}{% endif %}
+                <button class="speak-btn" data-speak="{% if shi.name %}{{ shi.name }}{% else %}{{ r.scheme_name }}{% endif %}। {% if shi.benefit %}{{ shi.benefit }}{% else %}{{ r.benefit_summary[:80] }}{% endif %}" aria-label="सुनें">🔊</button>
+                {% if shi.name %}<div class="card-name-en">{{ r.scheme_name }}</div>{% endif %}
             </div>
+            {% if shi.benefit %}
+            <div class="benefit-amount-hi">{{ shi.benefit }}</div>
+            {% endif %}
             {% if ben and ben.primary %}
             <div class="benefit-amount">{{ ben.primary }}</div>
             {% if ben.secondary %}<div class="benefit-secondary">{{ ben.secondary }}</div>{% endif %}
             {% if ben.note %}<div class="benefit-note">💡 {{ ben.note }}</div>{% endif %}
-            {% else %}
+            {% elif not shi.benefit %}
             <div class="card-benefit">{{ r.benefit_summary[:100] }}{% if r.benefit_summary|length > 100 %}…{% endif %}</div>
             {% endif %}
             {% set dist = distances.get(r.scheme_id) %}
@@ -189,13 +326,15 @@
             </p>
             {% for r in grouped.insufficient %}
             <div class="needinfo-card" id="nicard-{{ r.scheme_id }}" data-scheme-id="{{ r.scheme_id }}" data-status="insufficient_data">
+                {% set shi = scheme_hindi_map.get(r.scheme_id, {}) %}
                 <div class="needinfo-top">
                     <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
                     <div>
-                        <div class="needinfo-name">{{ r.scheme_name }}</div>
-                        <span class="badge badge-needinfo" style="font-size:0.7rem;">Need more info</span>
+                        <div class="needinfo-name">{% if shi.name %}{{ shi.name }}{% else %}{{ r.scheme_name }}{% endif %}</div>
+                        {% if shi.name %}<div style="font-size:0.75rem;color:var(--text-secondary)">{{ r.scheme_name }}</div>{% endif %}
+                        <span class="badge badge-needinfo" style="font-size:0.7rem;">जानकारी चाहिए · Need info</span>
                     </div>
-                    <div style="margin-left:auto;font-size:0.82rem;color:var(--text-secondary)">{{ r.benefit_summary[:50] }}…</div>
+                    <div style="margin-left:auto;font-size:0.82rem;color:var(--text-secondary)">{% if shi.benefit %}{{ shi.benefit[:50] }}{% else %}{{ r.benefit_summary[:50] }}{% endif %}…</div>
                 </div>
 
                 {% if r.gaps %}
@@ -211,34 +350,13 @@
 
                 <div class="mini-form" id="mini-{{ r.scheme_id }}">
                     <div class="mini-form-fields" id="mini-fields-{{ r.scheme_id }}">
-                        {% if r.scheme_id == 'pmmvy' %}
-                        <div class="field-group" style="margin-bottom:10px">
-                            <label class="field-label" style="font-size:0.85rem">Are you pregnant or nursing? / गर्भवती हैं?</label>
-                            <div class="option-cards three-col">
-                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_is_pregnant_or_lactating" value="yes"><span class="opt-en">Yes</span></label>
-                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_is_pregnant_or_lactating" value="no"><span class="opt-en">No</span></label>
-                            </div>
-                        </div>
-                        {% elif r.scheme_id == 'sukanya_samriddhi' %}
-                        <div class="field-group" style="margin-bottom:10px">
-                            <label class="field-label" style="font-size:0.85rem">Do you have a daughter under 10? / 10 साल से छोटी बेटी है?</label>
-                            <div class="option-cards three-col">
-                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_has_girl_child_under_10" value="yes"><span class="opt-en">Yes</span></label>
-                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_has_girl_child_under_10" value="no"><span class="opt-en">No</span></label>
-                            </div>
-                        </div>
-                        {% elif r.scheme_id in ['nsap_igndps'] %}
-                        <div class="field-group" style="margin-bottom:10px">
-                            <label class="field-label" style="font-size:0.85rem">Disability level / विकलांगता</label>
-                            <div class="option-cards two-col">
-                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_disability_percent" value="80_plus"><span class="opt-en">80%+</span></label>
-                                <label class="option-card"><input type="radio" name="mini_{{ r.scheme_id }}_disability_percent" value="40_79"><span class="opt-en">40-79%</span></label>
-                            </div>
-                        </div>
+                        {% set missing = missing_fields_map.get(r.scheme_id, []) %}
+                        {% if missing %}
+                            {% for field in missing %}{{ mini_field_input(r.scheme_id, field) }}{% endfor %}
                         {% else %}
                         <div class="field-group" style="margin-bottom:10px">
-                            <label class="field-label" style="font-size:0.85rem">Age / उम्र (if not provided)</label>
-                            <input type="number" name="mini_{{ r.scheme_id }}_age" placeholder="e.g. 34" style="max-width:200px">
+                            <label class="field-label" style="font-size:0.85rem">Age / उम्र</label>
+                            <input type="number" name="mini_{{ r.scheme_id }}_age" placeholder="e.g. 34" min="0" max="120" style="max-width:160px;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem">
                         </div>
                         {% endif %}
                     </div>
@@ -261,11 +379,15 @@
         </div>
         <div class="section-body collapsed">
             {% for r in grouped.ineligible %}
+            {% set shi = scheme_hindi_map.get(r.scheme_id, {}) %}
             <div class="scheme-card" data-status="ineligible" data-scheme-id="{{ r.scheme_id }}">
                 <div class="card-row">
                     <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
                     <div class="card-body">
-                        <div class="card-name">{{ r.scheme_name }}</div>
+                        <div class="card-name">
+                            {% if shi.name %}{{ shi.name }}{% else %}{{ r.scheme_name }}{% endif %}
+                            {% if shi.name %}<div class="card-name-en">{{ r.scheme_name }}</div>{% endif %}
+                        </div>
                         {% if r.rule_evaluations %}
                         {% for ev in r.rule_evaluations if ev.result.value == 'FAIL' %}
                         <div class="card-benefit" style="color:var(--ineligible)">✗ {{ ev.explanation[:70] if ev.explanation else ev.rule_id }}</div>
