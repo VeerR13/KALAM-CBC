@@ -47,27 +47,29 @@ function _cleanForTTS(text) {
 
 function speakHindi(text) {
     if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
     const cleaned = _cleanForTTS(text);
     if (!cleaned) return;
     const u = new SpeechSynthesisUtterance(cleaned);
     u.lang = 'hi-IN';
-    u.rate = 0.78;
-    u.pitch = 1.05;
+    u.rate = 0.72;
+    u.pitch = 1.0;
+    u.volume = 1;
     if (_hindiVoice) u.voice = _hindiVoice;
+    // Chrome bug: speechSynthesis can get silently stuck in paused state
+    window.speechSynthesis.cancel();
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
     window.speechSynthesis.speak(u);
 }
 
-function initSpeakButtons(root) {
-    (root || document).querySelectorAll('.speak-btn').forEach(btn => {
-        if (btn._speakInit) return;
-        btn._speakInit = true;
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            speakHindi(btn.getAttribute('data-speak') || '');
-        });
-    });
-}
+// Event delegation — one listener catches all .speak-btn clicks on every page,
+// regardless of when buttons are added to the DOM (no per-element wiring needed)
+function initSpeakButtons() {}  // kept as no-op so existing callers don't break
+document.addEventListener('click', e => {
+    const btn = e.target.closest('.speak-btn');
+    if (!btn) return;
+    e.stopPropagation();
+    speakHindi(btn.getAttribute('data-speak') || '');
+});
 
 // ── Save / Restore ────────────────────────────────────────────────────────────
 function saveStep() {
@@ -201,11 +203,13 @@ function buildSummary() {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+    // Wire speak buttons on every page (results, path, scheme detail, etc.)
+    initSpeakButtons();
+
     const form = document.getElementById('profile-form');
     if (!form) return;
 
     showStep(1);
-    initSpeakButtons();
 
     // Next / submit
     document.getElementById('btn-next')?.addEventListener('click', () => {

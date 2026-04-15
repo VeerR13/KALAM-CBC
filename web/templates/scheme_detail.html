@@ -420,12 +420,7 @@ document.getElementById('speak-hl-btn')?.addEventListener('click', () => {
     speakScript(document.getElementById('script-hi-text')?.textContent || '');
 });
 
-document.querySelectorAll('.speak-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-        e.stopPropagation();
-        speakScript(btn.getAttribute('data-speak') || '');
-    });
-});
+// .speak-btn clicks handled by event delegation in app.js
 
 if (window.location.hash === '#apply') switchTab('apply', document.querySelectorAll('.detail-tab')[2]);
 </script>
