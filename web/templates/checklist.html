@@ -4,15 +4,15 @@
 {% block content %}
 <div class="checklist-page container">
 
-    <a href="/results?{{ profile_qs }}" class="back-link">← Back to results</a>
+    <a href="/results?{{ profile_qs }}" class="back-link">← वापस जाएं / Back to results</a>
 
     <div class="checklist-hero">
-        <h1>Document Checklist</h1>
-        <p>दस्तावेज़ सूची &nbsp;&middot;&nbsp; {{ eligible_results|length }} scheme{{ 's' if eligible_results|length != 1 }}</p>
+        <h1>दस्तावेज़ सूची <span style="font-size:1.1rem;font-weight:400;color:var(--text-secondary)">/ Document Checklist</span></h1>
+        <p>{{ eligible_results|length }} scheme{{ 's' if eligible_results|length != 1 }} &nbsp;·&nbsp; इन योजनाओं के लिए ज़रूरी कागज़</p>
     </div>
 
     {% if docs %}
-    <div class="detail-section-title" style="margin-bottom:10px;">Documents to gather</div>
+    <div class="detail-section-title" style="margin-bottom:10px;">जमा करने वाले कागज़ &nbsp;/ Documents to gather</div>
     {% for doc in docs %}
     <div class="checklist-card">
         <div style="display:flex;align-items:flex-start;gap:12px;">
@@ -39,18 +39,21 @@
     {% endif %}
 
     {% if app_order %}
-    <div class="detail-section-title" style="margin:28px 0 10px;">Application order</div>
-    <p style="font-size:0.92rem;color:var(--text-faint);margin-bottom:12px;;">
-        Apply in this order — some schemes require others first.
+    <div class="detail-section-title" style="margin:28px 0 10px;">आवेदन का क्रम &nbsp;/ Application order</div>
+    <p style="font-size:0.92rem;color:var(--text-faint);margin-bottom:12px;">
+        इसी क्रम में आवेदन करें — कुछ योजनाएं पहले वाली पर निर्भर हैं। &nbsp;·&nbsp; Some schemes require others to be done first.
     </p>
     {% for scheme_id in app_order %}
+    {% set shi = scheme_hindi_map.get(scheme_id, {}) %}
     <div class="order-item">
         <div class="order-num">{{ "%02d" % loop.index }}</div>
         <div style="flex:1;">
-            <div>{{ icons.get(scheme_id, '') }} {{ scheme_id.replace('_', ' ').upper() }}</div>
+            <div>{{ icons.get(scheme_id, '') }} {% if shi.name %}{{ shi.name }}{% else %}{{ scheme_id.replace('_', ' ').upper() }}{% endif %}</div>
+            {% if shi.name %}<div style="font-size:0.78rem;color:var(--text-muted);">{{ scheme_id.replace('_', ' ').upper() }}</div>{% endif %}
             {% for r in eligible_results %}
                 {% if r.scheme_id == scheme_id %}
-                <div style="font-size:0.82rem;color:var(--text-faint);margin-top:2px;">{{ r.benefit_summary[:60] }}{% if r.benefit_summary|length > 60 %}…{% endif %}</div>
+                {% set rshi = scheme_hindi_map.get(r.scheme_id, {}) %}
+                <div style="font-size:0.82rem;color:var(--text-faint);margin-top:2px;">{% if rshi.benefit %}{{ rshi.benefit[:60] }}{% else %}{{ r.benefit_summary[:60] }}{% endif %}{% if r.benefit_summary|length > 60 %}…{% endif %}</div>
                 {% endif %}
             {% endfor %}
         </div>
@@ -59,9 +62,9 @@
     {% endif %}
 
     <div class="tip-box">
-        <strong style="color:var(--text);">Tip:</strong>
-        Link Aadhaar to your bank account first — it's required for most schemes.
-        Aadhaar ko bank se link karna sabse pehle karein.
+        <strong style="color:var(--text);">💡 टिप:</strong>
+        सबसे पहले आधार को बैंक से लिंक करें — ज़्यादातर योजनाओं के लिए यह ज़रूरी है।
+        <span style="color:var(--text-secondary);">Link Aadhaar to your bank account first — required for most schemes.</span>
     </div>
 
     <div style="margin-top:20px;padding-bottom:32px;">

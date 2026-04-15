@@ -69,7 +69,7 @@ SCHEME_ICONS = {
     "pm_svanidhi": "🛒",
     "pm_mudra": "💼",
     "pmegp": "🏭",
-    "standup_india": "🚀",
+    "stand_up_india": "🚀",
     "sukanya_samriddhi": "👧",
     "pmmvy": "🤰",
     "nfsa": "🌾",
@@ -449,7 +449,7 @@ def _office_script(profile: UserProfile, scheme: Scheme, needs_docs: list = None
             "Mujhe PMEGP ke tahat naya udyam shuru karne ke liye aavedan karna hai.",
         ),
         "stand_up_india": (
-            "मुझे Stand-Up India ऋण के लिए आवेदन करना है।",
+            "मुझे स्टैंड-अप इंडिया ऋण के लिए आवेदन करना है।",
             "Mujhe Stand-Up India loan ke liye aavedan karna hai.",
         ),
         "sukanya_samriddhi": (
@@ -615,6 +615,173 @@ async def recheck(request: Request):
 
 
 
+@app.get("/chat", response_class=HTMLResponse)
+async def chat_page(request: Request):
+    return templates.TemplateResponse(request, "chat.html")
+
+
+def _extract_from_message(text: str, current_profile: dict) -> tuple[dict, str]:
+    """Simple Hinglish/Hindi/English extractor. Returns (extracted_fields, follow_up_question)."""
+    import re
+    t = text.lower().strip()
+    extracted: dict = {}
+
+    # ── Age ──────────────────────────────────────────────────────────────────
+    age_m = re.search(r'\b(\d{1,3})\s*(?:saal|sal|year|years|varsh|वर्ष|साल|yrs|yr)\b', t)
+    if not age_m:
+        # "meri umar 34 hai", "I am 34"
+        age_m = re.search(r'(?:umar|age|umra)\s*(?:hai|he|is)?\s*(\d{1,3})', t)
+    if not age_m:
+        age_m = re.search(r'\bI\s+am\s+(\d{1,3})\b', text, re.IGNORECASE)
+    if age_m:
+        age = int(age_m.group(1))
+        if 0 < age < 130:
+            extracted["age"] = age
+
+    # ── Income ───────────────────────────────────────────────────────────────
+    inc_m = re.search(r'(\d+(?:\.\d+)?)\s*(?:lakh|lacs?|लाख)', t)
+    if inc_m:
+        extracted["annual_income"] = int(float(inc_m.group(1)) * 100_000)
+    else:
+        inc_k = re.search(r'(\d+)\s*(?:hazaar|hazar|thousand|हज़ार|हजार|k\b)', t)
+        if inc_k:
+            extracted["annual_income"] = int(inc_k.group(1)) * 1000
+
+    # ── Family size ───────────────────────────────────────────────────────────
+    fam_m = re.search(r'(\d+)\s*(?:log|member|pariwar|family|परिवार|angg|sadasy)', t)
+    if fam_m:
+        n = int(fam_m.group(1))
+        if 1 <= n <= 30:
+            extracted["family_size"] = n
+
+    # ── Gender ────────────────────────────────────────────────────────────────
+    if re.search(r'\b(?:main\s+(?:ek\s+)?(?:aurat|mahila|lady|woman)|female|महिला|औरत|she|her)\b', t):
+        extracted["gender"] = "F"
+    elif re.search(r'\b(?:main\s+(?:ek\s+)?(?:aadmi|purush|mard|man)|male|पुरुष|आदमी|he|his|mr\.?)\b', t):
+        extracted["gender"] = "M"
+
+    # ── Urban/Rural ───────────────────────────────────────────────────────────
+    if re.search(r'\b(?:gaon|village|gram|गाँव|गांव|rural|gramin)\b', t):
+        extracted["is_urban"] = "rural"
+    elif re.search(r'\b(?:shehar|shahr|city|town|urban|शहर|नगर)\b', t):
+        extracted["is_urban"] = "urban"
+
+    # ── State ────────────────────────────────────────────────────────────────
+    state_patterns = {
+        "Uttar Pradesh": r'\b(?:up|uttar\s*pradesh|u\.p\.)\b',
+        "Bihar": r'\bbihar\b',
+        "Rajasthan": r'\brajasthan\b',
+        "Madhya Pradesh": r'\b(?:mp|madhya\s*pradesh|m\.p\.)\b',
+        "Maharashtra": r'\bmaharashtra\b',
+        "West Bengal": r'\b(?:west\s*bengal|bengal|wb)\b',
+        "Gujarat": r'\bgujarat\b',
+        "Odisha": r'\b(?:odisha|orissa)\b',
+        "Karnataka": r'\bkarnataka\b',
+        "Jharkhand": r'\bjharkhand\b',
+        "Assam": r'\bassam\b',
+        "Kerala": r'\bkerala\b',
+        "Tamil Nadu": r'\b(?:tamil\s*nadu|tamilnadu|tn)\b',
+        "Telangana": r'\btelangana\b',
+        "Andhra Pradesh": r'\b(?:andhra|andhra\s*pradesh|ap)\b',
+        "Punjab": r'\bpunjab\b',
+        "Haryana": r'\bharyana\b',
+        "Chhattisgarh": r'\b(?:chhattisgarh|chattisgarh)\b',
+        "Uttarakhand": r'\b(?:uttarakhand|uttaranchal)\b',
+        "Himachal Pradesh": r'\b(?:himachal|himachal\s*pradesh|hp)\b',
+        "Delhi": r'\b(?:delhi|dilli|new\s*delhi)\b',
+        "Jammu & Kashmir": r'\b(?:jammu|kashmir|j\s*&?\s*k)\b',
+    }
+    for state, pat in state_patterns.items():
+        if re.search(pat, t):
+            extracted["state"] = state
+            break
+
+    # ── Caste ────────────────────────────────────────────────────────────────
+    if re.search(r'\b(?:sc|scheduled\s*caste|anusuchit\s*jati|dalit)\b', t):
+        extracted["caste_category"] = "SC"
+    elif re.search(r'\b(?:st|scheduled\s*tribe|anusuchit\s*janjati|tribal|adivasi)\b', t):
+        extracted["caste_category"] = "ST"
+    elif re.search(r'\b(?:obc|other\s*backward|pichda\s*varg|पिछड़ा)\b', t):
+        extracted["caste_category"] = "OBC"
+    elif re.search(r'\b(?:general|gen\b|saamanye|सामान्य|unreserved|open)\b', t):
+        extracted["caste_category"] = "General"
+
+    # ── Occupation ───────────────────────────────────────────────────────────
+    if re.search(r'\b(?:kisan|farmer|kheti|krishi|खेती|किसान|agriculture)\b', t):
+        extracted["occupation"] = "Farmer"
+    elif re.search(r'\b(?:majdoor|mazdoor|daily\s*wage|labourer|laborer|मजदूर|दिहाड़ी)\b', t):
+        extracted["occupation"] = "Daily wage worker"
+    elif re.search(r'\b(?:vendor|hawker|rehdi|pheri|feriwala|फेरीवाला|street)\b', t):
+        extracted["occupation"] = "street_vendor"
+    elif re.search(r'\b(?:artisan|karigar|craftsman|कारीगर|shilpkar)\b', t):
+        extracted["occupation"] = "Artisan"
+    elif re.search(r'\b(?:dukaan|shopkeeper|shop|dukaandar|दुकानदार)\b', t):
+        extracted["occupation"] = "Shopkeeper"
+    elif re.search(r'\b(?:student|padh|school|college|university|छात्र|पढ़)\b', t):
+        extracted["occupation"] = "Student"
+    elif re.search(r'\b(?:grahini|housewife|homemaker|घरेलू|गृहिणी)\b', t):
+        extracted["occupation"] = "Homemaker"
+    elif re.search(r'\b(?:berozgaar|unemployed|naukri\s*nahi|job\s*nahi|बेरोज़गार)\b', t):
+        extracted["occupation"] = "Unemployed"
+
+    # ── Documents ─────────────────────────────────────────────────────────────
+    if re.search(r'\b(?:aadhaar|aadhar|adhar|आधार)\b', t):
+        if re.search(r'\b(?:nahi|no\b|nahin|नहीं)\b', t):
+            extracted["has_aadhaar"] = "no"
+        else:
+            extracted["has_aadhaar"] = "yes"
+    if re.search(r'\b(?:bank\s*(?:account|khata|khata)|बैंक\s*खाता)\b', t):
+        if re.search(r'\b(?:nahi|no\b|nahin|नहीं)\b', t):
+            extracted["has_bank_account"] = "no"
+        else:
+            extracted["has_bank_account"] = "yes"
+    if re.search(r'\b(?:ration\s*card|ration\s*card|राशन\s*कार्ड|pds)\b', t):
+        extracted["has_ration_card"] = "PHH"
+
+    # ── LPG / Gas ─────────────────────────────────────────────────────────────
+    if re.search(r'\b(?:lpg|gas|cylinder|गैस)\b', t):
+        if re.search(r'\b(?:nahi|no\b|nahin|नहीं)\b', t):
+            extracted["has_lpg_connection"] = "no"
+        else:
+            extracted["has_lpg_connection"] = "yes"
+
+    # ── Marital status ────────────────────────────────────────────────────────
+    if re.search(r'\b(?:widow|vidhwa|vidhur|विधवा|विधुर|pati\s*guzar|wife\s*guzar)\b', t):
+        extracted["marital_status"] = "widowed"
+    elif re.search(r'\b(?:shaadi|married|vivahit|विवाहित|shadi)\b', t):
+        extracted["marital_status"] = "married"
+    elif re.search(r'\b(?:unmarried|single|avivahit|अविवाहित|kuanra|kunwara|kunwari)\b', t):
+        extracted["marital_status"] = "unmarried"
+
+    # ── Build follow-up question ──────────────────────────────────────────────
+    from src.conversation.follow_up import FIELD_PRIORITY, MANDATORY_FIELDS
+    merged = {**current_profile, **extracted}
+    followup = None
+    for field, question in FIELD_PRIORITY:
+        if field in MANDATORY_FIELDS and not merged.get(field):
+            followup = question
+            break
+
+    # Build a reply
+    n_extracted = len(extracted)
+    if n_extracted == 0:
+        reply = "Maaf kijiye, yeh samajh nahi aaya. / माफ़ करें, यह समझ नहीं आया।\n\n" + (followup or "Aap form bhar sakte hain: /details")
+    else:
+        fields_got = ", ".join(extracted.keys())
+        reply = f"✓ Samajh gaya: {fields_got}.<br><br>" + (followup or "Lagta hai kaafi jankari aa gayi! Niche <strong>See my results</strong> dabayein. / नीचे <strong>नतीजे देखें</strong> दबाएं।")
+
+    return extracted, reply
+
+
+@app.post("/api/chat", response_class=JSONResponse)
+async def api_chat(request: Request):
+    body = await request.json()
+    message: str = body.get("message", "")
+    current_profile: dict = body.get("profile", {})
+    extracted, reply = _extract_from_message(message, current_profile)
+    return JSONResponse({"reply": reply, "extracted": extracted})
+
+
 @app.get("/checklist", response_class=HTMLResponse)
 async def checklist(request: Request):
     from urllib.parse import parse_qs
@@ -651,10 +818,20 @@ async def checklist(request: Request):
                     if r.status in (MatchStatus.ELIGIBLE, MatchStatus.LIKELY_ELIGIBLE)]
     app_order = dag.topological_order(eligible_ids)
 
+    _schemes_raw = load_all_schemes()
+    scheme_hindi_map = {
+        sd["scheme_id"]: {
+            "name": sd.get("name_hindi") or "",
+            "benefit": sd.get("benefit_summary_hindi") or "",
+        }
+        for sd in _schemes_raw
+    }
+
     return templates.TemplateResponse(request, "checklist.html", {
         "docs": docs_list,
         "eligible_results": eligible_results,
         "app_order": app_order,
         "icons": SCHEME_ICONS,
         "profile_qs": qs,
+        "scheme_hindi_map": scheme_hindi_map,
     })

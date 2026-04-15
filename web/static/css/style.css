@@ -431,15 +431,15 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
     display: flex; justify-content: flex-end; gap: 12px;
 }
 .btn-next {
-    background: var(--primary); color: #fff;
+    background: #E53935; color: #fff;
     border: none; border-radius: var(--radius-pill);
     padding: 13px 32px; font-size: 0.95rem; font-weight: 600;
     cursor: pointer; font-family: inherit; min-width: 150px;
     transition: background 0.15s;
 }
-.btn-next:hover { background: var(--primary-dark); }
-.btn-next.submit { background: var(--accent); }
-.btn-next.submit:hover { background: #e11d48; }
+.btn-next:hover { background: #C62828; }
+.btn-next.submit { background: #E53935; }
+.btn-next.submit:hover { background: #C62828; }
 
 /* Summary */
 .summary-grid { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }

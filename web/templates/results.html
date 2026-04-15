@@ -110,7 +110,7 @@
     <div class="option-cards" style="font-size:0.78rem;gap:4px">
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="widowed"><span class="opt-en">Widowed / विधवा</span></label>
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="married"><span class="opt-en">Married / विवाहित</span></label>
-        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="single"><span class="opt-en">Single / अविवाहित</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="unmarried"><span class="opt-en">Single / अविवाहित</span></label>
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_marital_status" value="divorced"><span class="opt-en">Divorced / तलाकशुदा</span></label>
     </div>
 {% elif field == 'is_pregnant_or_lactating' %}
@@ -322,19 +322,23 @@
         </div>
         <div class="section-body" id="needinfo-body">
             <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
-                We couldn't check these schemes because some details are missing. Click "Answer now" to provide just the info needed for that scheme.
+                कुछ जानकारी नहीं मिली — इसलिए ये योजनाएं जांच नहीं हुईं।<br>
+                <span style="color:var(--text-muted)">"Answer now" दबाएं और सिर्फ वही जानकारी दें जो उस योजना के लिए चाहिए।</span>
             </p>
             {% for r in grouped.insufficient %}
             <div class="needinfo-card" id="nicard-{{ r.scheme_id }}" data-scheme-id="{{ r.scheme_id }}" data-status="insufficient_data">
                 {% set shi = scheme_hindi_map.get(r.scheme_id, {}) %}
                 <div class="needinfo-top">
                     <div class="card-icon">{{ icons.get(r.scheme_id, '📋') }}</div>
-                    <div>
-                        <div class="needinfo-name">{% if shi.name %}{{ shi.name }}{% else %}{{ r.scheme_name }}{% endif %}</div>
+                    <div style="flex:1">
+                        <div class="needinfo-name">
+                            {% if shi.name %}{{ shi.name }}{% else %}{{ r.scheme_name }}{% endif %}
+                            <button class="speak-btn" data-speak="{% if shi.name %}{{ shi.name }}{% else %}{{ r.scheme_name }}{% endif %}। {% if shi.benefit %}{{ shi.benefit }}{% else %}{{ r.benefit_summary[:80] }}{% endif %}" aria-label="सुनें">🔊</button>
+                        </div>
                         {% if shi.name %}<div style="font-size:0.75rem;color:var(--text-secondary)">{{ r.scheme_name }}</div>{% endif %}
                         <span class="badge badge-needinfo" style="font-size:0.7rem;">जानकारी चाहिए · Need info</span>
                     </div>
-                    <div style="margin-left:auto;font-size:0.82rem;color:var(--text-secondary)">{% if shi.benefit %}{{ shi.benefit[:50] }}{% else %}{{ r.benefit_summary[:50] }}{% endif %}…</div>
+                    <div style="font-size:0.82rem;color:var(--text-secondary);max-width:120px;text-align:right">{% if shi.benefit %}{{ shi.benefit[:50] }}{% else %}{{ r.benefit_summary[:50] }}{% endif %}…</div>
                 </div>
 
                 {% if r.gaps %}
@@ -558,8 +562,8 @@
 
     {% if missing_fields %}
     <div class="unlock-section">
-        <h3>Information that could unlock more schemes</h3>
-        <p class="unlock-intro">You can find these out and come back anytime — the system never blocks you.</p>
+        <h3>और योजनाएं खोलें <span style="font-size:0.78rem;font-weight:400;color:var(--text-secondary)">/ Unlock more schemes</span></h3>
+        <p class="unlock-intro">ये जानकारी देने पर और योजनाएं दिख सकती हैं — कभी भी वापस आकर भर सकते हैं।</p>
         {% set seen = [] %}
         {% for scheme_name, scheme_id, gap_desc, benefit in missing_fields[:8] %}
         {% if gap_desc not in seen %}
@@ -617,13 +621,15 @@ function toggleMiniForm(schemeId) {
 async function recheckScheme(schemeId) {
     const f = document.getElementById('mini-' + schemeId);
     const resultEl = document.getElementById('recheck-result-' + schemeId);
+    const submitBtn = f.querySelector('.mini-submit');
     const newFields = {};
     f.querySelectorAll('input[type="radio"]:checked, input[type="number"]').forEach(el => {
         const key = el.name.replace('mini_' + schemeId + '_', '');
         if (el.value !== '') newFields[key] = el.value;
     });
-    resultEl.textContent = 'Checking…';
+    resultEl.textContent = 'जांच हो रही है… / Checking…';
     resultEl.style.color = 'var(--text-muted)';
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.6'; }
     try {
         const resp = await fetch('/api/recheck', {
             method: 'POST',
@@ -632,12 +638,33 @@ async function recheckScheme(schemeId) {
         });
         const data = await resp.json();
         const statusColors = { ELIGIBLE: 'var(--eligible)', LIKELY_ELIGIBLE: 'var(--likely)', AMBIGUOUS: 'var(--ambiguous)', INELIGIBLE: 'var(--ineligible)', INSUFFICIENT_DATA: 'var(--needinfo)' };
-        const labels = { ELIGIBLE: '✅ Eligible!', LIKELY_ELIGIBLE: '🟡 Likely eligible', AMBIGUOUS: '🟠 Unclear', INELIGIBLE: '❌ Not eligible', INSUFFICIENT_DATA: '⬜ Still need more info' };
+        const labels = {
+            ELIGIBLE: '✅ पात्र हैं! / Eligible!',
+            LIKELY_ELIGIBLE: '🟡 संभावित पात्र / Likely eligible',
+            AMBIGUOUS: '🟠 अस्पष्ट / Unclear',
+            INELIGIBLE: '❌ अपात्र / Not eligible',
+            INSUFFICIENT_DATA: '⬜ और जानकारी चाहिए / Need more info'
+        };
         resultEl.textContent = labels[data.status] || data.status;
         resultEl.style.color = statusColors[data.status] || 'var(--text)';
+        // Visually highlight the card if eligible
+        const card = document.getElementById('nicard-' + schemeId);
+        if (card) {
+            if (data.status === 'ELIGIBLE' || data.status === 'LIKELY_ELIGIBLE') {
+                card.style.borderColor = 'var(--eligible)';
+                card.style.background = 'var(--eligible-bg)';
+                card.style.transition = 'border-color 0.4s, background 0.4s';
+            } else if (data.status === 'INELIGIBLE') {
+                card.style.borderColor = 'var(--ineligible)';
+                card.style.background = 'var(--ineligible-bg)';
+                card.style.transition = 'border-color 0.4s, background 0.4s';
+            }
+        }
     } catch (e) {
-        resultEl.textContent = 'Error — please try again';
+        resultEl.textContent = 'गड़बड़ी — दोबारा कोशिश करें / Error — try again';
         resultEl.style.color = 'var(--ineligible)';
+    } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; }
     }
 }
 
