@@ -49,21 +49,24 @@ function speakHindi(text) {
     if (!('speechSynthesis' in window)) return;
     const cleaned = _cleanForTTS(text);
     if (!cleaned) return;
-    const u = new SpeechSynthesisUtterance(cleaned);
-    u.lang = 'hi-IN';
-    u.rate = 0.72;
-    u.pitch = 1.0;
-    u.volume = 1;
-    if (_hindiVoice) u.voice = _hindiVoice;
-    // Chrome bug: speechSynthesis can get silently stuck in paused state
+    // Cancel first, then delay — Chrome cancels asynchronously; calling speak()
+    // immediately after cancel() silently kills the new utterance too.
     window.speechSynthesis.cancel();
-    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-    window.speechSynthesis.speak(u);
+    setTimeout(() => {
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        const u = new SpeechSynthesisUtterance(cleaned);
+        u.lang = 'hi-IN';
+        u.rate = 0.72;
+        u.pitch = 1.0;
+        u.volume = 1;
+        if (_hindiVoice) u.voice = _hindiVoice;
+        window.speechSynthesis.speak(u);
+    }, 50);
 }
 
-// Event delegation — one listener catches all .speak-btn clicks on every page,
-// regardless of when buttons are added to the DOM (no per-element wiring needed)
-function initSpeakButtons() {}  // kept as no-op so existing callers don't break
+// Event delegation — catches all .speak-btn (data-speak) clicks on every page.
+// .speak-btn-big buttons are wired individually in scheme_detail.html (live DOM text).
+function initSpeakButtons() {}  // no-op kept so existing callers don't break
 document.addEventListener('click', e => {
     const btn = e.target.closest('.speak-btn');
     if (!btn) return;

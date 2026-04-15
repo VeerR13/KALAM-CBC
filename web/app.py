@@ -313,44 +313,6 @@ async def results(request: Request):
     return await _render_results(request, dict(form_data))
 
 
-@app.get("/path", response_class=HTMLResponse)
-async def path_page(request: Request):
-    """Optimum path page — reads same profile from query params as /results."""
-    from urllib.parse import parse_qs
-    qs = str(request.query_params)
-    form = {k: v[0] for k, v in parse_qs(qs).items()} if qs else {}
-    if not form:
-        return RedirectResponse("/details")
-
-    profile = _build_profile(form)
-    all_results = _run_engine(profile)
-
-    dag = PrerequisiteDAG.from_data_file()
-    eligible_ids = [
-        r.scheme_id for r in all_results
-        if r.status in (MatchStatus.ELIGIBLE, MatchStatus.LIKELY_ELIGIBLE)
-    ]
-
-    detector = InteractionDetector()
-    interactions = detector.detect(eligible_ids)
-
-    scheme_name_map = {r.scheme_id: r.scheme_name for r in all_results}
-    optimizer = PathOptimizer(scheme_name_map)
-    optimal_path = optimizer.recommend(profile, eligible_ids, interactions)
-
-    current_statuses = {r.scheme_id: r.status for r in all_results}
-    sensitivity_flags = SensitivityAnalyzer().analyze(profile, current_statuses)
-    life_events = LifeEventProjector().project(profile, current_statuses)
-
-    return templates.TemplateResponse(request, "path.html", {
-        "profile": profile,
-        "profile_qs": qs,
-        "optimal_path": optimal_path,
-        "interactions": interactions,
-        "sensitivity_flags": sensitivity_flags,
-        "life_events": life_events,
-    })
-
 
 def _personalized_docs(profile: UserProfile, scheme: Scheme, bur_score=None):
     """Return (has_docs, needs_docs) lists for the scheme, using BureaucraticScore if available."""
