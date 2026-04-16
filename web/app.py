@@ -574,8 +574,8 @@ async def scheme_detail(request: Request, scheme_id: str):
     bur_calc = BureaucraticDistanceCalculator()
     bur_score = bur_calc.calculate(profile, scheme_obj, [])
     has_docs, needs_docs = _personalized_docs(profile, scheme_obj, bur_score)
-    applicant_name = form.get("applicant_name", "").strip()
-    applicant_village = form.get("applicant_village", "").strip()
+    applicant_name = form.get("applicant_name", "").strip()[:80]
+    applicant_village = form.get("applicant_village", "").strip()[:80]
     scripts = _office_script(profile, scheme_obj, needs_docs,
                              applicant_name=applicant_name,
                              applicant_village=applicant_village)
@@ -631,6 +631,25 @@ async def recheck(request: Request):
 
 
 
+# ── Simple in-process rate limiter ───────────────────────────────────────────
+import time as _time
+from collections import defaultdict as _defaultdict
+
+_rate_store: dict[str, list[float]] = _defaultdict(list)
+_RATE_WINDOW = 60.0   # seconds
+_RATE_MAX    = 20     # requests per IP per window
+
+def _is_rate_limited(ip: str) -> bool:
+    now = _time.monotonic()
+    hits = _rate_store[ip]
+    # Drop timestamps outside the window
+    _rate_store[ip] = [t for t in hits if now - t < _RATE_WINDOW]
+    if len(_rate_store[ip]) >= _RATE_MAX:
+        return True
+    _rate_store[ip].append(now)
+    return False
+
+
 # ── Hugging Face TTS (facebook/mms-tts-hin) ───────────────────────────────────
 _HF_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
 _HF_TTS_URL = "https://api-inference.huggingface.co/models/facebook/mms-tts-hin"
@@ -664,6 +683,9 @@ async def speak(request: Request):
     """Return audio for Hindi text via HuggingFace MMS TTS.
     Returns 503 if HUGGINGFACE_API_KEY is not set or model is loading —
     the client falls back to Web Speech API automatically."""
+    ip = request.client.host if request.client else "unknown"
+    if _is_rate_limited(ip):
+        return JSONResponse({"error": "rate_limited"}, status_code=429)
     try:
         body = await request.json()
     except Exception:
@@ -840,7 +862,7 @@ def _extract_from_message(text: str, current_profile: dict) -> tuple[dict, str]:
 @app.post("/api/chat", response_class=JSONResponse)
 async def api_chat(request: Request):
     body = await request.json()
-    message: str = body.get("message", "")
+    message: str = str(body.get("message", ""))[:500]   # cap at 500 chars
     current_profile: dict = body.get("profile", {})
     extracted, reply = _extract_from_message(message, current_profile)
     return JSONResponse({"reply": reply, "extracted": extracted})
