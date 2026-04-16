@@ -178,6 +178,16 @@ def _build_profile(form: dict) -> UserProfile:
             return None
         return max(lo, min(hi, val))
 
+    # Parse previous scheme loan checkboxes → list of scheme IDs
+    _loan_map = {
+        "prev_loan_pm_mudra": "pm_mudra",
+        "prev_loan_pmegp": "pmegp",
+        "prev_loan_pm_svanidhi": "pm_svanidhi",
+        "prev_loan_pm_vishwakarma": "pm_vishwakarma",
+    }
+    _prev_loans_list = [sid for key, sid in _loan_map.items() if form.get(key) == "yes"]
+    _prev_loans = _prev_loans_list if _prev_loans_list else None
+
     return UserProfile(
         age=_clamp(_int("age"), 0, 150),
         gender=form.get("gender") or None,
@@ -213,7 +223,9 @@ def _build_profile(form: dict) -> UserProfile:
         spouse_is_govt_employee=_bool("spouse_is_govt_employee"),
         has_lpg_connection=_bool("has_lpg_connection"),
         has_existing_pension=_bool("has_existing_pension"),
+        previous_scheme_loans=_prev_loans,
     )
+
 
 
 @app.get("/", response_class=HTMLResponse)

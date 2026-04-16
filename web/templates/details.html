@@ -201,6 +201,11 @@
                         <span class="occ-en">Unemployed</span><span class="occ-hi">बेरोज़गार</span>
                     </label>
                     <label class="occ-card">
+                        <input type="radio" name="occupation" value="Gig worker">
+                        <span class="occ-icon">🛵</span>
+                        <span class="occ-en">Gig worker</span><span class="occ-hi">गिग कामगार</span>
+                    </label>
+                    <label class="occ-card">
                         <input type="radio" name="occupation" value="">
                         <span class="occ-icon">·</span>
                         <span class="occ-en">Skip</span><span class="occ-hi">पता नहीं</span>
@@ -311,6 +316,30 @@
                         <span class="opt-wrap"><span class="opt-en">Skip</span><span class="opt-hi">पता नहीं</span></span>
                     </label>
                 </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Previous govt business loans <span class="field-label-hi">/ पहले सरकारी कर्ज़?</span></label>
+                <p class="field-hint">Some schemes block you if you already took one · कुछ योजनाएं पहले के कर्ज़ वालों को नहीं देतीं</p>
+                <div class="asset-checklist">
+                    <label class="asset-item">
+                        <input type="checkbox" name="prev_loan_pm_mudra" value="yes">
+                        <div class="asset-text"><span class="asset-en">PM MUDRA loan</span><span class="asset-hi">पीएम मुद्रा लोन</span></div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="prev_loan_pmegp" value="yes">
+                        <div class="asset-text"><span class="asset-en">PMEGP loan / subsidy</span><span class="asset-hi">पीएमईजीपी</span></div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="prev_loan_pm_svanidhi" value="yes">
+                        <div class="asset-text"><span class="asset-en">PM SVANidhi</span><span class="asset-hi">स्वनिधि</span></div>
+                    </label>
+                    <label class="asset-item">
+                        <input type="checkbox" name="prev_loan_pm_vishwakarma" value="yes">
+                        <div class="asset-text"><span class="asset-en">PM Vishwakarma</span><span class="asset-hi">विश्वकर्मा</span></div>
+                    </label>
+                </div>
+                <p class="field-hint" style="margin-top:6px;">None? Leave all boxes empty / कोई नहीं तो खाली छोड़ें</p>
             </div>
         </div>
 

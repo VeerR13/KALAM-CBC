@@ -84,6 +84,7 @@
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="daily_wage"><span class="opt-en">Daily wage / दिहाड़ी</span></label>
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="street_vendor"><span class="opt-en">Vendor / फेरीवाला</span></label>
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="Artisan"><span class="opt-en">Artisan / कारीगर</span></label>
+        <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="Gig worker"><span class="opt-en">Gig worker / गिग</span></label>
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="Self-employed"><span class="opt-en">Self-employed / स्वरोज़गार</span></label>
         <label class="option-card"><input type="radio" name="mini_{{ scheme_id }}_occupation" value="other"><span class="opt-en">Other / अन्य</span></label>
     </div>
@@ -174,10 +175,24 @@
             {% set dist = distances.get(r.scheme_id) %}
             {% if dist %}
             <div class="doc-status">
-                {% if dist.can_apply_online %}✅ Apply online{% else %}📍 Office visit needed{% endif %}
-                {% if dist.missing_docs %} &nbsp;·&nbsp; 📄 {{ dist.missing_docs|length }} doc{{ 's' if dist.missing_docs|length != 1 }} to collect{% endif %}
-                {% if dist.unmet_prerequisites %} &nbsp;·&nbsp; ⚠️ Apply {{ dist.unmet_prerequisites | join(', ') }} first{% endif %}
+                <span class="diff-badge diff-{{ dist.difficulty_label }}">{{ dist.difficulty_label }}</span>
+                {% if dist.can_apply_online %}<span class="doc-tag online">✅ Online</span>{% else %}<span class="doc-tag office">📍 Office</span>{% endif %}
+                {% if dist.missing_docs %}<span class="doc-tag missing">📄 {{ dist.missing_docs|length }} doc{{ 's' if dist.missing_docs|length != 1 }}</span>{% endif %}
+                {% if dist.total_days_estimate > 0 %}<span class="doc-tag days">⏱ ~{{ dist.total_days_estimate }}d</span>{% endif %}
+                {% if dist.unmet_prerequisites %}<span class="doc-tag prereq">⚠️ Needs {{ dist.unmet_prerequisites | join(', ') }} first</span>{% endif %}
             </div>
+            {% if dist.docs_already_have %}
+            <div class="docs-have">✓ You already have: {{ dist.docs_already_have | join(', ') }}</div>
+            {% endif %}
+            {% if dist.missing_docs %}
+            <div class="docs-need">
+                <span class="docs-need-label">Still need:</span>
+                {% for doc in dist.missing_docs[:3] %}
+                <span class="doc-chip">{{ doc.name }}{% if doc.where %} <span class="doc-where">@ {{ doc.where }}</span>{% endif %}</span>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+                {% if dist.missing_docs|length > 3 %} + {{ dist.missing_docs|length - 3 }} more{% endif %}
+            </div>
+            {% endif %}
             {% endif %}
         </div>
         <div class="card-right">
@@ -188,6 +203,11 @@
             </div>
         </div>
     </div>
+    {% if r.status.value in ('ELIGIBLE', 'LIKELY_ELIGIBLE') %}
+    <div class="card-apply-row">
+        <button class="applied-btn" data-scheme="{{ r.scheme_id }}" onclick="cycleStatus(event, '{{ r.scheme_id }}')">＋ Track application</button>
+    </div>
+    {% endif %}
     <div class="card-tap-hint">Tap for full details · पूरी जानकारी →</div>
 </div>
 {% endmacro %}
@@ -678,5 +698,49 @@ document.querySelectorAll('.scheme-card[data-href]').forEach(card => {
         if (e.key === 'Enter' || e.key === ' ') window.location.href = card.dataset.href;
     });
 });
+
+// ── Application status tracker (localStorage) ─────────────────────────────
+const STATUS_KEY = 'kalam_applied_v1';
+const STATUS_CYCLE = { '': 'applied', 'applied': 'pending', 'pending': '' };
+const STATUS_LABELS = {
+    '': '＋ Track application',
+    'applied': '✅ Applied — tap to mark pending',
+    'pending': '⏳ Pending — tap to clear',
+};
+
+function _loadStatuses() {
+    try { return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}'); }
+    catch { return {}; }
+}
+function _saveStatuses(obj) {
+    try { localStorage.setItem(STATUS_KEY, JSON.stringify(obj)); } catch {}
+}
+
+function cycleStatus(e, schemeId) {
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    const statuses = _loadStatuses();
+    const cur = statuses[schemeId] || '';
+    const next = STATUS_CYCLE[cur];
+    if (next === '') delete statuses[schemeId];
+    else statuses[schemeId] = next;
+    _saveStatuses(statuses);
+    _renderBtn(btn, next);
+}
+
+function _renderBtn(btn, status) {
+    btn.textContent = STATUS_LABELS[status] || STATUS_LABELS[''];
+    btn.classList.toggle('is-applied', status === 'applied');
+    btn.classList.toggle('is-pending', status === 'pending');
+}
+
+// Restore saved statuses on page load
+(function restoreStatuses() {
+    const statuses = _loadStatuses();
+    document.querySelectorAll('.applied-btn[data-scheme]').forEach(btn => {
+        const s = statuses[btn.dataset.scheme] || '';
+        _renderBtn(btn, s);
+    });
+})();
 </script>
 {% endblock %}

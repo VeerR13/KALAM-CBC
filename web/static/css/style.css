@@ -1370,3 +1370,27 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
     .path-cta-en { font-size: 0.92rem; }
     .path-cta-hi { font-size: 0.82rem; }
 }
+
+/* ── Bureaucratic distance badges ──────────────────────────────────────── */
+.diff-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+.diff-easy     { background: rgba(34,197,94,0.15); color: #16a34a; }
+.diff-moderate { background: rgba(234,179,8,0.15); color: #ca8a04; }
+.diff-involved { background: rgba(249,115,22,0.15); color: #ea580c; }
+.diff-complex  { background: rgba(239,68,68,0.15); color: #dc2626; }
+.doc-tag { font-size: 0.73rem; padding: 2px 6px; border-radius: 10px; background: var(--surface-elevated, #f4f4f5); color: var(--text-secondary); white-space: nowrap; }
+.doc-tag.online  { background: rgba(34,197,94,0.1); color: #16a34a; }
+.doc-tag.office  { background: rgba(249,115,22,0.1); color: #ea580c; }
+.doc-tag.missing { background: rgba(99,102,241,0.1); color: #6366f1; }
+.doc-tag.days    { background: rgba(14,165,233,0.1); color: #0369a1; }
+.doc-tag.prereq  { background: rgba(239,68,68,0.1); color: #dc2626; }
+.docs-have { font-size: 0.75rem; color: #16a34a; margin-top: 4px; }
+.docs-need { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline; }
+.docs-need-label { font-weight: 600; color: var(--text); }
+.doc-chip { background: var(--surface-elevated, #f4f4f5); border-radius: 6px; padding: 2px 6px; white-space: nowrap; }
+.doc-where { color: var(--text-muted); font-size: 0.7rem; }
+
+/* ── Application status tracker ─────────────────────────────────────────── */
+.applied-btn { font-size: 0.72rem; padding: 4px 10px; border-radius: 20px; border: 1.5px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; margin-top: 6px; transition: all 0.2s; }
+.applied-btn:hover { border-color: var(--eligible); color: #16a34a; }
+.applied-btn.is-applied { background: rgba(34,197,94,0.12); border-color: #16a34a; color: #16a34a; font-weight: 600; }
+.applied-btn.is-pending { background: rgba(234,179,8,0.12); border-color: #ca8a04; color: #ca8a04; font-weight: 600; }

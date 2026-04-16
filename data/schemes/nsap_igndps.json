@@ -73,6 +73,20 @@
       "weight": 15,
       "ambiguity_refs": [],
       "ambiguity_note": null
+    },
+    {
+      "rule_id": "NSAP-DPS-EX01",
+      "parameter": "no_existing_pension",
+      "description": "Applicant must not already be receiving a government pension",
+      "condition": {
+        "type": "field_check",
+        "field": "has_existing_pension",
+        "values": [false, null]
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Cannot receive IGNDPS if already receiving IGNOAPS, IGNWPS, or any other NSAP pension"
     }
   ],
   "required_documents": [

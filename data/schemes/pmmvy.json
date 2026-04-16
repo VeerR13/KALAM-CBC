@@ -62,7 +62,7 @@
         "min": 0,
         "max": 2
       },
-      "is_mandatory": false,
+      "is_mandatory": true,
       "weight": 15,
       "ambiguity_refs": [],
       "ambiguity_note": "Benefit for first child (any gender) and second child (only if girl). AMB-34 RESOLVED: miscarriage/stillbirth is fresh case."
