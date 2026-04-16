@@ -1,5 +1,9 @@
 """Kalam Web — FastAPI application."""
+import base64 as _b64
 import json
+import os
+import urllib.request as _http
+from functools import lru_cache as _lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -625,6 +629,53 @@ async def recheck(request: Request):
 
 
 
+
+
+# ── Google Cloud TTS ──────────────────────────────────────────────────────────
+_GOOGLE_TTS_KEY = os.getenv("GOOGLE_TTS_API_KEY", "")
+
+@_lru_cache(maxsize=512)
+def _tts_audio(text: str) -> bytes | None:
+    """Call Google Cloud TTS Neural2, return MP3 bytes. LRU-cached per text."""
+    if not _GOOGLE_TTS_KEY:
+        return None
+    url = f"https://texttospeech.googleapis.com/v1/text:synthesize?key={_GOOGLE_TTS_KEY}"
+    payload = json.dumps({
+        "input": {"text": text},
+        "voice": {"languageCode": "hi-IN", "name": "hi-IN-Neural2-A"},
+        "audioConfig": {
+            "audioEncoding": "MP3",
+            "speakingRate": 0.88,   # slightly slower than natural for clarity
+            "pitch": 0.0,
+        },
+    }).encode()
+    req = _http.Request(url, data=payload,
+                        headers={"Content-Type": "application/json"})
+    try:
+        with _http.urlopen(req, timeout=8) as resp:
+            return _b64.b64decode(json.loads(resp.read())["audioContent"])
+    except Exception:
+        return None
+
+
+@app.post("/api/speak")
+async def speak(request: Request):
+    """Return MP3 audio for the given Hindi text via Google Cloud TTS Neural2.
+    Falls back to 503 if GOOGLE_TTS_API_KEY is not configured — client then
+    uses the Web Speech API fallback instead."""
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "bad_request"}, status_code=400)
+    text = (body.get("text") or "").strip()[:4500]
+    if not text:
+        return JSONResponse({"error": "empty"}, status_code=400)
+    audio = _tts_audio(text)
+    if audio is None:
+        return JSONResponse({"error": "no_key"}, status_code=503)
+    from fastapi.responses import Response as _BinaryResp
+    return _BinaryResp(content=audio, media_type="audio/mpeg",
+                       headers={"Cache-Control": "public, max-age=86400"})
 
 
 @app.get("/chat", response_class=HTMLResponse)

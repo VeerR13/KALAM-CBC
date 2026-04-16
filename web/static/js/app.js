@@ -55,13 +55,16 @@ function _cleanForTTS(text) {
         .trim();
 }
 
-function speakHindi(text) {
-    if (!('speechSynthesis' in window)) return;
-    const cleaned = _cleanForTTS(text);
-    if (!cleaned) return;
+// ── TTS: Google Neural2 (server) with Web Speech API fallback ─────────────────
+// Server returns MP3 from Google Cloud TTS hi-IN-Neural2-A (human-sounding).
+// If GOOGLE_TTS_API_KEY is not set on the server, it returns 503 and we fall
+// back to the browser's Web Speech API automatically.
+const _ttsCache = new Map();  // text → object URL (blob URL, reusable)
+let _ttsServerAvailable = true; // flips false on first 503 so we stop trying
 
-    // Build utterance synchronously — iOS Safari requires speak() to stay inside
-    // the user-gesture call stack (setTimeout breaks it on iOS).
+function _speakWebSpeech(cleaned) {
+    if (!('speechSynthesis' in window)) return;
+    // Build utterance synchronously — iOS Safari requires speak() inside user-gesture.
     const u = new SpeechSynthesisUtterance(cleaned);
     u.lang = 'hi-IN';
     u.rate = 0.72;
@@ -69,12 +72,11 @@ function speakHindi(text) {
     u.volume = 1;
     if (_hindiVoice) u.voice = _hindiVoice;
 
-    // Chrome race-condition retry: if cancel() kills the new utterance silently,
-    // onend fires before onstart — catch that and re-queue after 50ms.
     let _started = false;
     u.onstart = () => { _started = true; };
     u.onend = () => {
         if (_started) return;
+        // Chrome race-condition retry
         setTimeout(() => {
             const u2 = new SpeechSynthesisUtterance(cleaned);
             u2.lang = 'hi-IN'; u2.rate = 0.72; u2.pitch = 1.0; u2.volume = 1;
@@ -83,13 +85,47 @@ function speakHindi(text) {
             window.speechSynthesis.speak(u2);
         }, 50);
     };
-
-    // Cancel any ongoing speech, then speak immediately.
-    // iOS: speak() is synchronous here → stays inside user-gesture context. ✓
-    // Chrome: if cancel() races and kills u, the onend retry above handles it. ✓
     window.speechSynthesis.cancel();
     if (window.speechSynthesis.paused) window.speechSynthesis.resume();
     window.speechSynthesis.speak(u);
+}
+
+async function speakHindi(text) {
+    const cleaned = _cleanForTTS(text);
+    if (!cleaned) return;
+
+    // ── Try cached audio URL first ────────────────────────────────────────
+    if (_ttsCache.has(cleaned)) {
+        new Audio(_ttsCache.get(cleaned)).play().catch(() => _speakWebSpeech(cleaned));
+        return;
+    }
+
+    // ── Try server-side Google Neural2 TTS ───────────────────────────────
+    if (_ttsServerAvailable) {
+        try {
+            const resp = await fetch('/api/speak', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: cleaned }),
+            });
+            if (resp.ok) {
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                _ttsCache.set(cleaned, url);
+                new Audio(url).play().catch(() => _speakWebSpeech(cleaned));
+                return;
+            }
+            if (resp.status === 503) {
+                // Server has no API key — stop trying for this session
+                _ttsServerAvailable = false;
+            }
+        } catch (_) {
+            // Network error — fall through to Web Speech
+        }
+    }
+
+    // ── Fallback: browser Web Speech API ─────────────────────────────────
+    _speakWebSpeech(cleaned);
 }
 
 // Event delegation — catches all .speak-btn (data-speak) clicks on every page.
