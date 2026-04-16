@@ -631,50 +631,51 @@ async def recheck(request: Request):
 
 
 
-# ── Google Cloud TTS ──────────────────────────────────────────────────────────
-_GOOGLE_TTS_KEY = os.getenv("GOOGLE_TTS_API_KEY", "")
+# ── Hugging Face TTS (facebook/mms-tts-hin) ───────────────────────────────────
+_HF_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
+_HF_TTS_URL = "https://api-inference.huggingface.co/models/facebook/mms-tts-hin"
 
 @_lru_cache(maxsize=512)
 def _tts_audio(text: str) -> bytes | None:
-    """Call Google Cloud TTS Neural2, return MP3 bytes. LRU-cached per text."""
-    if not _GOOGLE_TTS_KEY:
+    """Call HuggingFace MMS Hindi TTS, return audio bytes. LRU-cached per text."""
+    if not _HF_KEY:
         return None
-    url = f"https://texttospeech.googleapis.com/v1/text:synthesize?key={_GOOGLE_TTS_KEY}"
-    payload = json.dumps({
-        "input": {"text": text},
-        "voice": {"languageCode": "hi-IN", "name": "hi-IN-Neural2-A"},
-        "audioConfig": {
-            "audioEncoding": "MP3",
-            "speakingRate": 0.88,   # slightly slower than natural for clarity
-            "pitch": 0.0,
+    req = _http.Request(
+        _HF_TTS_URL,
+        data=json.dumps({"inputs": text}).encode(),
+        headers={
+            "Authorization": f"Bearer {_HF_KEY}",
+            "Content-Type": "application/json",
         },
-    }).encode()
-    req = _http.Request(url, data=payload,
-                        headers={"Content-Type": "application/json"})
+    )
     try:
-        with _http.urlopen(req, timeout=8) as resp:
-            return _b64.b64decode(json.loads(resp.read())["audioContent"])
+        with _http.urlopen(req, timeout=30) as resp:
+            data = resp.read()
+            # HF returns JSON error on model loading — treat as transient failure
+            if resp.headers.get("Content-Type", "").startswith("application/json"):
+                return None
+            return data
     except Exception:
         return None
 
 
 @app.post("/api/speak")
 async def speak(request: Request):
-    """Return MP3 audio for the given Hindi text via Google Cloud TTS Neural2.
-    Falls back to 503 if GOOGLE_TTS_API_KEY is not configured — client then
-    uses the Web Speech API fallback instead."""
+    """Return audio for Hindi text via HuggingFace MMS TTS.
+    Returns 503 if HUGGINGFACE_API_KEY is not set or model is loading —
+    the client falls back to Web Speech API automatically."""
     try:
         body = await request.json()
     except Exception:
         return JSONResponse({"error": "bad_request"}, status_code=400)
-    text = (body.get("text") or "").strip()[:4500]
+    text = (body.get("text") or "").strip()[:1000]  # MMS works best under 1000 chars
     if not text:
         return JSONResponse({"error": "empty"}, status_code=400)
     audio = _tts_audio(text)
     if audio is None:
-        return JSONResponse({"error": "no_key"}, status_code=503)
+        return JSONResponse({"error": "unavailable"}, status_code=503)
     from fastapi.responses import Response as _BinaryResp
-    return _BinaryResp(content=audio, media_type="audio/mpeg",
+    return _BinaryResp(content=audio, media_type="audio/flac",
                        headers={"Cache-Control": "public, max-age=86400"})
 
 

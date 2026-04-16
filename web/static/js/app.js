@@ -55,9 +55,9 @@ function _cleanForTTS(text) {
         .trim();
 }
 
-// ── TTS: Google Neural2 (server) with Web Speech API fallback ─────────────────
-// Server returns MP3 from Google Cloud TTS hi-IN-Neural2-A (human-sounding).
-// If GOOGLE_TTS_API_KEY is not set on the server, it returns 503 and we fall
+// ── TTS: HuggingFace MMS Hindi (server) with Web Speech API fallback ──────────
+// Server returns FLAC from facebook/mms-tts-hin (Meta MMS, no payment needed).
+// If HUGGINGFACE_API_KEY is not set on the server, it returns 503 and we fall
 // back to the browser's Web Speech API automatically.
 const _ttsCache = new Map();  // text → object URL (blob URL, reusable)
 let _ttsServerAvailable = true; // flips false on first 503 so we stop trying
