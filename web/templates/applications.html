@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block title %}आवेदन / Applications — Kalam{% endblock %}
+
+{% block content %}
+<div class="applications-page">
+    <div class="app-hero">
+        <h2>📋 मेरे आवेदन <span class="hero-en">/ My Applications</span></h2>
+        <p class="app-hero-sub">Results पेज पर track किए हुए schemes यहाँ दिखती हैं।<br><span style="color:var(--text-muted);font-size:0.85rem">Schemes tracked from your results page appear here.</span></p>
+    </div>
+
+    <!-- Empty state (shown until JS loads data) -->
+    <div id="empty-state" class="app-empty">
+        <div style="font-size:3rem;margin-bottom:12px">📂</div>
+        <div style="font-weight:600;font-size:1rem;margin-bottom:6px">कोई आवेदन track नहीं हुआ</div>
+        <div style="color:var(--text-muted);font-size:0.88rem;margin-bottom:20px">No applications tracked yet.<br>Results पेज पर जाएं और scheme के नीचे "आवेदन ट्रैक करें" दबाएं।</div>
+        <a href="/details" class="btn-primary" style="font-size:0.9rem">फॉर्म भरें / Start →</a>
+    </div>
+
+    <!-- Cards container -->
+    <div id="app-cards" style="display:none"></div>
+
+    <!-- Scheme data embedded for offline lookup -->
+    <script>
+    // Embedded scheme metadata — name, benefit, docs, offices, online flag
+    // This is populated from the Python template context
+    const SCHEME_META = {{ scheme_meta | tojson }};
+    </script>
+</div>
+
+<style>
+.applications-page { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
+.app-hero { text-align: center; margin-bottom: 32px; }
+.app-hero h2 { margin-bottom: 6px; font-size: 1.6rem; }
+.hero-en { font-size: 1rem; font-weight: 400; color: var(--text-secondary); }
+.app-hero-sub { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5; }
+.app-empty { text-align: center; padding: 60px 20px; }
+.app-card { background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
+.app-card-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+.app-card-icon { font-size: 1.6rem; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+.app-card-title { font-weight: 700; font-size: 1rem; margin-bottom: 2px; }
+.app-card-title-en { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 6px; }
+.app-status-badge { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em; }
+.status-applied { background: rgba(34,197,94,0.12); color: #16a34a; border: 1px solid #16a34a; }
+.status-pending { background: rgba(234,179,8,0.12); color: #ca8a04; border: 1px solid #ca8a04; }
+.app-section { margin-top: 12px; }
+.app-section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.doc-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.doc-chip-need { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+.doc-chip-have { background: #ECFDF5; color: #065F46; border: 1px solid #6EE7B7; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+.app-benefit { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px; }
+.app-meta-row { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; }
+.app-meta-item { display: flex; align-items: center; gap: 4px; }
+.app-card-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.app-cycle-btn { font-size: 0.78rem; padding: 6px 14px; border-radius: 20px; border: 1.5px solid #E53935; background: transparent; color: #E53935; cursor: pointer; font-weight: 600; transition: all 0.15s; font-family: inherit; }
+.app-cycle-btn:hover { background: #E53935; color: #fff; }
+.app-cycle-btn.is-applied { border-color: #16a34a; color: #16a34a; background: rgba(34,197,94,0.08); }
+.app-cycle-btn.is-applied:hover { background: #16a34a; color: #fff; }
+.app-cycle-btn.is-pending { border-color: #ca8a04; color: #ca8a04; background: rgba(234,179,8,0.08); }
+.app-cycle-btn.is-pending:hover { background: #ca8a04; color: #fff; }
+.app-detail-link { font-size: 0.78rem; color: var(--primary); text-decoration: none; padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); }
+.app-detail-link:hover { border-color: var(--primary); }
+.app-summary-bar { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 24px; display: flex; gap: 24px; flex-wrap: wrap; }
+.app-summary-num { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+.app-summary-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+</style>
+
+<script>
+const ICONS = {
+    pm_kisan: '🌾', mgnrega: '⛏️', pmay_g: '🏠', pmay_u: '🏙️',
+    pmjdy: '🏦', pmjjby: '🛡️', pmsby: '⚕️', apy: '🧓',
+    pmmvy: '🤱', nsap_ignoaps: '🧓', nsap_igndps: '♿', nsap_ignwps: '👩',
+    pm_kaushal: '🎓', pmegp: '🏭', mudra_shishu: '💰', mudra_kishor: '💰',
+    mudra_tarun: '💰', abha: '💊', aadhaar: '🪪', ujjwala: '🔥',
+};
+
+const STATUS_KEY = 'kalam_applied_v1';
+const STATUS_CYCLE = { '': 'applied', 'applied': 'pending', 'pending': '' };
+const STATUS_LABELS = {
+    '': '＋ आवेदन ट्रैक करें',
+    'applied': '✅ आवेदन किया — pending करें',
+    'pending': '⏳ जमा है — हटाएं',
+};
+const STATUS_CLASS = { '': '', 'applied': 'is-applied', 'pending': 'is-pending' };
+
+function _loadStatuses() {
+    try { return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}'); }
+    catch { return {}; }
+}
+function _saveStatuses(obj) {
+    try { localStorage.setItem(STATUS_KEY, JSON.stringify(obj)); } catch {}
+}
+
+function cycleAppStatus(schemeId) {
+    const statuses = _loadStatuses();
+    const cur = statuses[schemeId] || '';
+    const next = STATUS_CYCLE[cur];
+    if (next === '') delete statuses[schemeId];
+    else statuses[schemeId] = next;
+    _saveStatuses(statuses);
+    renderCards();  // re-render so removed schemes disappear
+}
+
+function renderCards() {
+    const statuses = _loadStatuses();
+    const ids = Object.keys(statuses).filter(k => statuses[k]);
+    const container = document.getElementById('app-cards');
+    const empty = document.getElementById('empty-state');
+
+    if (!ids.length) {
+        container.style.display = 'none';
+        empty.style.display = '';
+        return;
+    }
+    empty.style.display = 'none';
+    container.style.display = '';
+
+    // Summary bar
+    const appliedCount = ids.filter(id => statuses[id] === 'applied').length;
+    const pendingCount = ids.filter(id => statuses[id] === 'pending').length;
+    let html = `<div class="app-summary-bar">
+        <div><div class="app-summary-num">${ids.length}</div><div class="app-summary-label">कुल tracked / Total</div></div>
+        <div><div class="app-summary-num" style="color:#16a34a">${appliedCount}</div><div class="app-summary-label">✅ Applied</div></div>
+        <div><div class="app-summary-num" style="color:#ca8a04">${pendingCount}</div><div class="app-summary-label">⏳ Pending</div></div>
+    </div>`;
+
+    for (const id of ids) {
+        const status = statuses[id];
+        const meta = SCHEME_META[id] || {};
+        const icon = ICONS[id] || '📋';
+        const name_hi = meta.name_hi || '';
+        const name_en = meta.name_en || id;
+        const benefit = meta.benefit || '';
+        const docs_need = meta.docs_need || [];
+        const docs_have = meta.docs_have || [];
+        const offices = meta.offices || '';
+        const days = meta.days || '';
+        const online = meta.can_apply_online;
+
+        const statusBadge = status === 'applied'
+            ? '<span class="app-status-badge status-applied">✅ Applied</span>'
+            : '<span class="app-status-badge status-pending">⏳ Pending</span>';
+
+        const docsNeedHtml = docs_need.length
+            ? docs_need.map(d => `<span class="doc-chip-need">📄 ${d}</span>`).join('')
+            : '<span style="color:var(--text-muted);font-size:0.8rem">जानकारी नहीं / Unknown</span>';
+
+        const docsHaveHtml = docs_have.length
+            ? docs_have.map(d => `<span class="doc-chip-have">✓ ${d}</span>`).join('')
+            : '';
+
+        const metaItems = [];
+        if (offices) metaItems.push(`<span class="app-meta-item">🏢 ${offices}</span>`);
+        if (days) metaItems.push(`<span class="app-meta-item">📅 ~${days} दिन</span>`);
+        if (online === true) metaItems.push(`<span class="app-meta-item">🌐 ऑनलाइन आवेदन संभव</span>`);
+
+        const btnClass = STATUS_CLASS[status];
+
+        html += `<div class="app-card">
+            <div class="app-card-header">
+                <div class="app-card-icon">${icon}</div>
+                <div style="flex:1">
+                    <div class="app-card-title">${name_hi || name_en}</div>
+                    ${name_hi ? `<div class="app-card-title-en">${name_en}</div>` : ''}
+                    ${statusBadge}
+                </div>
+            </div>
+            ${benefit ? `<div class="app-benefit">${benefit}</div>` : ''}
+
+            <div class="app-section">
+                <div class="app-section-label">📋 चाहिए दस्तावेज़ / Documents needed</div>
+                <div class="doc-list">${docsNeedHtml}</div>
+            </div>
+
+            ${docsHaveHtml ? `<div class="app-section" style="margin-top:10px">
+                <div class="app-section-label">✅ पहले से है / Already have</div>
+                <div class="doc-list">${docsHaveHtml}</div>
+            </div>` : ''}
+
+            ${metaItems.length ? `<div class="app-meta-row">${metaItems.join('')}</div>` : ''}
+
+            <div class="app-card-actions">
+                <button class="app-cycle-btn ${btnClass}" onclick="cycleAppStatus('${id}')">
+                    ${STATUS_LABELS[status]}
+                </button>
+                <a href="/scheme/${id}" class="app-detail-link">पूरी जानकारी →</a>
+            </div>
+        </div>`;
+    }
+
+    container.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', renderCards);
+</script>
+{% endblock %}

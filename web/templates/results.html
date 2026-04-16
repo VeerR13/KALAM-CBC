@@ -205,7 +205,7 @@
     </div>
     {% if r.status.value in ('ELIGIBLE', 'LIKELY_ELIGIBLE') %}
     <div class="card-apply-row">
-        <button class="applied-btn" data-scheme="{{ r.scheme_id }}" onclick="cycleStatus(event, '{{ r.scheme_id }}')">＋ Track application</button>
+        <button class="applied-btn" data-scheme="{{ r.scheme_id }}" onclick="cycleStatus(event, '{{ r.scheme_id }}')">＋ आवेदन ट्रैक करें</button>
     </div>
     {% endif %}
     <div class="card-tap-hint">Tap for full details · पूरी जानकारी →</div>
@@ -338,7 +338,7 @@
             <h3>⬜ Need more info · जानकारी दें</h3>
             <span class="section-hi">These might be available to you</span>
             <span class="section-count-badge">{{ grouped.insufficient|length }}</span>
-            <button class="section-toggle-btn" onclick="toggleSection(this)">Hide</button>
+            <button class="section-toggle-btn" onclick="toggleSection(this)">छुपाएं / Hide</button>
         </div>
         <div class="section-body" id="needinfo-body">
             <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
@@ -370,7 +370,7 @@
                 </div>
                 {% endif %}
 
-                <button class="answer-now-btn" onclick="toggleMiniForm('{{ r.scheme_id }}')">Answer now →</button>
+                <button class="answer-now-btn" onclick="toggleMiniForm('{{ r.scheme_id }}')">जवाब दें → <span style="font-weight:400;opacity:0.75;font-size:0.75rem">Answer</span></button>
 
                 <div class="mini-form" id="mini-{{ r.scheme_id }}">
                     <div class="mini-form-fields" id="mini-fields-{{ r.scheme_id }}">
@@ -384,7 +384,7 @@
                         </div>
                         {% endif %}
                     </div>
-                    <button class="mini-submit" onclick="recheckScheme('{{ r.scheme_id }}')">Check this scheme →</button>
+                    <button class="mini-submit" onclick="recheckScheme('{{ r.scheme_id }}')">जाँचें → <span style="font-weight:400;opacity:0.8;font-size:0.75rem">Check</span></button>
                     <div class="recheck-result" id="recheck-result-{{ r.scheme_id }}"></div>
                 </div>
             </div>
@@ -399,7 +399,7 @@
         <div class="section-heading">
             <h3>❌ Not eligible · अयोग्य</h3>
             <span class="section-count-badge">{{ grouped.ineligible|length }}</span>
-            <button class="section-toggle-btn" onclick="toggleSection(this)">Show</button>
+            <button class="section-toggle-btn" onclick="toggleSection(this)">दिखाएं / Show</button>
         </div>
         <div class="section-body collapsed">
             {% for r in grouped.ineligible %}
@@ -602,8 +602,8 @@
 
     <!-- Actions -->
     <div class="results-actions">
-        <a class="btn-primary" href="/checklist?{{ profile_dict | urlencode }}">View document checklist →</a>
-        <a class="btn-ghost" href="/details">← Edit details</a>
+        <a class="btn-primary" href="/checklist?{{ profile_dict | urlencode }}">📄 दस्तावेज़ सूची देखें <span style="font-weight:400;opacity:0.8;font-size:0.82rem">/ Documents →</span></a>
+        <a class="btn-ghost" href="/details">← विवरण बदलें <span style="opacity:0.7;font-size:0.82rem">/ Edit</span></a>
     </div>
 
 </div>
@@ -617,7 +617,7 @@ const PROFILE_DICT = {{ profile_dict | tojson }};
 function toggleSection(btn) {
     const body = btn.closest('.results-section').querySelector('.section-body');
     const collapsed = body.classList.toggle('collapsed');
-    btn.textContent = collapsed ? 'Show' : 'Hide';
+    btn.textContent = collapsed ? 'दिखाएं / Show' : 'छुपाएं / Hide';
 }
 
 function togglePathDetail(id) {
@@ -703,9 +703,9 @@ document.querySelectorAll('.scheme-card[data-href]').forEach(card => {
 const STATUS_KEY = 'kalam_applied_v1';
 const STATUS_CYCLE = { '': 'applied', 'applied': 'pending', 'pending': '' };
 const STATUS_LABELS = {
-    '': '＋ Track application',
-    'applied': '✅ Applied — tap to mark pending',
-    'pending': '⏳ Pending — tap to clear',
+    '': '＋ आवेदन ट्रैक करें',
+    'applied': '✅ आवेदन किया — pending करें',
+    'pending': '⏳ जमा है — हटाएं / Clear',
 };
 
 function _loadStatuses() {

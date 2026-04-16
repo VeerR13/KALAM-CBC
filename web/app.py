@@ -701,6 +701,38 @@ async def speak(request: Request):
                        headers={"Cache-Control": "public, max-age=86400"})
 
 
+@app.get("/applications", response_class=HTMLResponse)
+async def applications_page(request: Request):
+    _schemes_raw = load_all_schemes()
+    scheme_meta = {}
+    for sd in _schemes_raw:
+        sid = sd["scheme_id"]
+        docs = [d["document"] for d in sd.get("required_documents", [])]
+        offices = sd.get("application_offices", [])
+        office_label = ""
+        if offices:
+            o = offices[0]
+            office_label = o.get("name_hindi") or o.get("type") or ""
+        def _parse_days(v):
+            try: return int(str(v).split("-")[0])
+            except: return 0
+        max_days = max(
+            (_parse_days(d.get("processing_time_days") or 0) for d in sd.get("required_documents", [])),
+            default=0,
+        )
+        scheme_meta[sid] = {
+            "name_hi": sd.get("name_hindi") or "",
+            "name_en": sd.get("name") or sid,
+            "benefit": sd.get("benefit_summary_hindi") or sd.get("benefit_summary") or "",
+            "docs_need": docs,
+            "docs_have": [],
+            "offices": office_label,
+            "days": max_days if max_days > 0 else "",
+            "can_apply_online": bool(sd.get("portal_url")),
+        }
+    return templates.TemplateResponse(request, "applications.html", {"scheme_meta": scheme_meta})
+
+
 @app.get("/chat", response_class=HTMLResponse)
 async def chat_page(request: Request):
     return templates.TemplateResponse(request, "chat.html")
