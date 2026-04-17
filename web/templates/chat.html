@@ -10,6 +10,12 @@
             अपनी situation Hindi, English, या Hinglish में बताइए।<br>
             We'll figure out which government schemes you qualify for.
         </p>
+        <button class="chat-tts-toggle" id="chat-tts-toggle"
+                aria-pressed="true"
+                title="Bot baolega / Read aloud toggle"
+                onclick="toggleAutoSpeak()">
+            🔊 Bot baolega · Read aloud
+        </button>
     </div>
 
     <!-- Progress tracker -->
@@ -50,6 +56,10 @@
     </button>
     <textarea class="chat-input" id="chat-input"
         placeholder="Type here… Hindi, English, Hinglish · यहाँ लिखें…" rows="1"></textarea>
+    <button class="chat-mic" id="chat-mic"
+            aria-label="Voice input · बोलकर भेजें"
+            title="Bolo · Speak"
+            onclick="startVoiceInput()">🎤</button>
     <button class="chat-send" id="chat-send" onclick="sendMessage()">भेजें · Send</button>
 </div>
 {% endblock %}
@@ -60,10 +70,15 @@
 let sessionId = null;
 let serverProfile = {};
 let turnCount = 0;
+let isInFlight = false;   // prevents concurrent fetch calls
+
+// TTS auto-speak toggle (default ON)
+let autoSpeakEnabled = true;
 
 const chatWindow = document.getElementById('chat-window');
 const chatInput  = document.getElementById('chat-input');
 const chatSend   = document.getElementById('chat-send');
+const chatMic    = document.getElementById('chat-mic');
 
 const CHAT_FIELD_LABELS = {
     age: 'Age · उम्र', gender: 'Gender · लिंग', state: 'State · राज्य',
@@ -77,12 +92,36 @@ const CHAT_FIELD_LABELS = {
 };
 
 // ── DOM helpers ────────────────────────────────────────────────────────────────
+
+// Strip HTML tags to get plain text for TTS
+function stripHtml(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
 function addBubble(html, cls) {
     const div = document.createElement('div');
     div.className = 'chat-bubble ' + cls;
     div.innerHTML = html;
     chatWindow.appendChild(div);
     chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Auto-speak bot messages (not thinking or warning bubbles)
+    const isBot     = cls.includes('bot');
+    const isThinking = cls.includes('thinking');
+    const isWarning  = cls.includes('warning');
+    if (isBot && !isThinking && !isWarning) {
+        const plainText = stripHtml(html);
+        if (autoSpeakEnabled) {
+            speakHindi(plainText);
+        }
+        // Tap-to-replay: clicking any bot bubble re-speaks it
+        div.classList.add('bot-speakable');
+        div.setAttribute('title', 'Tap to re-read · दोबारा सुनें');
+        div.addEventListener('click', () => speakHindi(plainText));
+    }
+
     return div;
 }
 
@@ -90,6 +129,7 @@ function setInputEnabled(on) {
     chatSend.disabled = !on;
     chatInput.disabled = !on;
     document.querySelector('.chat-skip-btn').disabled = !on;
+    if (chatMic) chatMic.disabled = !on;
 }
 
 // ── Progress ──────────────────────────────────────────────────────────────────
@@ -246,6 +286,87 @@ async function init() {
     loader.innerHTML = 'Server se connect nahi hua · Could not connect. Please refresh.';
     loader.className = 'chat-bubble bot warning';
 }
+
+// ── Read-aloud toggle ─────────────────────────────────────────────────────────
+function toggleAutoSpeak() {
+    autoSpeakEnabled = !autoSpeakEnabled;
+    const btn = document.getElementById('chat-tts-toggle');
+    btn.setAttribute('aria-pressed', String(autoSpeakEnabled));
+    if (autoSpeakEnabled) {
+        btn.textContent = '🔊 Bot baolega · Read aloud';
+        btn.classList.remove('tts-off');
+    } else {
+        btn.textContent = '🔇 Bot chup hai · Read aloud: OFF';
+        btn.classList.add('tts-off');
+        // Stop any currently playing speech
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    }
+}
+
+// ── Voice input ───────────────────────────────────────────────────────────────
+(function initVoiceInput() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+        // Browser has no speech recognition — hide the mic button
+        if (chatMic) chatMic.style.display = 'none';
+        return;
+    }
+
+    const rec = new SpeechRec();
+    rec.lang          = 'hi-IN';  // accepts Hindi, English, and Hinglish
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    rec.continuous    = false;
+
+    let listening = false;
+
+    function setListening(on) {
+        listening = on;
+        if (!chatMic) return;
+        chatMic.classList.toggle('recording', on);
+        chatMic.setAttribute('aria-label', on
+            ? 'Listening… · सुन रहा हूँ…'
+            : 'Voice input · बोलकर भेजें');
+    }
+
+    rec.onstart = () => setListening(true);
+
+    rec.onresult = (e) => {
+        const transcript = e.results[0][0].transcript.trim();
+        if (transcript) {
+            chatInput.value = transcript;
+            // Trigger auto-resize
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
+            // Auto-send
+            sendMessage();
+        }
+    };
+
+    rec.onerror = (e) => {
+        // Ignore no-speech; surface other errors briefly
+        if (e.error !== 'no-speech') {
+            console.warn('SpeechRecognition error:', e.error);
+        }
+    };
+
+    rec.onend = () => setListening(false);
+
+    window.startVoiceInput = function () {
+        if (listening) {
+            rec.stop();
+            return;
+        }
+        // Stop any ongoing TTS before listening so mic doesn't pick it up
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        try {
+            rec.start();
+        } catch (err) {
+            // Guard against already-started errors on rapid taps
+            console.warn('rec.start() error:', err);
+        }
+    };
+})();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function escapeHtml(s) {

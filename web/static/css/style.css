@@ -1121,6 +1121,68 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
 
 .office-script-note { font-size: 0.8rem; color: var(--text-muted); }
 
+/* ── Chat: TTS / Voice input additions ───────────────────────────────────── */
+
+/* Read-aloud toggle in hero */
+.chat-tts-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px;
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--primary);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-size: 0.88rem; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.chat-tts-toggle:hover { background: var(--primary); color: #fff; }
+.chat-tts-toggle.tts-off {
+    background: var(--bg-soft);
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+/* Mic button next to send */
+.chat-mic {
+    flex-shrink: 0;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--bg-soft);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+.chat-mic:hover { background: var(--primary-light); border-color: var(--primary); }
+.chat-mic:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Pulsing red ring while recording */
+.chat-mic.recording {
+    background: #FEE2E2;
+    border-color: #EF4444;
+    animation: chat-mic-pulse 1s ease-in-out infinite;
+}
+@keyframes chat-mic-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+
+/* Bot bubbles: slightly larger font for legibility */
+.chat-bubble.bot {
+    font-size: 1.05rem;
+}
+
+/* Tap-to-replay cursor on speakable bot bubbles */
+.chat-bubble.bot-speakable {
+    cursor: pointer;
+}
+.chat-bubble.bot-speakable:hover {
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
 .time-item {
     display: flex; gap: 10px; align-items: flex-start;
     font-size: 0.88rem; color: var(--text); padding: 6px 0;
