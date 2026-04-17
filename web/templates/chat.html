@@ -209,18 +209,42 @@ async function resetChat() {
 }
 
 // ── Init: load opening message ─────────────────────────────────────────────────
-async function init() {
+async function fetchWithTimeout(url, ms) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
     try {
-        const resp = await fetch('/api/chat/opening');
-        const data = await resp.json();
-        document.getElementById('opening-loader').remove();
-        sessionId = data.session_id;
-        addBubble(data.reply, 'bot');
+        const resp = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(timer);
+        return resp;
     } catch (e) {
-        document.getElementById('opening-loader').innerHTML =
-            'Could not load. Please refresh · रिफ्रेश करें।';
+        clearTimeout(timer);
+        throw e;
     }
-    setInputEnabled(true);
+}
+
+async function init() {
+    const loader = document.getElementById('opening-loader');
+    let attempt = 0;
+    while (attempt < 3) {
+        try {
+            if (attempt > 0) {
+                loader.innerHTML = `Server shuru ho raha hai… · Starting up… (attempt ${attempt + 1}/3)`;
+            }
+            const resp = await fetchWithTimeout('/api/chat/opening', 20000);
+            const data = await resp.json();
+            loader.remove();
+            sessionId = data.session_id;
+            addBubble(data.reply, 'bot');
+            setInputEnabled(true);
+            return;
+        } catch (e) {
+            attempt++;
+            if (attempt >= 3) break;
+            await new Promise(r => setTimeout(r, 3000));
+        }
+    }
+    loader.innerHTML = 'Server se connect nahi hua · Could not connect. Please refresh.';
+    loader.className = 'chat-bubble bot warning';
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
