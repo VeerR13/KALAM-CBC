@@ -179,8 +179,9 @@ function submitToResults() {
 // ── Send message ──────────────────────────────────────────────────────────────
 async function sendMessage() {
     const text = chatInput.value.trim();
-    if (!text || !sessionId) return;
+    if (!text || !sessionId || isInFlight) return;
 
+    isInFlight = true;
     setInputEnabled(false);
     chatInput.value = '';
     chatInput.style.height = 'auto';
@@ -211,6 +212,7 @@ async function sendMessage() {
         thinking.innerHTML = '⚠️ Error — please try again · कोई गड़बड़ी हुई';
         thinking.className = 'chat-bubble bot warning';
     } finally {
+        isInFlight = false;
         setInputEnabled(true);
         chatInput.focus();
     }
@@ -218,13 +220,16 @@ async function sendMessage() {
 
 // ── Skip / don't know ─────────────────────────────────────────────────────────
 async function sendSkip() {
+    if (isInFlight) return;
     chatInput.value = 'pata nahi';
     await sendMessage();
 }
 
 // ── Reset ─────────────────────────────────────────────────────────────────────
 async function resetChat() {
-    if (!sessionId) return;
+    if (!sessionId || isInFlight) return;
+    isInFlight = true;
+    setInputEnabled(false);
     chatWindow.innerHTML = '';
     serverProfile = {};
     turnCount = 0;
@@ -245,6 +250,10 @@ async function resetChat() {
     } catch (e) {
         thinking.remove();
         addBubble('Error resetting. Please refresh.', 'bot warning');
+    } finally {
+        isInFlight = false;
+        setInputEnabled(true);
+        chatInput.focus();
     }
 }
 

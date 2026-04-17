@@ -527,6 +527,10 @@ def _build_reply(
             state.contradictions_seen.append(list(c.fields))
             q = _get_contradiction_question(c, {**state.profile, **extracted})
             parts.append(f"⚠️ <strong>Contradiction:</strong> {q}")
+            # Clear last_question_field so a "pata nahi" on a contradiction
+            # question does not accidentally skip an unrelated profile field.
+            state.last_question_field = None
+            state.last_question = None
             return "<br><br>".join(parts)   # pause here for clarification
 
     # Next question or done
@@ -534,7 +538,7 @@ def _build_reply(
     next_q = _next_question(merged, state.skipped)
 
     if next_q is None or _mandatory_filled(merged, state.skipped):
-        if _count_filled(merged) >= 4:
+        if _count_filled(merged) >= 5:
             parts.append(
                 "🎉 Kaafi jankari aa gayi! Niche <strong>Nataije Dekho</strong> button dabayein. "
                 "Ya main aur poochhta hoon agar kuch baaki hai."
@@ -596,9 +600,16 @@ def process_turn(text: str, state: ConversationState) -> tuple[str, dict]:
             state.last_question = question
             state.last_question_field = field_name
             reply = f"Theek hai! {question}"
-        else:
+        elif _count_filled(state.profile) >= 4:
+            # Only declare done if we actually have enough data
             state.done = True
             reply = "🎉 Enough info aa gayi! Niche <strong>Nataije Dekho</strong> dabayein."
+        else:
+            # No more questions but not enough data — prompt for free-form input
+            reply = (
+                "Kuch aur batayein apne baare mein — "
+                "income, parivaar size, ya koi bhi yojana ke baare mein?"
+            )
         state.turn += 1
         return reply, {}
 

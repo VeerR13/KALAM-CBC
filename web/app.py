@@ -172,7 +172,17 @@ def _build_profile(form: dict) -> UserProfile:
 
     disability_map = {"none": 0, "40_79": 60, "80_plus": 85}
     disability_raw = form.get("disability_percent")
-    disability_percent = disability_map.get(disability_raw) if disability_raw else None
+    if not disability_raw:
+        disability_percent = None
+    elif disability_raw in disability_map:
+        # Form-select values from /details page
+        disability_percent = disability_map[disability_raw]
+    else:
+        # Raw integer string from chat flow (e.g. "40", "0", "80")
+        try:
+            disability_percent = int(disability_raw)
+        except (ValueError, TypeError):
+            disability_percent = None
 
     is_urban_raw = form.get("is_urban")
     is_urban = (is_urban_raw == "urban") if is_urban_raw else None
