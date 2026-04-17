@@ -65,7 +65,7 @@ const chatWindow = document.getElementById('chat-window');
 const chatInput  = document.getElementById('chat-input');
 const chatSend   = document.getElementById('chat-send');
 
-const FIELD_LABELS = {
+const CHAT_FIELD_LABELS = {
     age: 'Age · उम्र', gender: 'Gender · लिंग', state: 'State · राज्य',
     is_urban: 'Location · स्थान', caste_category: 'Category · वर्ग',
     annual_income: 'Income · आमदनी', occupation: 'Occupation · पेशा',
@@ -101,7 +101,7 @@ function updateProgress(profile, filled_count) {
     document.getElementById('chat-progress').style.display = 'block';
     const fieldsDiv = document.getElementById('chat-fields-filled');
     fieldsDiv.innerHTML = filled.map(k => {
-        const label = FIELD_LABELS[k] || k.replace(/_/g, ' ');
+        const label = CHAT_FIELD_LABELS[k] || k.replace(/_/g, ' ');
         return `<span class="chat-field-chip">${label}</span>`;
     }).join('');
 
