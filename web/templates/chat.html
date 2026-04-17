@@ -5,32 +5,39 @@
 <div class="chat-page">
 
     <div class="chat-hero">
-        <h2>Chat with Kalam</h2>
-        <p class="chat-hero-sub">कलाम से बात करें &nbsp;·&nbsp; Tell us about yourself in Hindi, English, or both. We'll figure out which schemes you qualify for.</p>
+        <h2>Kalam से बात करें &nbsp;·&nbsp; Chat with Kalam</h2>
+        <p class="chat-hero-sub">
+            अपनी situation Hindi, English, या Hinglish में बताइए।<br>
+            We'll figure out which government schemes you qualify for.
+        </p>
     </div>
 
     <!-- Progress tracker -->
     <div class="chat-progress" id="chat-progress" style="display:none">
-        <div class="chat-progress-label">Collected so far · अब तक मिली जानकारी:</div>
+        <div class="chat-progress-label">अब तक मिली जानकारी · Collected so far:</div>
         <div class="chat-fields-filled" id="chat-fields-filled"></div>
     </div>
 
     <!-- Results CTA (appears when enough data collected) -->
     <div class="chat-cta-row" id="chat-cta-row" style="display:none">
         <form id="chat-results-form" action="/results" method="POST">
-            <!-- hidden inputs populated by JS -->
+            <!-- hidden inputs populated by JS from server profile -->
         </form>
-        <button class="btn-chat-results" onclick="submitToResults()">
-            See my results →<br><small style="font-size:0.78em;font-weight:400;opacity:0.85">नतीजे देखें</small>
+        <button class="btn-next" onclick="submitToResults()">
+            नतीजे देखें &nbsp;·&nbsp; See My Results →
         </button>
-        <a class="chat-skip-link" href="/details">Prefer a form instead? · फॉर्म भरें</a>
+        <a class="chat-skip-link" href="/details">Prefer a form? · फॉर्म भरें</a>
+    </div>
+
+    <!-- Reset link -->
+    <div style="text-align:center; margin-bottom: 0.5rem">
+        <button class="chat-reset-btn" onclick="resetChat()">↺ नई बात शुरू करें · Start over</button>
     </div>
 
     <!-- Chat window -->
     <div class="chat-window" id="chat-window">
-        <div class="chat-bubble bot">
-            Namaste! 🙏 Tell me about yourself — where you live, what work you do, your income, family size. Anything you know is helpful.<br><br>
-            <span style="opacity:0.75">नमस्ते! अपने बारे में बताइए — कहाँ रहते हैं, क्या काम करते हैं, आमदनी कितनी है, परिवार में कितने लोग हैं।</span>
+        <div class="chat-bubble bot thinking-bubble" id="opening-loader">
+            Loading… · लोड हो रहा है…
         </div>
     </div>
 
@@ -38,104 +45,187 @@
 
 <!-- Fixed bottom input bar -->
 <div class="chat-input-row" id="chat-input-row">
-    <textarea class="chat-input" id="chat-input" placeholder="Type here… / यहाँ लिखें…" rows="1"></textarea>
-    <button class="chat-send" id="chat-send" onclick="sendMessage()">Send · भेजें</button>
+    <button class="chat-skip-btn" onclick="sendSkip()" title="I don't know · पता नहीं">
+        पता नहीं
+    </button>
+    <textarea class="chat-input" id="chat-input"
+        placeholder="Type here… Hindi, English, Hinglish · यहाँ लिखें…" rows="1"></textarea>
+    <button class="chat-send" id="chat-send" onclick="sendMessage()">भेजें · Send</button>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+// ── State ──────────────────────────────────────────────────────────────────────
+let sessionId = null;
+let serverProfile = {};
+let turnCount = 0;
+
 const chatWindow = document.getElementById('chat-window');
 const chatInput  = document.getElementById('chat-input');
 const chatSend   = document.getElementById('chat-send');
-let profileData  = {};
-let turnCount    = 0;
 
 const FIELD_LABELS = {
     age: 'Age · उम्र', gender: 'Gender · लिंग', state: 'State · राज्य',
     is_urban: 'Location · स्थान', caste_category: 'Category · वर्ग',
     annual_income: 'Income · आमदनी', occupation: 'Occupation · पेशा',
     family_size: 'Family · परिवार', has_aadhaar: 'Aadhaar',
-    has_bank_account: 'Bank Account · बैंक',
-    land_ownership: 'Land · ज़मीन', marital_status: 'Marital status · वैवाहिक',
+    has_bank_account: 'Bank · बैंक', is_aadhaar_linked: 'Aadhaar Link',
+    land_ownership: 'Land · ज़मीन', marital_status: 'Marital · वैवाहिक',
+    has_ration_card: 'Ration Card', disability_percent: 'Disability · विकलांगता',
+    has_lpg_connection: 'LPG Gas', is_pregnant_or_lactating: 'Pregnancy',
 };
 
-function addBubble(text, cls) {
+// ── DOM helpers ────────────────────────────────────────────────────────────────
+function addBubble(html, cls) {
     const div = document.createElement('div');
     div.className = 'chat-bubble ' + cls;
-    div.innerHTML = text;
+    div.innerHTML = html;
     chatWindow.appendChild(div);
     chatWindow.scrollTop = chatWindow.scrollHeight;
     return div;
 }
 
-function updateProgress() {
-    const filled = Object.keys(profileData).filter(k => profileData[k] !== null && profileData[k] !== '');
+function setInputEnabled(on) {
+    chatSend.disabled = !on;
+    chatInput.disabled = !on;
+    document.querySelector('.chat-skip-btn').disabled = !on;
+}
+
+// ── Progress ──────────────────────────────────────────────────────────────────
+function updateProgress(profile, filled_count) {
+    serverProfile = profile || serverProfile;
+    const filled = Object.keys(serverProfile).filter(k => serverProfile[k] != null && serverProfile[k] !== '');
     if (filled.length === 0) return;
 
-    const progressDiv = document.getElementById('chat-progress');
-    const fieldsDiv   = document.getElementById('chat-fields-filled');
-    progressDiv.style.display = 'block';
-
+    document.getElementById('chat-progress').style.display = 'block';
+    const fieldsDiv = document.getElementById('chat-fields-filled');
     fieldsDiv.innerHTML = filled.map(k => {
-        const label = FIELD_LABELS[k] || k;
+        const label = FIELD_LABELS[k] || k.replace(/_/g, ' ');
         return `<span class="chat-field-chip">${label}</span>`;
     }).join('');
 
-    // Show results CTA once we have the 5 key fields
-    const keyFields = ['age','state','caste_category','annual_income','occupation'];
-    const hasEnough = keyFields.filter(f => profileData[f]).length >= 3;
-    document.getElementById('chat-cta-row').style.display = hasEnough ? 'block' : 'none';
+    // Show CTA once we have at least 5 fields
+    if (filled_count >= 5) {
+        document.getElementById('chat-cta-row').style.display = 'block';
+    }
 }
 
+// ── Submit to results ─────────────────────────────────────────────────────────
 function submitToResults() {
     const form = document.getElementById('chat-results-form');
     form.innerHTML = '';
-    Object.entries(profileData).forEach(([k, v]) => {
+
+    // Map boolean strings back to form values
+    const boolMap = { 'true': 'yes', 'false': 'no' };
+    const urbanMap = { 'true': 'urban', 'false': 'rural' };
+
+    Object.entries(serverProfile).forEach(([k, v]) => {
         if (v === null || v === '') return;
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = k;
-        input.value = v;
-        form.appendChild(input);
+        let val = String(v);
+        if (k === 'is_urban') val = urbanMap[val] || val;
+        else if (['has_aadhaar','has_bank_account','is_aadhaar_linked','is_govt_employee',
+                  'is_income_tax_payer','has_lpg_connection','is_pregnant_or_lactating',
+                  'has_girl_child_under_10'].includes(k)) {
+            val = boolMap[val] || val;
+        }
+        const inp = document.createElement('input');
+        inp.type = 'hidden'; inp.name = k; inp.value = val;
+        form.appendChild(inp);
     });
     form.submit();
 }
 
+// ── Send message ──────────────────────────────────────────────────────────────
 async function sendMessage() {
     const text = chatInput.value.trim();
-    if (!text) return;
+    if (!text || !sessionId) return;
 
-    chatSend.disabled = true;
+    setInputEnabled(false);
     chatInput.value = '';
     chatInput.style.height = 'auto';
 
-    addBubble(text, 'user');
-    const thinking = addBubble('Thinking… · सोच रहा हूँ…', 'thinking');
+    addBubble(escapeHtml(text), 'user');
+    const thinking = addBubble('Samajh raha hoon… · Thinking…', 'thinking');
 
     try {
         const resp = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text, profile: profileData, turn: turnCount }),
+            body: JSON.stringify({ message: text, session_id: sessionId }),
         });
         const data = await resp.json();
-
         thinking.remove();
 
-        if (data.reply) addBubble(data.reply, 'bot');
-        if (data.extracted) {
-            Object.assign(profileData, data.extracted);
-            updateProgress();
+        const cls = data.reply.includes('⚠️') ? 'bot warning' : 'bot';
+        addBubble(data.reply, cls);
+
+        if (data.session_id) sessionId = data.session_id;
+        updateProgress(data.profile, data.filled_count || 0);
+
+        if (data.done) {
+            document.getElementById('chat-cta-row').style.display = 'block';
         }
         turnCount++;
     } catch (e) {
-        thinking.textContent = 'Error — please try again · कोई गड़बड़ी हुई';
-        thinking.style.color = 'var(--ineligible)';
+        thinking.innerHTML = '⚠️ Error — please try again · कोई गड़बड़ी हुई';
+        thinking.className = 'chat-bubble bot warning';
     } finally {
-        chatSend.disabled = false;
+        setInputEnabled(true);
         chatInput.focus();
     }
+}
+
+// ── Skip / don't know ─────────────────────────────────────────────────────────
+async function sendSkip() {
+    chatInput.value = 'pata nahi';
+    await sendMessage();
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+async function resetChat() {
+    if (!sessionId) return;
+    chatWindow.innerHTML = '';
+    serverProfile = {};
+    turnCount = 0;
+    document.getElementById('chat-progress').style.display = 'none';
+    document.getElementById('chat-cta-row').style.display = 'none';
+
+    const thinking = addBubble('Nayi baat shuru ho rahi hai…', 'thinking');
+    try {
+        const resp = await fetch('/api/chat/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId }),
+        });
+        const data = await resp.json();
+        thinking.remove();
+        if (data.session_id) sessionId = data.session_id;
+        addBubble(data.reply, 'bot');
+    } catch (e) {
+        thinking.remove();
+        addBubble('Error resetting. Please refresh.', 'bot warning');
+    }
+}
+
+// ── Init: load opening message ─────────────────────────────────────────────────
+async function init() {
+    try {
+        const resp = await fetch('/api/chat/opening');
+        const data = await resp.json();
+        document.getElementById('opening-loader').remove();
+        sessionId = data.session_id;
+        addBubble(data.reply, 'bot');
+    } catch (e) {
+        document.getElementById('opening-loader').innerHTML =
+            'Could not load. Please refresh · रिफ्रेश करें।';
+    }
+    setInputEnabled(true);
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // Auto-resize textarea
@@ -144,9 +234,13 @@ chatInput.addEventListener('input', () => {
     chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
 });
 
-// Send on Enter (Shift+Enter for newline)
+// Enter to send (Shift+Enter = newline)
 chatInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 });
+
+// Start
+setInputEnabled(false);
+init();
 </script>
 {% endblock %}

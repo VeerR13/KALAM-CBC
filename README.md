@@ -7,9 +7,14 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Live on Render](https://img.shields.io/badge/live%20demo-kalam--ac7c.onrender.com-46E3B7)](https://kalam-ac7c.onrender.com)
 
-**Fill out a short profile form (5 steps, skip anything you don't know). Get personalised eligibility results across 20 central government schemes — confidence scores, benefit amounts, document checklists, Hindi audio on every card, and a step-by-step application guide.**
+**Two ways to check eligibility:**
 
-No sign-up. No API key required. Works even with partial information — the more you fill in, the more accurate the results.
+- **Chat** (`/chat`) — describe your situation in Hinglish. The system asks intelligent follow-up questions, handles "pata nahi" (don't know) gracefully, and surfaces contradictions before they cause incorrect results.
+- **Form** (`/details`) — a 5-step bilingual form, all fields optional.
+
+Get personalised results across 20 central government schemes — confidence scores, benefit amounts, document checklists, Hindi audio on every card, and a step-by-step application guide.
+
+No sign-up. No API key required. Works even with partial information.
 
 ---
 
@@ -50,6 +55,28 @@ No sign-up. No API key required. Works even with partial information — the mor
 ---
 
 ## Features
+
+### Hinglish conversational chat (`/chat`)
+A stateful, multi-turn chat interface where users describe their situation in natural language — no form required.
+
+- **Hinglish NLU** — pure regex, no API. Handles Hindi, English, and mixed input. ~140 patterns covering age, income (lakhs/hazaar), state, gender, caste, occupation, land, documents, and more.
+- **Question-context awareness** — "haan/nahi" answers resolve correctly because the engine tracks which question it just asked.
+- **"Pata nahi" handling** — a dedicated skip button (or just type "pata nahi") skips the current question without blocking the conversation. Skipped fields show as INSUFFICIENT\_DATA in results.
+- **Cross-turn contradiction detection** — e.g. "no bank account + Aadhaar linked" triggers a clarification question before results are shown.
+- **Server-side session state** — profile is built up across turns server-side. The browser never needs to manage state.
+- **Progress chips** — shows filled fields in real time ("Age · उम्र", "State · राज्य", …). Results CTA appears when ≥ 5 fields are collected.
+- **Reset** — start a fresh conversation without refreshing the page.
+
+```
+You: "main 38 saal ka kisan hoon UP ke gaon mein, OBC, income 1.5 lakh, parivaar 5 log"
+Bot: ✓ Age:38 · Income:₹1.5L/yr · State:UP · Location:Gaon · Category:OBC · Occupation:Farmer
+     Kya aapke paas Aadhaar card hai?
+You: haan
+Bot: ✓ Aadhaar: Haan ✓   Kya aapka bank account hai?
+You: pata nahi
+Bot: Theek hai! Kya aapka Aadhaar bank account se linked hai?
+     [Results CTA appears]
+```
 
 ### Transparent eligibility engine
 Every scheme evaluation is fully visible — you see each rule, whether it passed or failed, and why. Nothing is a black box.
@@ -179,7 +206,18 @@ A private, no-login tracker for your application progress:
 ## Architecture
 
 ```
-User fills short profile form (5 steps, all fields optional)
+User (Browser)
+  ├─ /chat  → Hinglish chat   ─── stateful NLU ──→ /results
+  └─ /details → 5-step form   ───────────────────→ /results
+
+Conversation layer  (src/conversation/engine.py)
+  ConversationState  {profile, skipped, contradictions_seen, last_question}
+  _extract_fields()  pure-regex, context-aware Hinglish NLU
+  detect_contradictions()  cross-turn logic checks
+  _next_question()   priority-ordered follow-up queue
+      │
+      ▼
+User fills short profile (form or chat, all fields optional)
 (age · gender · state · income · occupation · caste · documents · family · land · disability · children…)
       │
       ▼
@@ -320,7 +358,8 @@ kalam/
 │   ├── engine/         # rule_engine, confidence, benefit_calculator,
 │   │                   # bureaucratic_distance, sensitivity, life_events,
 │   │                   # interaction_detector, path_optimizer, sequencer
-│   ├── conversation/   # Hinglish NLP extractor (follow_up, contradiction)
+│   ├── conversation/   # engine.py (stateful ConversationEngine + session mgr)
+│   │                   # follow_up.py, contradiction.py, system_prompt.py
 │   └── loader.py       # Loads and caches scheme JSON files
 ├── web/
 │   ├── app.py          # FastAPI routes, TTS endpoint, rate limiter

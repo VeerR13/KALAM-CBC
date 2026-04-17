@@ -733,13 +733,21 @@ async def applications_page(request: Request):
     return templates.TemplateResponse(request, "applications.html", {"scheme_meta": scheme_meta})
 
 
+from src.conversation.engine import (
+    get_or_create_session,
+    get_opening_message,
+    process_turn,
+    reset_session,
+)
+
+
 @app.get("/chat", response_class=HTMLResponse)
 async def chat_page(request: Request):
     return templates.TemplateResponse(request, "chat.html")
 
 
 def _extract_from_message(text: str, current_profile: dict) -> tuple[dict, str]:
-    """Simple Hinglish/Hindi/English extractor. Returns (extracted_fields, follow_up_question)."""
+    """Legacy extractor — kept for backwards-compat with direct callers only."""
     import re
     t = text.lower().strip()
     extracted: dict = {}
@@ -891,13 +899,46 @@ def _extract_from_message(text: str, current_profile: dict) -> tuple[dict, str]:
     return extracted, reply
 
 
+@app.get("/api/chat/opening", response_class=JSONResponse)
+async def chat_opening(request: Request):
+    """Return the opening greeting and a fresh session_id."""
+    sid = request.query_params.get("sid")
+    state = get_or_create_session(sid)
+    return JSONResponse({"reply": get_opening_message(), "session_id": state.session_id, "done": False})
+
+
 @app.post("/api/chat", response_class=JSONResponse)
 async def api_chat(request: Request):
     body = await request.json()
-    message: str = str(body.get("message", ""))[:500]   # cap at 500 chars
-    current_profile: dict = body.get("profile", {})
-    extracted, reply = _extract_from_message(message, current_profile)
-    return JSONResponse({"reply": reply, "extracted": extracted})
+    message: str = str(body.get("message", ""))[:600]
+    sid: str = str(body.get("session_id", ""))
+
+    state = get_or_create_session(sid or None)
+    reply, extracted = process_turn(message, state)
+
+    # Coerce bool fields for JSON serialisation
+    safe_profile = {
+        k: (str(v).lower() if isinstance(v, bool) else v)
+        for k, v in state.profile.items()
+        if v is not None
+    }
+
+    return JSONResponse({
+        "reply": reply,
+        "extracted": extracted,
+        "profile": safe_profile,
+        "session_id": state.session_id,
+        "done": state.done,
+        "filled_count": sum(1 for v in state.profile.values() if v is not None),
+    })
+
+
+@app.post("/api/chat/reset", response_class=JSONResponse)
+async def chat_reset(request: Request):
+    body = await request.json()
+    sid: str = str(body.get("session_id", ""))
+    state = reset_session(sid)
+    return JSONResponse({"reply": get_opening_message(), "session_id": state.session_id, "done": False})
 
 
 @app.get("/checklist", response_class=HTMLResponse)
