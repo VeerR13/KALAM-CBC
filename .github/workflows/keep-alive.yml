@@ -1,0 +1,30 @@
+# Keep Alive — prevents Render free-tier cold starts by pinging the app every 14 minutes.
+#
+# Setup required:
+#   Add a GitHub Actions secret named RENDER_URL with the value of your deployed app URL.
+#   Example: https://kalam.onrender.com
+#
+# To add the secret:
+#   GitHub repo → Settings → Secrets and variables → Actions → New repository secret
+#   Name: RENDER_URL
+#   Value: https://<your-app>.onrender.com
+
+name: Keep Alive
+
+on:
+  schedule:
+    # Runs every 14 minutes. Render spins down free services after ~15 min of inactivity.
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allow manual trigger from the GitHub Actions UI
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2 # Bail early if Render is hanging rather than tying up a runner
+
+    steps:
+      - name: Ping Render
+        # curl -f: exits non-zero on HTTP 4xx/5xx so the job fails loudly if the app is down.
+        # The fallback echo ensures the workflow itself doesn't block a potential future deploy
+        # on a transient network blip — adjust to `exit 1` if you want hard failures instead.
+        run: curl -f --max-time 30 "${{ secrets.RENDER_URL }}" || echo "Server unreachable — check Render dashboard"
