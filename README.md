@@ -2,14 +2,22 @@
 
 > **आपके लिए सरकारी योजनाएं खोजें** · Find which Indian government welfare schemes you qualify for
 
-[![Tests](https://img.shields.io/badge/tests-158%20passing-brightgreen)](#)
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
-[![Deploy](https://img.shields.io/badge/deployed%20on-Render-46E3B7)](https://kalam-ac7c.onrender.com)
+[![Tests](https://img.shields.io/badge/tests-158%20passing-brightgreen)](#running-tests)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](#quick-start)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live on Render](https://img.shields.io/badge/live%20demo-kalam--ac7c.onrender.com-46E3B7)](https://kalam-ac7c.onrender.com)
 
-Answer 5 short questions. Get personalised eligibility results across 20 central government schemes — with benefit amounts, document checklists, application guidance, and Hindi audio for every card. **No sign-up. No API key. Works with partial information.**
+**Fill out a short profile form (5 steps, skip anything you don't know). Get personalised eligibility results across 20 central government schemes — confidence scores, benefit amounts, document checklists, Hindi audio on every card, and a step-by-step application guide.**
 
-**Live:** [kalam-ac7c.onrender.com](https://kalam-ac7c.onrender.com) *(Render free tier — may take 30 s to wake)*
+No sign-up. No API key required. Works even with partial information — the more you fill in, the more accurate the results.
+
+---
+
+## Live demo
+
+**[https://kalam-ac7c.onrender.com](https://kalam-ac7c.onrender.com)**
+
+> Hosted on Render free tier — may take up to 30 seconds to wake from sleep on first visit.
 
 ---
 
@@ -17,186 +25,331 @@ Answer 5 short questions. Get personalised eligibility results across 20 central
 
 ### Home page
 ![Home page](docs/screenshots/home.png)
-*Hindi-first landing with live scheme stats and a single CTA*
+*Hindi-first landing with real-time scheme count, potential benefit total, and a single CTA. Nav: आवेदन (Applications) + फॉर्म (Form).*
 
 ### Eligibility results
 ![Eligibility results](docs/screenshots/results.png)
-*Per-scheme confidence bars, benefit totals, rule-by-rule breakdown, and 🔊 Hindi audio on every card*
+*Each scheme shows a confidence bar (0–100%), rule-by-rule pass/fail breakdown, personalised benefit amount, docs you already have vs still need, and a 🔊 Hindi speak button. Grouped by: Eligible · Likely · Need info · Ineligible.*
 
-### Scheme detail — Atal Pension Yojana
+### Scheme detail page — Atal Pension Yojana
 ![Scheme detail](docs/screenshots/scheme_detail.png)
-*Full description in Hindi + English, 100% confidence score, Benefits tab, How-to-Apply tab*
+*Full scheme description in Hindi + English. Three tabs: Eligibility (100% confidence, all rules passed), Benefits (exact amounts), How to Apply (office, helpline, portal link, Hindi office script).*
 
-### Important choices & what's coming up
+### Important choices & coming up
 ![Choices and life events](docs/screenshots/choices_coming_up.png)
-*Scheme interaction warnings (e.g. "bank account unlocks 8 others") and age-based life-event projections*
+*Scheme interaction warnings: "Bank account unlocks 8 other schemes — apply for PMJDY first." Age-based life-event projections: APY closes at 40, Sukanya Samriddhi must open before daughter turns 10.*
 
 ### Optimal application order
 ![Optimal order](docs/screenshots/optimal_order.png)
-*Prerequisite-aware sequencing — which office to visit first, estimated days, Hindi office script*
+*Prerequisite-aware sequencing using topological sort. Each step shows: scheme name in Hindi, why to do it first, which office to go to (with Hindi name), and estimated processing days.*
 
 ### My Applications tracker
 ![Applications tracker](docs/screenshots/applications.png)
-*localStorage-based tracker: mark schemes as Applied / Pending, see all required documents at a glance*
+*Track applied / pending schemes in localStorage — no login needed. Shows documents needed for each tracked scheme, office info, and benefit summary in Hindi.*
 
 ---
 
 ## Features
 
-### Eligibility engine
-- Evaluates 20 central government schemes against your profile
-- Every rule is **transparent** — you see exactly which conditions pass, fail, or need clarification
-- Handles ambiguous rules (e.g. "BPL-equivalent") with annotated edge cases in `data/ambiguity_map.json`
+### Transparent eligibility engine
+Every scheme evaluation is fully visible — you see each rule, whether it passed or failed, and why. Nothing is a black box.
 
-### Confidence scoring
-- **Dempster-Shafer TBM pignistic transform** converts multi-valued rule outputs (PASS / FAIL / AMBIGUOUS / MISSING) into a calibrated 0–100% confidence score
-- **Bayesian shrinkage** scales confidence by data completeness — a profile with 3 fields gets a wider uncertainty band than a complete one
-- All scoring is deterministic; the same inputs always produce the same output
+- 20 central government schemes, 180+ individual eligibility rules
+- Rule values: PASS · FAIL · AMBIGUOUS · INSUFFICIENT\_DATA
+- Mandatory rules are gate conditions — any mandatory FAIL → INELIGIBLE immediately, before numeric scoring
+- Ambiguous rules (e.g. "BPL-equivalent income") handled via `data/ambiguity_map.json` with annotated edge cases
+- Handles partial profiles — missing fields produce INSUFFICIENT\_DATA, not false negatives
 
-### Hindi audio (TTS)
-- Every scheme card, benefit line, and application step has a **🔊 speak button**
-- Primary: server-side **Google Cloud Neural2 Hindi TTS** (`hi-IN-Neural2-A`) — natural, human-quality voice
-- Fallback: browser **Web Speech API** (`hi-IN`) when no server key is set — zero cost
-- Audio is **cached** so repeated taps don't re-fetch
-- Handles Android Chrome 30 s idle bug, iOS Safari autoplay restrictions, and Chrome voice-load race conditions
+### Confidence scoring (Dempster-Shafer TBM + Bayesian shrinkage)
+The confidence percentage shown on each card is not a simple pass-rate. It uses:
 
-### Benefit calculator
-- Real rupee amounts: ₹6,000/yr PM-KISAN, ₹1,000–5,000/month APY, ₹1.2 lakh PMAY-G, etc.
-- **State-specific top-ups** (e.g. Odisha CM-KALIA + UP state housing supplement)
-- Subsidised food value computed from NFSA ration × FCI open-market price differential
-- Total potential annual benefit shown on the results summary
+1. **Pignistic transform** (Smets–Shafer TBM): converts multi-valued rule mass assignments into a single probability
+   ```
+   raw = (PASS_weight + 0.5 × AMBIGUOUS_weight) / evaluated_weight
+   ```
+2. **Bayesian shrinkage** by data coverage: pulls the score toward 50% when profile is sparse
+   ```
+   score = (0.5 + (raw − 0.5) × coverage) × 100
+   coverage = evaluated_rules / total_rules
+   ```
+3. Result: a sparse profile gets a wider uncertainty band than a complete one — "60% confidence" means something different for a 3-field profile vs a 15-field profile
 
-### Bureaucratic distance
-- Per-scheme **difficulty badge**: Easy / Moderate / Involved / Complex
-- Documents you **already have** vs still need (personalised to your profile)
-- Estimated processing days, which offices to visit, and whether online application is available
+### Hindi audio — HuggingFace MMS + Web Speech API fallback
+Every scheme card, benefit line, and application step has a 🔊 speak button that reads the content aloud in Hindi.
 
-### Interaction detector
-- Flags **mutual exclusions** (e.g. can't hold PMJJBY + PMSBY from two different providers)
-- Flags **enablers**: "Open PMJDY bank account first — it unlocks 8 other schemes"
-- Flags **threshold risks**: income or age close to a cut-off
+**How it works:**
+- **Primary (server-side):** [Meta MMS Hindi TTS](https://huggingface.co/facebook/mms-tts-hin) via HuggingFace Inference API (`facebook/mms-tts-hin`). Free tier, no credit card required. Set `HUGGINGFACE_API_KEY` in `.env`.
+- **Fallback (client-side):** Browser Web Speech API (`hi-IN`). Zero cost, works without any API key. Prefers Google Hindi voice on Android/Chrome if available.
+- Audio is cached — blob URLs stored in a JS Map so repeated taps replay instantly without re-fetching
+- Rate-limited at 20 requests / 60 s per IP on the server endpoint
+- Text is cleaned before TTS: ₹ → "रुपये", emojis stripped, dashes/symbols normalised
+- Browser workarounds: Chrome 30 s idle bug (periodic pause/resume keepalive), iOS Safari autoplay restriction (utterance built synchronously inside user-gesture), Chrome voice-load race condition (retry on `onend` with `_started` flag)
+
+If `HUGGINGFACE_API_KEY` is not set the server returns 503 and the client silently falls back to Web Speech — the app is fully functional either way.
+
+### Benefit calculator — real rupee amounts
+Shows exactly how much money each scheme provides, not just "eligible":
+
+- **PM-KISAN:** ₹6,000/yr (₹2,000 × 3 instalments)
+- **APY:** ₹1,000–5,000/month pension at 60, chosen at enrolment
+- **PMAY-G:** ₹1,20,000 plains / ₹1,30,000 hilly/NE/island states
+- **PMAY-U:** ₹1,00,000–2,50,000 depending on category (EWS/LIG/MIG)
+- **Ayushman Bharat:** ₹5,00,000/yr health insurance coverage
+- **NFSA:** 5 kg grain/person/month at ₹1–3/kg (value computed vs. FCI market price)
+- **State-specific top-ups:** Odisha CM-KALIA ₹4,000/year additional, UP state housing supplement, etc.
+
+Total potential annual benefit shown as a summary at the top of results.
+
+### Bureaucratic distance — difficulty & docs
+Each scheme card shows:
+
+- **Difficulty badge:** Easy / Moderate / Involved / Complex (based on number of offices, doc complexity, processing time)
+- **Documents you already have** (green chips) vs **documents still needed** (amber chips) — personalised to your profile (e.g. if you said you have Aadhaar, it's marked as already obtained)
+- **Estimated processing days** per doc and total
+- **Office to visit** with Hindi name (e.g. बैंक शाखा, ग्राम पंचायत)
+- **Online application** flag with direct portal link where available
+
+### Scheme interaction detector
+Analyses all eligible schemes together and flags relationships:
+
+- **Mutual exclusions:** can't hold both PMJJBY and PMSBY from separate providers simultaneously
+- **Enablers (critical path):** "Open a PMJDY bank account first — it's a prerequisite for 8 other schemes (DBT requirement)"
+- **Threshold risks:** income within 10% of a scheme's cut-off → flag so you know you're fragile
 
 ### Life event projector
-- Projects eligibility changes over the next 1–5 years based on your current age
-- E.g. "APY closes at 40 — you have 2 years left to enrol", "NSAP old-age pension opens at 60"
-- Surfaces both deadlines (act now) and upcoming opportunities
+Based on your current age, shows what changes in eligibility in the next 1–5 years:
+
+- **Deadlines:** "APY enrolment closes at age 40 — you have 2 years left"
+- **Opportunities:** "NSAP old-age pension opens at age 60 — you qualify in 1 year"
+- **Time-limited windows:** "Sukanya Samriddhi must be opened before your daughter turns 10"
 
 ### Sensitivity analysis
-- Varies your income and age by small margins to find **fragile eligibility**
-- "If your income were ₹5,000 less you would qualify for three more schemes"
+Varies your income and age by small margins (±5–10%) and re-runs the engine to find fragile eligibility:
+
+- "If your annual income were ₹5,000 lower you would qualify for MGNREGA's extended benefits"
+- Prevents false confidence in borderline cases
+- Flags both opportunities (just above a threshold) and risks (just below one)
 
 ### Optimal application order
-- **networkx topological sort** of prerequisites across all eligible schemes
-- Tells you which scheme to apply for first, why, and how long each step takes
-- Hindi office-visit script for every step so you know exactly what to say
+Uses **networkx topological sort** across the prerequisite graph of all eligible schemes. Tells you:
+
+- Which scheme to apply for first (and why — e.g. "PMJDY unlocks DBT for everything else")
+- Estimated time and which office/portal for each step
+- A **Hindi office-visit script** for each step: what to say, what to bring, what to ask for
+- Greedy value ordering within the topological constraints (highest benefit first when no dependency ordering required)
 
 ### My Applications tracker
-- **localStorage-based** — no login, no server, fully private
-- Track any eligible scheme: Not tracked → Applied → Pending → (clear)
-- Dedicated `/applications` page shows all tracked schemes with documents needed, office info, and benefit summary in Hindi
+A private, no-login tracker for your application progress:
+
+- Available on the **आवेदन / Applications** tab in the nav
+- Stores data in `localStorage` under key `kalam_applied_v1` — never sent to a server
+- Three states per scheme: (untracked) → ✅ Applied → ⏳ Pending → (clear)
+- Applications page shows each tracked scheme with Hindi name, benefit summary, documents needed, office info, and a "पूरी जानकारी →" link to the full scheme detail page
+- Summary bar: total tracked / applied / pending counts
 
 ---
 
 ## Scheme coverage (20 schemes)
 
-| # | Scheme | Ministry | What it gives |
-|---|--------|----------|---------------|
-| 1 | PM-KISAN | Agriculture | ₹6,000/yr direct cash |
-| 2 | MGNREGA | Rural Dev | 100 days guaranteed wage work |
-| 3 | Ayushman Bharat (PM-JAY) | Health | ₹5 lakh/yr health insurance |
-| 4 | PMAY-G | Rural Dev | ₹1.2–1.3 lakh house grant |
-| 5 | PMAY-U | Housing | ₹1–2.5 lakh housing subsidy |
-| 6 | PMJDY | Finance | Zero-balance bank account + insurance |
-| 7 | Ujjwala 2.0 | Petroleum | Free LPG connection |
-| 8 | NSAP-IGNOAPS | Rural Dev | ₹200–500/month old-age pension |
-| 9 | NSAP-IGNWPS | Rural Dev | ₹300/month widow pension |
-| 10 | NSAP-IGNDPS | Rural Dev | ₹300/month disability pension |
-| 11 | APY | Finance / PFRDA | ₹1,000–5,000/month pension at 60 |
-| 12 | PM-SYM | Labour | ₹3,000/month pension (informal workers) |
-| 13 | PM SVANidhi | Housing & Urban | ₹10,000–50,000 micro-credit (street vendors) |
-| 14 | PM-MUDRA | Finance | ₹50,000–10 lakh business loan |
-| 15 | PMEGP | MSME | 15–35% capital subsidy on new enterprise |
-| 16 | Stand-Up India | Finance | ₹10 lakh–1 crore SC/ST/women entrepreneur loan |
-| 17 | Sukanya Samriddhi | Finance | 8.2% tax-free savings for girl child |
-| 18 | PMMVY | Women & Child Dev | ₹5,000 maternity benefit (first child) |
-| 19 | NFSA | Food & Consumer Affairs | 5 kg subsidised grain/month per person |
-| 20 | PM Vishwakarma | MSME | ₹1–2 lakh credit + skill training (artisans) |
+| # | Scheme ID | Full name | Ministry | Benefit |
+|---|-----------|-----------|----------|---------|
+| 1 | pm\_kisan | PM Kisan Samman Nidhi | Agriculture | ₹6,000/yr cash |
+| 2 | mgnrega | MGNREGA | Rural Development | 100 days guaranteed wage |
+| 3 | ayushman\_bharat | Ayushman Bharat PM-JAY | Health | ₹5 lakh/yr health cover |
+| 4 | pmay\_g | PMAY Gramin | Rural Development | ₹1.2–1.3 lakh house grant |
+| 5 | pmay\_u | PMAY Urban | Housing & Urban | ₹1–2.5 lakh subsidy |
+| 6 | pmjdy | PM Jan Dhan Yojana | Finance | Zero-balance account + insurance |
+| 7 | ujjwala | Ujjwala 2.0 | Petroleum | Free LPG connection |
+| 8 | nsap\_ignoaps | NSAP IGNOAPS | Rural Development | ₹200–500/month old-age pension |
+| 9 | nsap\_ignwps | NSAP IGNWPS | Rural Development | ₹300/month widow pension |
+| 10 | nsap\_igndps | NSAP IGNDPS | Rural Development | ₹300/month disability pension |
+| 11 | apy | Atal Pension Yojana | Finance / PFRDA | ₹1,000–5,000/month at 60 |
+| 12 | pm\_sym | PM Shram Yogi Maandhan | Labour | ₹3,000/month pension |
+| 13 | pm\_svanidhi | PM SVANidhi | Housing & Urban | ₹10k–50k micro-credit |
+| 14 | pm\_mudra | PM MUDRA | Finance | ₹50k–10 lakh business loan |
+| 15 | pmegp | PMEGP | MSME | 15–35% capital subsidy |
+| 16 | stand\_up\_india | Stand-Up India | Finance | ₹10 lakh–1 crore loan |
+| 17 | sukanya\_samriddhi | Sukanya Samriddhi Yojana | Finance | 8.2% tax-free savings |
+| 18 | pmmvy | PMMVY | Women & Child Dev | ₹5,000 maternity benefit |
+| 19 | nfsa | NFSA / Ration Card | Food & Consumer Affairs | 5 kg grain/person/month |
+| 20 | pm\_vishwakarma | PM Vishwakarma | MSME | ₹1–2 lakh credit + training |
 
 ---
 
 ## Architecture
 
 ```
-User fills 5-step form (age · income · location · occupation · documents)
+User fills short profile form (5 steps, all fields optional)
+(age · gender · state · income · occupation · caste · documents · family · land · disability · children…)
       │
       ▼
-Profile Builder  ← Pydantic v2 validation, unit normalisation
-                   (bigha / acre / gaj / sqft → hectares)
+Profile Builder
+  └─ Pydantic v2 validation (all fields Optional — no mandatory questions)
+  └─ Unit normalisation: bigha / acre / gaj / sqft → hectares
+  └─ Derived fields: income bucket, family size, doc flags
       │ UserProfile (38 optional fields)
       ▼
-Rule Engine  ◄──── data/schemes/*.json  (all rules in JSON, zero hardcoding)
-      │             data/ambiguity_map.json
-      │ PASS / FAIL / AMBIGUOUS / INSUFFICIENT_DATA per rule
-      ▼
-Confidence Scorer  ← Dempster-Shafer TBM pignistic + Bayesian shrinkage
+Rule Engine  ◄──── data/schemes/*.json   (180+ rules, zero hardcoding in Python)
+      │             data/ambiguity_map.json   (edge case annotations)
+      │             data/documents.json        (doc metadata)
+      │             data/prerequisites.json    (dependency graph)
       │
-      ├── Benefit Calculator        ← real amounts, state top-ups
-      ├── Bureaucratic Distance     ← difficulty, docs, offices, days
-      ├── Sensitivity Analyzer      ← threshold proximity flags
-      ├── Life Event Projector      ← age-based opportunity/deadline
-      ├── Interaction Detector      ← mutual exclusions, enablers
-      ├── Path Optimizer            ← greedy value-first ordering
-      └── Prerequisite Sequencer    ← networkx topological sort
+      │ Per rule: PASS / FAIL / AMBIGUOUS / INSUFFICIENT_DATA + explanation
+      ▼
+Confidence Scorer
+  └─ Dempster-Shafer TBM pignistic transform
+  └─ Bayesian shrinkage by data coverage
+  └─ Output: (float confidence, MatchStatus)
+      │
+      ├── Benefit Calculator       ← real amounts, state-specific top-ups
+      │     └─ src/engine/benefit_calculator.py
+      │
+      ├── Bureaucratic Distance    ← difficulty, docs, offices, days
+      │     └─ src/engine/bureaucratic_distance.py
+      │
+      ├── Sensitivity Analyzer     ← threshold proximity flags
+      │     └─ src/engine/sensitivity.py
+      │
+      ├── Life Event Projector     ← age-based deadline / opportunity
+      │     └─ src/engine/life_events.py
+      │
+      ├── Interaction Detector     ← mutual exclusions, enablers
+      │     └─ src/engine/interaction_detector.py
+      │
+      ├── Path Optimizer           ← greedy value-first ordering
+      │     └─ src/engine/path_optimizer.py
+      │
+      └── Prerequisite Sequencer   ← networkx topological sort
+            └─ src/engine/sequencer.py
                 │
                 ▼
-        FastAPI + Jinja2 · uvicorn · Render
+        FastAPI + Jinja2 templates
+        uvicorn ASGI server
+        Deployed on Render (render.yaml included)
 ```
 
 ---
 
 ## Quick start
 
+### Requirements
+- Python 3.11+
+- No API keys required for full functionality (TTS falls back to browser if no key is set)
+
 ```bash
 git clone https://github.com/VeerR13/KALAM-CBC
 cd KALAM-CBC
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-
-# Web app
-uvicorn web.app:app --reload
-# → http://localhost:8000
-
-# CLI (no browser needed)
-python cli.py
-python cli.py --profile tests/fixtures/profiles/edge_02_leased_farmer.json
-
-# Tests (158 passing)
-pytest -v
 ```
 
-### Environment variables (all optional)
+### Run the web app
+```bash
+uvicorn web.app:app --reload
+```
+Open [http://localhost:8000](http://localhost:8000)
 
-| Variable | Purpose | Default behaviour |
-|----------|---------|-------------------|
-| `GOOGLE_TTS_KEY` | Google Cloud TTS Neural2 Hindi voice | Falls back to browser Web Speech API |
-| `ANTHROPIC_API_KEY` | (future) AI chat features | Not required |
+### Run the CLI (no browser needed)
+```bash
+# Interactive prompt
+python cli.py
 
-Copy `.env.example` to `.env` and fill in any keys you have.
+# Load a saved profile
+python cli.py --profile tests/fixtures/profiles/edge_02_leased_farmer.json
+
+# Run all 10 edge-case profiles
+python cli.py --test-edge-cases
+```
+
+### Run tests
+```bash
+pytest -v          # 158 tests, all should pass
+ruff check src/ tests/   # linting
+```
+
+---
+
+## Environment variables
+
+All optional. The app works without any of them.
+
+| Variable | What it enables | How to get it |
+|----------|----------------|---------------|
+| `HUGGINGFACE_API_KEY` | Server-side Hindi TTS via [Meta MMS](https://huggingface.co/facebook/mms-tts-hin) — natural voice | Free account at huggingface.co → Settings → Access Tokens |
+| `ANTHROPIC_API_KEY` | Reserved for future AI features | anthropic.com |
+
+Copy `.env.example` → `.env` and fill in any keys you have. Leave blank to use browser Web Speech API for audio.
 
 ---
 
 ## Deploy on Render
 
-`render.yaml` is included. Connect the repo at [render.com](https://render.com) → New Web Service. No environment variables are required for base functionality — the app works fully without any API keys.
+`render.yaml` is included. Steps:
+
+1. Fork or connect this repo at [render.com](https://render.com) → New Web Service
+2. Build command: `pip install -r requirements.txt`
+3. Start command: `uvicorn web.app:app --host 0.0.0.0 --port $PORT`
+4. Optionally add `HUGGINGFACE_API_KEY` in the Environment tab for server-side TTS
+
+Live deployment: **[https://kalam-ac7c.onrender.com](https://kalam-ac7c.onrender.com)**
 
 ---
 
 ## Data
 
-All 20 scheme JSON files are sourced from official government PDFs and guidelines. Each file's `data_freshness` field records the verification date. Eligibility rules, benefit amounts, required documents, helpline numbers, and portal URLs live entirely in `data/schemes/*.json` — no eligibility logic is hardcoded in Python.
+All 20 scheme JSON files in `data/schemes/` are sourced from official government PDFs, guidelines, and scheme portals. Each file has a `data_freshness` field recording the verification date. All eligibility rules, benefit amounts, required documents, helpline numbers, and portal URLs live in JSON — no eligibility logic is hardcoded in Python.
+
+```
+data/
+  schemes/          # 20 JSON rule files (one per scheme)
+  ambiguity_map.json      # edge case annotations
+  documents.json          # document metadata (where to get, processing time)
+  prerequisites.json      # scheme dependency graph
+  pdfs/                   # drop official PDFs here for verification
+```
+
+---
+
+## Project structure
+
+```
+kalam/
+├── src/
+│   ├── models/         # Pydantic models: UserProfile, Scheme, MatchResult
+│   ├── engine/         # rule_engine, confidence, benefit_calculator,
+│   │                   # bureaucratic_distance, sensitivity, life_events,
+│   │                   # interaction_detector, path_optimizer, sequencer
+│   ├── conversation/   # Hinglish NLP extractor (follow_up, contradiction)
+│   └── loader.py       # Loads and caches scheme JSON files
+├── web/
+│   ├── app.py          # FastAPI routes, TTS endpoint, rate limiter
+│   ├── templates/      # Jinja2 HTML templates (base, details, results,
+│   │                   # scheme_detail, checklist, applications, chat)
+│   └── static/
+│       ├── css/style.css
+│       └── js/app.js   # Form navigation, TTS client, localStorage tracker
+├── data/               # Scheme rules, documents, prerequisites (JSON)
+├── tests/              # 158 pytest tests + 10 edge-case profile fixtures
+├── cli.py              # CLI entry point
+├── render.yaml         # Render deployment config
+└── .env.example        # Environment variable template
+```
 
 ---
 
 ## Tech stack
 
-Python 3.11+ · Pydantic v2 · FastAPI · Jinja2 · uvicorn · networkx · pytest (158 tests)
+| Layer | Technology |
+|-------|-----------|
+| Language | Python 3.11+ |
+| Validation | Pydantic v2 |
+| Web framework | FastAPI + Jinja2 + uvicorn |
+| Graph algorithms | networkx (topological sort) |
+| TTS (server) | HuggingFace Inference API — `facebook/mms-tts-hin` |
+| TTS (fallback) | Browser Web Speech API (`hi-IN`) |
+| Frontend | Vanilla JS, no frameworks |
+| Storage | localStorage (application tracker) |
+| Testing | pytest (158 tests) |
+| Linting | ruff |
+| Hosting | Render (free tier) |
