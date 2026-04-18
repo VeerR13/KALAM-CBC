@@ -42,8 +42,8 @@
 
     <!-- Chat window -->
     <div class="chat-window" id="chat-window">
-        <div class="chat-bubble bot thinking-bubble" id="opening-loader">
-            लोड हो रहा है… · Loading…
+        <div class="chat-bubble bot thinking" id="opening-loader">
+            लोड हो रहा है · Loading<span class="thinking-dots"></span>
         </div>
     </div>
 
@@ -105,22 +105,38 @@ function hindiOnly(text) {
 function addBubble(html, cls) {
     const div = document.createElement('div');
     div.className = 'chat-bubble ' + cls;
-    div.innerHTML = html;
-    chatWindow.appendChild(div);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
 
     // Auto-speak bot messages (not thinking or warning bubbles)
     const isBot      = cls.includes('bot');
     const isThinking = cls.includes('thinking');
     const isWarning  = cls.includes('warning');
+
     if (isBot && !isThinking && !isWarning) {
-        const speakText = hindiOnly(stripHtml(html));
+        // Wrap each sentence in a <span> for visual breathing room.
+        // Split on ". " boundaries and "\n\n" paragraph breaks.
+        const plain = stripHtml(html);
+        const parts = plain.split(/(?<=\. )|(\n\n)/);
+        const sentences = parts.map(s => (s || '').trim()).filter(s => s.length > 0);
+        if (sentences.length > 1) {
+            div.innerHTML = sentences
+                .map(s => `<span class="bot-sentence">${escapeHtml(s)}</span>`)
+                .join('');
+        } else {
+            div.innerHTML = html;
+        }
+
+        const speakText = hindiOnly(plain);
         if (autoSpeakEnabled) speakHindi(speakText);
         // Tap-to-replay: clicking any bot bubble re-speaks it
         div.classList.add('bot-speakable');
         div.setAttribute('title', 'दोबारा सुनें · Tap to re-read');
         div.addEventListener('click', () => speakHindi(speakText));
+    } else {
+        div.innerHTML = html;
     }
+
+    chatWindow.appendChild(div);
+    chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
 
     return div;
 }
@@ -186,7 +202,7 @@ async function sendMessage() {
     chatInput.style.height = 'auto';
 
     addBubble(escapeHtml(text), 'user');
-    const thinking = addBubble('समझ रहा हूँ… · Thinking…', 'thinking');
+    const thinking = addBubble('समझ रहा हूँ · Thinking<span class="thinking-dots"></span>', 'bot thinking');
 
     try {
         const resp = await fetch('/api/chat', {
@@ -235,7 +251,7 @@ async function resetChat() {
     document.getElementById('chat-progress').style.display = 'none';
     document.getElementById('chat-cta-row').style.display = 'none';
 
-    const thinking = addBubble('नई बात शुरू हो रही है… · Starting over…', 'thinking');
+    const thinking = addBubble('नई बात शुरू हो रही है · Starting over<span class="thinking-dots"></span>', 'bot thinking');
     try {
         const resp = await fetch('/api/chat/reset', {
             method: 'POST',
@@ -276,7 +292,7 @@ async function init() {
     while (attempt < 3) {
         try {
             if (attempt > 0) {
-                loader.innerHTML = `सर्वर शुरू हो रहा है… · Starting up… (${attempt + 1}/3)`;
+                loader.innerHTML = `सर्वर शुरू हो रहा है · Starting up… (${attempt + 1}/3)<span class="thinking-dots"></span>`;
             }
             const resp = await fetchWithTimeout('/api/chat/opening', 20000);
             const data = await resp.json();

@@ -34,6 +34,9 @@ if ('speechSynthesis' in window) {
 
 function _cleanForTTS(text) {
     return text
+        // Defensive: strip any HTML tags that may have leaked through rendering
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/<\/?(strong|b|em|i|span|p|div)[^>]*>/gi, '')
         // Currency — say "rupaye" not the symbol
         .replace(/₹\s*([\d,]+)/g, (_, n) => n.replace(/,/g, '') + ' रुपये ')
         .replace(/₹/g, 'रुपये ')
@@ -47,6 +50,8 @@ function _cleanForTTS(text) {
         .replace(/%/g, ' प्रतिशत ')       // percent
         .replace(/\//g, ' ')              // slash in "6,000/year"
         .replace(/&amp;/g, ' और ')        // HTML entity
+        .replace(/&lt;/g, '')             // stray escaped angle brackets
+        .replace(/&gt;/g, '')
         .replace(/&/g, ' और ')
         // Remove stray English punctuation that causes TTS to pause oddly
         .replace(/[*#@^~`<>[\]{}\\]/g, '')

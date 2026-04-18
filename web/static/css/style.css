@@ -705,6 +705,31 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
     background: var(--bg-soft); color: var(--text-muted);
     align-self: flex-start; font-style: italic; font-size: 0.92rem;
 }
+
+/* Animated ellipsis for thinking/loading states */
+@keyframes thinkingDots {
+    0%   { content: '.'; }
+    33%  { content: '..'; }
+    66%  { content: '...'; }
+    100% { content: '.'; }
+}
+.thinking-dots::after {
+    content: '.';
+    animation: thinkingDots 1.2s steps(1, end) infinite;
+    display: inline-block;
+    min-width: 1.2em;
+    text-align: left;
+}
+
+/* Bot message sentence spans — give each sentence visual breathing room */
+.chat-bubble.bot .bot-sentence {
+    display: block;
+    margin-bottom: 0.4em;
+}
+.chat-bubble.bot .bot-sentence:last-child {
+    margin-bottom: 0;
+}
+
 .chat-input-row {
     display: flex; gap: 10px; align-items: flex-end;
     position: fixed; bottom: 0; left: 0; right: 0;
