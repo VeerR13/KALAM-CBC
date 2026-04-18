@@ -193,7 +193,7 @@ A private, no-login tracker for your application progress:
 | 11 | apy | Atal Pension Yojana | Finance / PFRDA | ₹1,000–5,000/month at 60 |
 | 12 | pm\_sym | PM Shram Yogi Maandhan | Labour | ₹3,000/month pension |
 | 13 | pm\_svanidhi | PM SVANidhi | Housing & Urban | ₹10k–50k micro-credit |
-| 14 | pm\_mudra | PM MUDRA | Finance | ₹50k–10 lakh business loan |
+| 14 | pm\_mudra | PM MUDRA | Finance | ₹50k–20 lakh business loan (Tarun Plus) |
 | 15 | pmegp | PMEGP | MSME | 15–35% capital subsidy |
 | 16 | stand\_up\_india | Stand-Up India | Finance | ₹10 lakh–1 crore loan |
 | 17 | sukanya\_samriddhi | Sukanya Samriddhi Yojana | Finance | 8.2% tax-free savings |
