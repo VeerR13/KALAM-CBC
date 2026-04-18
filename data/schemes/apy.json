@@ -10,12 +10,12 @@
     {
       "rule_id": "APY-R01",
       "parameter": "age",
-      "description": "Applicant must be between 18 and 40 years of age",
+      "description": "Applicant must be between 18 and 39 years of age (enrollment must be BEFORE the 40th birthday)",
       "condition": {
         "type": "range_check",
         "field": "age",
         "min": 18,
-        "max": 40
+        "max": 39
       },
       "is_mandatory": true,
       "weight": 30,

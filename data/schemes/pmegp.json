@@ -90,7 +90,7 @@
         "type": "field_check",
         "field": "occupation",
         "values": ["Self-employed", "Shopkeeper", "street_vendor", "Artisan", "Unemployed", "Student", "Homemaker", "Salaried employee"],
-        "ambiguous_values": ["Daily wage worker", "Farmer"]
+        "ambiguous_values": ["Daily wage worker", "Farmer", "Gig worker"]
       },
       "is_mandatory": false,
       "weight": 20,

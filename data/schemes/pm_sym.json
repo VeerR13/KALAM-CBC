@@ -80,6 +80,33 @@
       "weight": 20,
       "ambiguity_refs": [],
       "ambiguity_note": null
+    },
+    {
+      "rule_id": "PMSYM-R06",
+      "parameter": "occupation_unorganised",
+      "description": "PM-SYM targets unorganised sector workers — gig/platform workers, daily wage, street vendors, domestic workers, construction workers, etc.",
+      "condition": {
+        "type": "field_check",
+        "field": "occupation",
+        "values": [
+          "Daily wage worker",
+          "street_vendor",
+          "Artisan",
+          "Homemaker",
+          "Gig worker",
+          "Farmer"
+        ],
+        "ambiguous_values": [
+          "Self-employed",
+          "Shopkeeper",
+          "Unemployed",
+          "Other"
+        ]
+      },
+      "is_mandatory": false,
+      "weight": 15,
+      "ambiguity_refs": [],
+      "ambiguity_note": "PM-SYM is specifically designed for unorganised sector workers. Gig/platform workers (delivery, freelance) are a primary target group. Salaried employees with EPF are excluded by PMSYM-R03."
     }
   ],
   "required_documents": [

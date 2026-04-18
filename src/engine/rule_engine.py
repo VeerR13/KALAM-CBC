@@ -35,7 +35,10 @@ def evaluate_rule(rule: Rule, profile: UserProfile) -> tuple[RuleResult, str]:
                     return RuleResult.AMBIGUOUS, (
                         f"{cond.field} contains ambiguous item(s): {matched}"
                     )
-            # If items exist and none are ambiguous, it's a disqualifying loan (FAIL)
+            # If values list is empty, non-matching items are neutral (PASS)
+            # Only fail if a non-empty disqualifying values list was explicitly defined
+            if not cond.values:
+                return RuleResult.PASS, f"{cond.field} has prior scheme activity (none disqualifying for this rule)"
             return RuleResult.FAIL, f"{cond.field}={value} contains disqualifying loan(s)"
 
         # Scalar field_check with case-insensitive string matching

@@ -366,10 +366,12 @@ async def _render_results(request: Request, form: dict):
     })
 
 
-@app.post("/results", response_class=HTMLResponse)
+@app.post("/results")
 async def results(request: Request):
     form_data = await request.form()
-    return await _render_results(request, dict(form_data))
+    from urllib.parse import urlencode
+    qs = urlencode({k: v for k, v in form_data.multi_items()})
+    return RedirectResponse(f"/results?{qs}", status_code=303)
 
 
 

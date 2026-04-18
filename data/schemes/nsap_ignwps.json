@@ -94,24 +94,24 @@
     {
       "rule_id": "NSAP-WPS-EX01",
       "parameter": "remarriage_exclusion",
-      "description": "Pension discontinued on remarriage per central IGNWPS guidelines",
+      "description": "Pension is permanently revoked on remarriage or divorce per central IGNWPS guidelines — applicant must remain widowed",
       "condition": {
-        "type": "field_check",
-        "field": "marital_status",
-        "values": [
-          "widowed"
-        ],
-        "ambiguous_values": [
-          "married",
-          "divorced"
+        "type": "exclusion",
+        "any_true_fails": [
+          {
+            "field": "marital_status",
+            "equals": "married"
+          },
+          {
+            "field": "marital_status",
+            "equals": "divorced"
+          }
         ]
       },
       "is_mandatory": true,
       "weight": 20,
-      "ambiguity_refs": [
-        "AMB-20"
-      ],
-      "ambiguity_note": "PARTIALLY RESOLVED: Pension must be discontinued on remarriage — ambiguity around state-level discretion on enforcement"
+      "ambiguity_refs": [],
+      "ambiguity_note": "Remarriage definitively revokes the widow pension at central level. Divorced applicants are also ineligible as they are not widows."
     },
     {
       "rule_id": "NSAP-WPS-EX02",

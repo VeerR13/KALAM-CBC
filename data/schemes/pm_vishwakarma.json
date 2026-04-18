@@ -144,6 +144,20 @@
       "ambiguity_note": null
     },
     {
+      "rule_id": "PMVK-R08",
+      "parameter": "spouse_not_govt_employee",
+      "description": "Spouse must not be in government service — official guidelines exclude the entire family if any member is a govt employee",
+      "condition": {
+        "type": "boolean_check",
+        "field": "spouse_is_govt_employee",
+        "equals": false
+      },
+      "is_mandatory": true,
+      "weight": 20,
+      "ambiguity_refs": [],
+      "ambiguity_note": "Official guideline: 'A person in government service and their family members shall not be eligible.' This rule checks the spouse. Parent/sibling govt employment cannot be checked (field not in profile) — users should verify manually."
+    },
+    {
       "rule_id": "PMVK-R07",
       "parameter": "one_per_family",
       "description": "Only one member per family (husband, wife, unmarried children) is eligible",

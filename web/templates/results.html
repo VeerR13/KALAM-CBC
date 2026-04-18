@@ -242,7 +242,7 @@
             <strong>No details provided</strong> — showing all schemes as "Need more info"
             {% endif %}
         </div>
-        <a href="/details" class="profile-edit-btn">✏️ Edit</a>
+        <a href="/details?{{ profile_dict | urlencode }}" class="profile-edit-btn">✏️ Edit</a>
     </div>
 
     {% if profile.is_family_head == false %}
@@ -603,7 +603,7 @@
     <!-- Actions -->
     <div class="results-actions">
         <a class="btn-primary" href="/checklist?{{ profile_dict | urlencode }}">📄 दस्तावेज़ सूची देखें <span style="font-weight:400;opacity:0.8;font-size:0.82rem">/ Documents →</span></a>
-        <a class="btn-ghost" href="/details">← विवरण बदलें <span style="opacity:0.7;font-size:0.82rem">/ Edit</span></a>
+        <a class="btn-ghost" href="/details?{{ profile_dict | urlencode }}">← विवरण बदलें <span style="opacity:0.7;font-size:0.82rem">/ Edit</span></a>
     </div>
 
 </div>

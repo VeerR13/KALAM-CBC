@@ -120,7 +120,32 @@
       "is_mandatory": true,
       "weight": 30,
       "ambiguity_refs": [],
-      "ambiguity_note": "Official exclusion also includes owning refrigerator AND landline (compound condition — not fully evaluated here as it requires both together). Missing fields in this exclusion rule return MISSING, not FAIL."
+      "ambiguity_note": "Missing fields in this exclusion rule return MISSING, not FAIL."
+    },
+    {
+      "rule_id": "PMJAY-EX03",
+      "parameter": "exclusion_fridge_landline",
+      "description": "Exclusion: household owns BOTH a refrigerator AND a landline phone (combined wealth indicator per official PM-JAY exclusion list)",
+      "condition": {
+        "type": "composite",
+        "logic": "OR",
+        "sub_conditions": [
+          {
+            "type": "boolean_check",
+            "field": "has_refrigerator",
+            "equals": false
+          },
+          {
+            "type": "boolean_check",
+            "field": "has_landline",
+            "equals": false
+          }
+        ]
+      },
+      "is_mandatory": false,
+      "weight": 10,
+      "ambiguity_refs": [],
+      "ambiguity_note": "PASS when either fridge or landline is absent. FAIL only when both are present. MISSING when neither field is provided."
     },
     {
       "rule_id": "PMJAY-EX02",

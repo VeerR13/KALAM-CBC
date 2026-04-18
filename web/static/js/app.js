@@ -281,6 +281,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('profile-form');
     if (!form) return;
 
+    // Restore form from query params (e.g. when returning from results via Edit button)
+    const params = new URLSearchParams(window.location.search);
+    if (params.toString()) {
+        params.forEach((value, name) => {
+            const el = form.elements[name];
+            if (!el) return;
+            if (el.type === 'radio') {
+                const radio = form.querySelector(`input[name="${name}"][value="${value}"]`);
+                if (radio) { radio.checked = true; formState[name] = value; }
+            } else if (el.type === 'checkbox') {
+                el.checked = (value === 'true' || value === 'on');
+                formState[name] = el.checked;
+            } else {
+                el.value = value;
+                formState[name] = value;
+            }
+        });
+        // Re-select cards for restored radio values
+        document.querySelectorAll('.option-card, .occ-card').forEach(card => {
+            const radio = card.querySelector('input[type="radio"]');
+            if (radio && radio.checked) card.classList.add('selected');
+        });
+        document.querySelectorAll('.range-card').forEach(card => {
+            const radio = card.querySelector('input[type="radio"]');
+            if (radio && radio.checked) card.classList.add('selected');
+        });
+    }
+
     showStep(1);
 
     // Next / submit
