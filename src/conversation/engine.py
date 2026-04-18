@@ -438,14 +438,11 @@ def _get_contradiction_question(contradiction, profile: dict) -> str:
 # Question sequencer
 # ---------------------------------------------------------------------------
 
-# All follow-up questions including optional ones beyond mandatory
+# All follow-up questions — FIELD_PRIORITY covers mandatory + common optional;
+# append only the remaining optional fields not already listed there.
 _ALL_FIELD_QUESTIONS: list[tuple[str, str]] = FIELD_PRIORITY + [
-    ("marital_status", "Aap shaadi-shuda hain? (Married/Unmarried/Widowed/Divorced?)"),
-    ("has_ration_card", "Kya aapke paas ration card hai? (AAY/BPL/PHH/none?)"),
-    ("land_ownership", "Kya aapke paas apni zameen hai? (Apni hai/Kiraye ki/Nahi hai?)"),
-    ("disability_percent", "Kya aapko koi disability hai? (Kitne percent — ya 'nahi')"),
-    ("has_lpg_connection", "Kya aapke ghar mein LPG gas connection hai?"),
-    ("is_pregnant_or_lactating", "Kya aap ya ghar mein koi mahila pregnant hai ya recently delivery hui hai?"),
+    ("has_lpg_connection",       "क्या आपके घर में LPG गैस कनेक्शन है? · Ghar mein LPG gas hai?"),
+    ("is_pregnant_or_lactating", "क्या घर में कोई महिला गर्भवती हैं? · Koi pregnant ya recently delivery hui?"),
 ]
 
 

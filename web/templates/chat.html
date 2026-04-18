@@ -95,11 +95,15 @@ function stripHtml(html) {
     return tmp.textContent || tmp.innerText || '';
 }
 
-// Extract only the Hindi portion: if text has "·", take everything before the first "·".
-// Bot conversation messages are Hinglish (no "·") and are returned as-is.
-function hindiOnly(text) {
-    const idx = text.indexOf('·');
-    return idx >= 0 ? text.slice(0, idx).trim() : text;
+// Extract only Devanagari (Hindi script) sentences for TTS.
+// Each question is structured as "हिंदी सवाल? · Hinglish question?"
+// so we grab only the parts that contain Devanagari characters.
+function devanagariOnly(text) {
+    const hasDevanagari = /[ऀ-ॿ]/;
+    // Split on "·" separators and newlines, keep only Hindi-script segments
+    const parts = text.split(/·|
++/).map(s => s.trim()).filter(s => s && hasDevanagari.test(s));
+    return parts.length > 0 ? parts.join(" ") : "";
 }
 
 function addBubble(html, cls) {
@@ -125,7 +129,7 @@ function addBubble(html, cls) {
             div.innerHTML = html;
         }
 
-        const speakText = hindiOnly(plain);
+        const speakText = devanagariOnly(plain);
         if (autoSpeakEnabled) speakHindi(speakText);
         // Tap-to-replay: clicking any bot bubble re-speaks it
         div.classList.add('bot-speakable');

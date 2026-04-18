@@ -3,20 +3,20 @@ from src.models.user_profile import UserProfile
 
 # Fields ordered by number of schemes they affect (most impactful first)
 FIELD_PRIORITY: list[tuple[str, str]] = [
-    ("has_aadhaar", "Kya aapke paas Aadhaar card hai? (Do you have an Aadhaar card?)"),
-    ("has_bank_account", "Kya aapka bank account hai? (Do you have a bank account?)"),
-    ("is_urban", "Aap gaon mein rehte hain ya shehar mein? (Do you live in a village or city?)"),
-    ("state", "Aap kis state mein rehte hain? (Which state do you live in?)"),
-    ("annual_income", "Aapki saalana income kitni hai (approx)? (What is your annual income approx?)"),
-    ("caste_category", "Aapki category kya hai — General, OBC, SC, ya ST?"),
-    ("gender", "Aap purush hain, mahila hain, ya transgender? (Male, Female, or Transgender?)"),
-    ("occupation", "Aap kya kaam karte hain? (What is your occupation?)"),
-    ("family_size", "Aapke ghar mein kitne log hain? (How many people in your family?)"),
-    ("is_aadhaar_linked", "Kya aapka Aadhaar bank account se linked hai?"),
-    ("land_ownership", "Kya aapke paas zameen hai? Apni, kiraye ki, ya koi nahi?"),
-    ("marital_status", "Aap shaadi-shuda hain? (What is your marital status?)"),
-    ("has_ration_card", "Kya aapke paas ration card hai? (AAY/PHH/none?)"),
-    ("disability_percent", "Kya aapko koi disability hai? Kitne percent?"),
+    ("has_aadhaar",      "क्या आपके पास आधार कार्ड है? · Kya aapke paas Aadhaar card hai?"),
+    ("has_bank_account", "क्या आपका बैंक अकाउंट है? · Kya aapka bank account hai?"),
+    ("is_urban",         "आप गाँव में रहते हैं या शहर में? · Gaon ya shehar?"),
+    ("state",            "आप किस राज्य में रहते हैं? · Aap kis state mein rehte hain?"),
+    ("annual_income",    "आपकी सालाना आमदनी कितनी है? · Saalana income kitni hai?"),
+    ("caste_category",   "आपकी श्रेणी क्या है — General, OBC, SC, या ST? · Category kya hai?"),
+    ("gender",           "आप पुरुष हैं, महिला हैं, या ट्रांसजेंडर? · Purush, mahila, ya transgender?"),
+    ("occupation",       "आप क्या काम करते हैं? · Kya kaam karte hain?"),
+    ("family_size",      "आपके घर में कितने लोग हैं? · Ghar mein kitne log hain?"),
+    ("is_aadhaar_linked","क्या आपका आधार बैंक से जुड़ा है? · Aadhaar bank se linked hai?"),
+    ("land_ownership",   "क्या आपके पास ज़मीन है? · Zameen hai aapke paas?"),
+    ("marital_status",   "आप विवाहित हैं? · Shaadi-shuda hain?"),
+    ("has_ration_card",  "क्या आपके पास राशन कार्ड है? · Ration card hai?"),
+    ("disability_percent","क्या आपको कोई विकलांगता है? · Koi disability hai?"),
 ]
 
 MANDATORY_FIELDS = {
