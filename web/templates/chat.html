@@ -12,9 +12,9 @@
         </p>
         <button class="chat-tts-toggle" id="chat-tts-toggle"
                 aria-pressed="true"
-                title="Bot baolega / Read aloud toggle"
+                title="पढ़कर सुनाएं / Read aloud toggle"
                 onclick="toggleAutoSpeak()">
-            🔊 Bot baolega · Read aloud
+            🔊 पढ़कर सुनाएं · Read aloud
         </button>
     </div>
 
@@ -43,7 +43,7 @@
     <!-- Chat window -->
     <div class="chat-window" id="chat-window">
         <div class="chat-bubble bot thinking-bubble" id="opening-loader">
-            Loading… · लोड हो रहा है…
+            लोड हो रहा है… · Loading…
         </div>
     </div>
 
@@ -51,15 +51,11 @@
 
 <!-- Fixed bottom input bar -->
 <div class="chat-input-row" id="chat-input-row">
-    <button class="chat-skip-btn" onclick="sendSkip()" title="I don't know · पता नहीं">
+    <button class="chat-skip-btn" onclick="sendSkip()" title="पता नहीं · I don't know">
         पता नहीं
     </button>
     <textarea class="chat-input" id="chat-input"
-        placeholder="Type here… Hindi, English, Hinglish · यहाँ लिखें…" rows="1"></textarea>
-    <button class="chat-mic" id="chat-mic"
-            aria-label="Voice input · बोलकर भेजें"
-            title="Bolo · Speak"
-            onclick="startVoiceInput()">🎤</button>
+        placeholder="यहाँ लिखें… Hindi, English, Hinglish · Type here…" rows="1"></textarea>
     <button class="chat-send" id="chat-send" onclick="sendMessage()">भेजें · Send</button>
 </div>
 {% endblock %}
@@ -78,7 +74,6 @@ let autoSpeakEnabled = true;
 const chatWindow = document.getElementById('chat-window');
 const chatInput  = document.getElementById('chat-input');
 const chatSend   = document.getElementById('chat-send');
-const chatMic    = document.getElementById('chat-mic');
 
 const CHAT_FIELD_LABELS = {
     age: 'Age · उम्र', gender: 'Gender · लिंग', state: 'State · राज्य',
@@ -100,6 +95,13 @@ function stripHtml(html) {
     return tmp.textContent || tmp.innerText || '';
 }
 
+// Extract only the Hindi portion: if text has "·", take everything before the first "·".
+// Bot conversation messages are Hinglish (no "·") and are returned as-is.
+function hindiOnly(text) {
+    const idx = text.indexOf('·');
+    return idx >= 0 ? text.slice(0, idx).trim() : text;
+}
+
 function addBubble(html, cls) {
     const div = document.createElement('div');
     div.className = 'chat-bubble ' + cls;
@@ -108,18 +110,16 @@ function addBubble(html, cls) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
     // Auto-speak bot messages (not thinking or warning bubbles)
-    const isBot     = cls.includes('bot');
+    const isBot      = cls.includes('bot');
     const isThinking = cls.includes('thinking');
     const isWarning  = cls.includes('warning');
     if (isBot && !isThinking && !isWarning) {
-        const plainText = stripHtml(html);
-        if (autoSpeakEnabled) {
-            speakHindi(plainText);
-        }
+        const speakText = hindiOnly(stripHtml(html));
+        if (autoSpeakEnabled) speakHindi(speakText);
         // Tap-to-replay: clicking any bot bubble re-speaks it
         div.classList.add('bot-speakable');
-        div.setAttribute('title', 'Tap to re-read · दोबारा सुनें');
-        div.addEventListener('click', () => speakHindi(plainText));
+        div.setAttribute('title', 'दोबारा सुनें · Tap to re-read');
+        div.addEventListener('click', () => speakHindi(speakText));
     }
 
     return div;
@@ -129,7 +129,6 @@ function setInputEnabled(on) {
     chatSend.disabled = !on;
     chatInput.disabled = !on;
     document.querySelector('.chat-skip-btn').disabled = !on;
-    if (chatMic) chatMic.disabled = !on;
 }
 
 // ── Progress ──────────────────────────────────────────────────────────────────
@@ -187,7 +186,7 @@ async function sendMessage() {
     chatInput.style.height = 'auto';
 
     addBubble(escapeHtml(text), 'user');
-    const thinking = addBubble('Samajh raha hoon… · Thinking…', 'thinking');
+    const thinking = addBubble('समझ रहा हूँ… · Thinking…', 'thinking');
 
     try {
         const resp = await fetch('/api/chat', {
@@ -209,7 +208,7 @@ async function sendMessage() {
         }
         turnCount++;
     } catch (e) {
-        thinking.innerHTML = '⚠️ Error — please try again · कोई गड़बड़ी हुई';
+        thinking.innerHTML = '⚠️ कोई गड़बड़ी हुई · Error — please try again';
         thinking.className = 'chat-bubble bot warning';
     } finally {
         isInFlight = false;
@@ -236,7 +235,7 @@ async function resetChat() {
     document.getElementById('chat-progress').style.display = 'none';
     document.getElementById('chat-cta-row').style.display = 'none';
 
-    const thinking = addBubble('Nayi baat shuru ho rahi hai…', 'thinking');
+    const thinking = addBubble('नई बात शुरू हो रही है… · Starting over…', 'thinking');
     try {
         const resp = await fetch('/api/chat/reset', {
             method: 'POST',
@@ -249,7 +248,7 @@ async function resetChat() {
         addBubble(data.reply, 'bot');
     } catch (e) {
         thinking.remove();
-        addBubble('Error resetting. Please refresh.', 'bot warning');
+        addBubble('⚠️ कोई गड़बड़ी हुई · Error resetting. Please refresh.', 'bot warning');
     } finally {
         isInFlight = false;
         setInputEnabled(true);
@@ -277,7 +276,7 @@ async function init() {
     while (attempt < 3) {
         try {
             if (attempt > 0) {
-                loader.innerHTML = `Server shuru ho raha hai… · Starting up… (attempt ${attempt + 1}/3)`;
+                loader.innerHTML = `सर्वर शुरू हो रहा है… · Starting up… (${attempt + 1}/3)`;
             }
             const resp = await fetchWithTimeout('/api/chat/opening', 20000);
             const data = await resp.json();
@@ -292,7 +291,7 @@ async function init() {
             await new Promise(r => setTimeout(r, 3000));
         }
     }
-    loader.innerHTML = 'Server se connect nahi hua · Could not connect. Please refresh.';
+    loader.innerHTML = 'सर्वर से कनेक्ट नहीं हुआ · Could not connect. Please refresh.';
     loader.className = 'chat-bubble bot warning';
 }
 
@@ -302,80 +301,14 @@ function toggleAutoSpeak() {
     const btn = document.getElementById('chat-tts-toggle');
     btn.setAttribute('aria-pressed', String(autoSpeakEnabled));
     if (autoSpeakEnabled) {
-        btn.textContent = '🔊 Bot baolega · Read aloud';
+        btn.textContent = '🔊 पढ़कर सुनाएं · Read aloud';
         btn.classList.remove('tts-off');
     } else {
-        btn.textContent = '🔇 Bot chup hai · Read aloud: OFF';
+        btn.textContent = '🔇 बंद · Read aloud: OFF';
         btn.classList.add('tts-off');
-        // Stop any currently playing speech
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
 }
-
-// ── Voice input ───────────────────────────────────────────────────────────────
-(function initVoiceInput() {
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRec) {
-        // Browser has no speech recognition — hide the mic button
-        if (chatMic) chatMic.style.display = 'none';
-        return;
-    }
-
-    const rec = new SpeechRec();
-    rec.lang          = 'hi-IN';  // accepts Hindi, English, and Hinglish
-    rec.interimResults = false;
-    rec.maxAlternatives = 1;
-    rec.continuous    = false;
-
-    let listening = false;
-
-    function setListening(on) {
-        listening = on;
-        if (!chatMic) return;
-        chatMic.classList.toggle('recording', on);
-        chatMic.setAttribute('aria-label', on
-            ? 'Listening… · सुन रहा हूँ…'
-            : 'Voice input · बोलकर भेजें');
-    }
-
-    rec.onstart = () => setListening(true);
-
-    rec.onresult = (e) => {
-        const transcript = e.results[0][0].transcript.trim();
-        if (transcript) {
-            chatInput.value = transcript;
-            // Trigger auto-resize
-            chatInput.style.height = 'auto';
-            chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
-            // Auto-send
-            sendMessage();
-        }
-    };
-
-    rec.onerror = (e) => {
-        // Ignore no-speech; surface other errors briefly
-        if (e.error !== 'no-speech') {
-            console.warn('SpeechRecognition error:', e.error);
-        }
-    };
-
-    rec.onend = () => setListening(false);
-
-    window.startVoiceInput = function () {
-        if (listening) {
-            rec.stop();
-            return;
-        }
-        // Stop any ongoing TTS before listening so mic doesn't pick it up
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-        try {
-            rec.start();
-        } catch (err) {
-            // Guard against already-started errors on rapid taps
-            console.warn('rec.start() error:', err);
-        }
-    };
-})();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function escapeHtml(s) {
